@@ -19,11 +19,11 @@ after_initialize do
     end
   end
   
-  DiscourseServerStatus::Engine.routes.draw do
+  ::DiscourseServerStatus::Engine.routes.draw do
     get 'status' => 'status#show'
   end
 
-  Discourse::Application.routes.append do
+  ::Discourse::Application.routes.append do
     mount ::DiscourseServerStatus::Engine, at: 'server-status'
   end
   
@@ -43,7 +43,7 @@ after_initialize do
     def show
       render_json_dump(
         update: serialized_update,
-        discourse: DiscourseUpdates.check_version,
+        discourse: ::DiscourseUpdates.check_version,
         plugins: DiscourseServerStatus::Plugins.stats
       )
     end
@@ -77,7 +77,7 @@ after_initialize do
           file = File.read("#{plugin_path}/plugin.rb")
           metadata = Plugin::Metadata.parse(file)
           
-          if Plugin::Metadata::OFFICIAL_PLUGINS.exclude?(metadata.name)
+          if ::Plugin::Metadata::OFFICIAL_PLUGINS.exclude?(metadata.name)
             sha = nil
             branch = nil
             
