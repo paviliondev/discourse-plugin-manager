@@ -2,6 +2,11 @@
   margin-bottom: 20px;
   border: 1px solid $primary-medium;
   padding: 20px;
+  display: none;
+  
+  &.visible {
+    display: block;
+  }
   
   .details {
     display: flex;

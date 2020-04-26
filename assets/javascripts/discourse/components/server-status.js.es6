@@ -4,13 +4,16 @@ import { default as discourseComputed } from 'discourse-common/utils/decorators'
 import { eventCalculations, setupEvent } from 'discourse/plugins/discourse-events/discourse/lib/date-utilities';
 
 export default Component.extend({
-  classNameBindings: [':server-status', 'inUpdatePeriod'],
+  classNameBindings: [':server-status', 'inUpdatePeriod', 'visible'],
   
   init() {
     this._super(...arguments);
-    const controller = getOwner(this).lookup('controller:application');
-    
+    const container = getOwner(this)
+    const controller = container.lookup('controller:application');
+    const router = container.lookup("router:main");
+
     let props = {
+      router,
       discourse: controller.get('discourseStatus'),
       plugins: controller.get('pluginsStatus')
     }
@@ -44,5 +47,10 @@ export default Component.extend({
   @discourseComputed('inUpdatePeriod')
   updateTitle(inUpdatePeriod) {
     return `discourse_server_status.${inUpdatePeriod ? 'current_period' : 'next_period'}`;
+  },
+  
+  @discourseComputed('router.currentPath')
+  visible(currentPath) {
+    return currentPath && currentPath.indexOf('admin') === -1;
   }
 });
