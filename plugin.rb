@@ -50,7 +50,7 @@ after_initialize do
     
     def serialized_update
       if update_topic = DiscourseServerStatus::Update.current
-        DiscourseServerStatus::UpdateSerializer.new(updateTopic, root: false)
+        DiscourseServerStatus::UpdateSerializer.new(update_topic, root: false)
       end
     end
   end
