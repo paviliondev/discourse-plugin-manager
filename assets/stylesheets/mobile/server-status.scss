@@ -1,0 +1,27 @@
+.server-status {
+  padding: 10px;
+  
+  .buttons {
+    
+    > a:first-of-type {
+      margin-right: 10px;
+    }
+    
+    .btn {
+      margin: 0;
+    }
+    
+    .update-topic {
+      flex-flow: wrap;
+    }
+    
+    .btn-default {
+      white-space: nowrap;
+      align-self: flex-start;
+    }
+  }
+  
+  .statuses {
+    max-height: initial;
+  }
+}

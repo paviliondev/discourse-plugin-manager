@@ -22,15 +22,17 @@
       }
     }
     
-    .update-topic .d-icon {
-      color: $secondary;
+    .update-topic {
+      display: inline-flex;
+      
+      > span:first-of-type {
+        margin-right: 8px;
+      }
+      
+      .d-icon {
+        color: $secondary;
+      }
     }
-  }
-}
-
-.update-topic {
-  > span:first-of-type {
-    margin-right: 6px;
   }
 }
 

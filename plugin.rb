@@ -5,6 +5,7 @@
 # url: https://github.com/paviliondev/discourse-server-status
 
 register_asset "stylesheets/common/server-status.scss"
+register_asset "stylesheets/mobile/server-status.scss", :mobile
 
 if respond_to?(:register_svg_icon)
   register_svg_icon "bug"
