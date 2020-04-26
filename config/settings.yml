@@ -1,5 +1,5 @@
 plugins:
-  updates_category:
+  update_category:
     default: ""
     type: category
     client: true

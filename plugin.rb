@@ -49,15 +49,15 @@ after_initialize do
     end
     
     def serialized_update
-      DiscourseServerStatus::UpdateSerializer.new(
-        DiscourseServerStatus::Update.current, root: false
-      )
+      if update_topic = DiscourseServerStatus::Update.current
+        DiscourseServerStatus::UpdateSerializer.new(updateTopic, root: false)
+      end
     end
   end
   
   class DiscourseServerStatus::Update
     def self.current
-      if category_id = SiteSetting.updates_category
+      if category_id = SiteSetting.update_category
         TopicQuery.new(nil, 
           category: Category.find(category_id).id,
           limit: 1
