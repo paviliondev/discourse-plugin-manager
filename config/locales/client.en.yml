@@ -1,0 +1,11 @@
+en:
+  js:
+    discourse_server_status:
+      title: "Status"
+      site: "Discourse"
+      plugins: "Plugins"
+      next_period: "Next Update Period"
+      current_period: "Update Period Now"
+      bug_report: "Report a bug"
+
+        

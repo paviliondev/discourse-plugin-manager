@@ -1,0 +1,60 @@
+.server-status {
+  margin-bottom: 20px;
+  border: 1px solid $primary-medium;
+  padding: 20px;
+  
+  .details {
+    display: flex;
+    
+    > div {
+      margin-right: 10px;
+    }
+  }
+  
+  .buttons {
+    display: flex;
+    
+    .btn {
+      margin-right: 10px;
+      
+      span {
+        line-height: 20px;
+      }
+    }
+    
+    .update-topic .d-icon {
+      color: $secondary;
+    }
+  }
+}
+
+.update-topic {
+  > span:first-of-type {
+    margin-right: 6px;
+  }
+}
+
+.discourse-no-touch .btn-success,
+.discourse-no-touch .btn-success:hover {
+  background-color: $success;
+  color: $secondary;
+}
+
+.site-status {
+  margin-bottom: 10px;
+}
+
+.plugin-statuses {
+  margin-top: 20px;
+  
+  .statuses {
+    max-height: 120px;
+    display: inline-flex;
+    flex-flow: column;
+    flex-wrap: wrap;
+    
+    .details {
+      margin-right: 20px;
+    }
+  }
+}

@@ -4,6 +4,12 @@
 # authors: Angus McLeod
 # url: https://github.com/paviliondev/discourse-server-status
 
+register_asset "stylesheets/common/server-status.scss"
+
+if respond_to?(:register_svg_icon)
+  register_svg_icon "bug"
+end
+
 after_initialize do
   module ::DiscourseServerStatus
     class Engine < ::Rails::Engine
@@ -17,44 +23,79 @@ after_initialize do
   end
 
   Discourse::Application.routes.append do
-    mount ::DiscourseServerStatus::Engine, at: 'server'
+    mount ::DiscourseServerStatus::Engine, at: 'server-status'
+  end
+  
+  class DiscourseServerStatus::UpdateSerializer < ::BasicTopicSerializer
+    attributes :event, :url
+
+    def event
+      object.event
+    end
+
+    def url
+      object.url
+    end
   end
   
   class DiscourseServerStatus::StatusController < ::ApplicationController
     def show
       render_json_dump(
+        update: serialized_update,
         discourse: DiscourseUpdates.check_version,
         plugins: DiscourseServerStatus::Plugins.stats
       )
+    end
+    
+    def serialized_update
+      DiscourseServerStatus::UpdateSerializer.new(
+        DiscourseServerStatus::Update.current, root: false
+      )
+    end
+  end
+  
+  class DiscourseServerStatus::Update
+    def self.current
+      if category_id = SiteSetting.updates_category
+        TopicQuery.new(nil, 
+          category: Category.find(category_id).id,
+          limit: 1
+        ).list_agenda.topics.first
+      end
     end
   end
   
   class DiscourseServerStatus::Plugins
     def self.stats
-      stats = []
-      base_path = "#{Rails.root}/plugins"
-      
-      Dir.each_child(base_path) do |folder|
-        plugin_path = "#{base}/#{folder}"
-        file = File.read("#{plugin_path}/plugin.rb")
-        metadata = Plugin::Metadata.parse(file)
+      @@stats ||= begin
+        stats = []
+        base_path = "#{Rails.root}/plugins"
         
-        if Plugin::Metadata::OFFICIAL_PLUGINS.exclude?(metadata.name)
+        Dir.each_child(base_path) do |folder|
+          plugin_path = "#{base_path}/#{folder}"
+          file = File.read("#{plugin_path}/plugin.rb")
+          metadata = Plugin::Metadata.parse(file)
           
-          Open3.popen3("pwd", chdir: plugin_path) do |i,o,e,t|
-            sha = `git rev-parse HEAD`
-            branch = `git rev-parse --abbrev-ref HEAD`
+          if Plugin::Metadata::OFFICIAL_PLUGINS.exclude?(metadata.name)
+            sha = nil
+            branch = nil
+            
+            Dir.chdir(plugin_path) do
+              sha = `git rev-parse HEAD`.strip
+              branch = `git rev-parse --abbrev-ref HEAD`.strip
+            end
+                      
+            stats.push(
+              name: metadata.name,
+              url: metadata.url,
+              installed_sha: sha,
+              git_branch: branch,
+            )
           end
-          
-          stats.push(
-            name: metadata.name,
-            installed_sha: sha,
-            git_branch: branch,
-          )
         end
+        
+        stats
       end
-      
-      stats
     end
   end
 end

@@ -1,0 +1,5 @@
+plugins:
+  updates_category:
+    default: ""
+    type: category
+    client: true
