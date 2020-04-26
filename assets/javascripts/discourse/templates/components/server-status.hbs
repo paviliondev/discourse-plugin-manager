@@ -15,10 +15,12 @@
 </div>
 
 <div class="buttons">
-  <a href="{{updateTopic.url}}" class="{{updateClass}}">
-    <span>{{i18n updateTitle}}</span>
-    <div class="event">{{event-label updateTopic.event}}</div>
-  </a>
+  {{#if updateTopic.event}}
+    <a href="{{updateTopic.url}}" class="{{updateClass}}">
+      <span>{{i18n updateTitle}}</span>
+      <div class="event">{{event-label updateTopic.event}}</div>
+    </a>
+  {{/if}}
   
   <a href="https://thepavilion.io/w/bug-report" class="btn btn-default" target="_blank">
     {{d-icon "bug"}}

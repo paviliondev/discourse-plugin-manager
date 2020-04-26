@@ -9,23 +9,25 @@ export default Component.extend({
   init() {
     this._super(...arguments);
     const controller = getOwner(this).lookup('controller:application');
-    const updateTopic = controller.get('updateTopic');
     
-    const { start, end, allDay, multiDay } = setupEvent(updateTopic.event);
-    const { startIsSame, endIsSame, isBetween, daysLeft } = eventCalculations(
-      moment(),
-      start,
-      end,
-    )
-    
-    console.log(startIsSame, endIsSame, isBetween);
-        
-    this.setProperties({
-      updateTopic,
+    let props = {
       discourse: controller.get('discourseStatus'),
-      plugins: controller.get('pluginsStatus'),
-      inUpdatePeriod: startIsSame || endIsSame || isBetween
-    });
+      plugins: controller.get('pluginsStatus')
+    }
+    
+    const updateTopic = controller.get('updateTopic');
+    if (updateTopic && updateTopic.event) {
+      const { start, end, allDay, multiDay } = setupEvent(updateTopic.event);
+      const { startIsSame, endIsSame, isBetween, daysLeft } = eventCalculations(
+        moment(),
+        start,
+        end,
+      )
+      props.updateTopic = updateTopic;
+      props.inUpdatePeriod = startIsSame || endIsSame || isBetween;
+    }
+
+    this.setProperties(props);
   },
   
   @discourseComputed('inUpdatePeriod')

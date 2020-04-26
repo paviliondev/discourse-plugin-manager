@@ -57,9 +57,10 @@ after_initialize do
   
   class DiscourseServerStatus::Update
     def self.current
-      if category_id = SiteSetting.update_category
+      if SiteSetting.update_category_id &&
+        (category = Category.find_by(id: SiteSetting.update_category_id)).present?
         TopicQuery.new(nil, 
-          category: Category.find(category_id).id,
+          category: category.id,
           limit: 1
         ).list_agenda.topics.first
       end
