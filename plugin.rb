@@ -9,6 +9,7 @@ register_asset "stylesheets/mobile/server-status.scss", :mobile
 
 if respond_to?(:register_svg_icon)
   register_svg_icon "bug"
+  register_svg_icon "info-circle"
 end
 
 after_initialize do

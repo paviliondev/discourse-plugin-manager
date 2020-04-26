@@ -8,6 +8,30 @@
     display: block;
   }
   
+  .top {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    
+    .site-status {      
+      .details {
+        margin-bottom: 10px;
+      }
+    }
+    
+    .info {
+      margin-left: 30px;
+      max-width: 50%;
+      padding: 10px;
+      background-color: $primary-low;
+      color: $primary-high;
+      
+      .d-icon {
+        margin-right: 4px;
+      }
+    }
+  }
+  
   .details {
     display: flex;
     
@@ -45,10 +69,6 @@
 .discourse-no-touch .btn-success:hover {
   background-color: $success;
   color: $secondary;
-}
-
-.site-status {
-  margin-bottom: 10px;
 }
 
 .plugin-statuses {

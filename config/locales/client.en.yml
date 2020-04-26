@@ -7,5 +7,8 @@ en:
       next_period: "Next Update Period"
       current_period: "Update Period Now"
       bug_report: "Report a bug"
+      information: >
+        During an update period, this site is rebuilt every 24 hours.
+        If you use any of these plugins, we recommed you update during this period.
 
         

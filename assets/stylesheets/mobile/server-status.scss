@@ -1,6 +1,15 @@
 .server-status {
   padding: 10px;
   
+  .top {
+    flex-direction: column;
+    
+    .info {
+      margin: 10px 0;
+      max-width: 100%;
+    }
+  }
+  
   .buttons {
     
     > a:first-of-type {
@@ -19,6 +28,10 @@
       white-space: nowrap;
       align-self: flex-start;
     }
+  }
+  
+  .plugin-statuses {
+    margin-top: 10px;
   }
   
   .statuses {
