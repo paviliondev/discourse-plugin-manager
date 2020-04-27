@@ -1,5 +1,4 @@
 import ApplicationRoute from 'discourse/routes/application';
-import VersionCheck from "admin/models/version-check";
 import ServerStatus from "../models/server-status";
 import Topic from 'discourse/models/topic';
 import { ajax } from 'discourse/lib/ajax';
