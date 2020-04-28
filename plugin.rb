@@ -76,24 +76,28 @@ after_initialize do
         
         Dir.each_child(base_path) do |folder|
           plugin_path = "#{base_path}/#{folder}"
-          file = File.read("#{plugin_path}/plugin.rb")
-          metadata = Plugin::Metadata.parse(file)
           
-          if ::Plugin::Metadata::OFFICIAL_PLUGINS.exclude?(metadata.name)
-            sha = nil
-            branch = nil
+          if file = File.read("#{plugin_path}/plugin.rb", "r")
+            metadata = Plugin::Metadata.parse(file)
             
-            Dir.chdir(plugin_path) do
-              sha = `git rev-parse HEAD`.strip
-              branch = `git rev-parse --abbrev-ref HEAD`.strip
+            if metadata.present? && 
+              ::Plugin::Metadata::OFFICIAL_PLUGINS.exclude?(metadata.name)
+              
+              sha = nil
+              branch = nil
+              
+              Dir.chdir(plugin_path) do
+                sha = `git rev-parse HEAD`.strip
+                branch = `git rev-parse --abbrev-ref HEAD`.strip
+              end
+                        
+              stats.push(
+                name: metadata.name,
+                url: metadata.url,
+                installed_sha: sha,
+                git_branch: branch,
+              )
             end
-                      
-            stats.push(
-              name: metadata.name,
-              url: metadata.url,
-              installed_sha: sha,
-              git_branch: branch,
-            )
           end
         end
         
