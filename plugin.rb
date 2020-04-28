@@ -77,7 +77,13 @@ after_initialize do
         Dir.each_child(base_path) do |folder|
           plugin_path = "#{base_path}/#{folder}"
           
-          if file = File.read("#{plugin_path}/plugin.rb", "r")
+          begin
+            file = File.read("#{plugin_path}/plugin.rb")
+          rescue
+            #
+          end
+          
+          if file.present?
             metadata = Plugin::Metadata.parse(file)
             
             if metadata.present? && 

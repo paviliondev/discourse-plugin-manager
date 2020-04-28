@@ -1,7 +1,6 @@
 import Component from '@ember/component';
 import { getOwner } from 'discourse-common/lib/get-owner';
 import { default as discourseComputed } from 'discourse-common/utils/decorators';
-import { eventCalculations, setupEvent } from 'discourse/plugins/discourse-events/discourse/lib/date-utilities';
 
 export default Component.extend({
   classNameBindings: [':server-status', 'inUpdatePeriod', 'visible'],
@@ -18,10 +17,17 @@ export default Component.extend({
       plugins: controller.get('pluginsStatus')
     }
     
+    let dateUtilities;
+    try {
+      dateUtilities = requirejs('discourse/plugins/discourse-events/discourse/lib/date-utilities');
+    } catch(error) {
+      console.error(error);
+    }
+    
     const updateTopic = controller.get('updateTopic');
-    if (updateTopic && updateTopic.event) {
-      const { start, end, allDay, multiDay } = setupEvent(updateTopic.event);
-      const { startIsSame, endIsSame, isBetween, daysLeft } = eventCalculations(
+    if (updateTopic && updateTopic.event && dateUtilities) {
+      const { start, end, allDay, multiDay } = dateUtilities.setupEvent(updateTopic.event);
+      const { startIsSame, endIsSame, isBetween, daysLeft } = dateUtilities.eventCalculations(
         moment(),
         start,
         end,
