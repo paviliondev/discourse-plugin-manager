@@ -3,12 +3,18 @@ en:
     discourse_server_status:
       title: "Status"
       site: "Discourse"
-      plugins: "Plugins"
-      next_period: "Next Update Period"
-      current_period: "Update Period Now"
+      description: >
+        This site is updated every 24 hours.
+        You can use it to test how a plugin works on the latest version of Discourse.
+      next_period: "Next Support Period"
+      current_period: "Support Period Now"
       bug_report: "Report a bug"
-      information: >
-        During an update period, this site is rebuilt every 24 hours.
-        If you use any of these plugins, we recommed you update during this period.
+      plugins: 
+        header: "Plugins"
+        description: "Plugins running on this server. <a href='https://thepavilion.io/w/bug-report' Please report any issues here</a>."
+      incompatible_plugins:
+        header: "Incompatible Plugins"
+        description: "Plugins incompatible with the version of Discourse on this server"
+      
 
         

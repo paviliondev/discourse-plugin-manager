@@ -12,7 +12,8 @@ export default {
           this.controllerFor('application').setProperties({
             updateTopic: result.update,
             discourseStatus: ServerStatus.create(result.discourse),
-            pluginsStatus: result.plugins.map(plugin => ServerStatus.create(plugin))
+            pluginStats: result.plugins.map(p => ServerStatus.create(p)),
+            incompatiblePluginStats: result.incompatible_plugins.map(p => ServerStatus.create(p))
           })
         })
       }

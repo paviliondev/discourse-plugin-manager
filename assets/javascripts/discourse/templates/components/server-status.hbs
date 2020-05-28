@@ -1,9 +1,17 @@
-<h3>{{i18n 'discourse_server_status.title'}}</h3>
-
 <div class="top">
-  <div class="site-status">
-    <div class="details">
+  <div class="left">
+    <h4>{{i18n 'discourse_server_status.title'}}</h4>
+    
+    <div class="information">
+      {{i18n 'discourse_server_status.description'}}
+    </div>
+    
+    <div class="discourse">
       <div class="name">{{i18n 'discourse_server_status.site'}}</div>
+      
+      <div class="branch">
+        {{dash-if-empty discourse.git_branch}}
+      </div>
       
       <div class="version">
         {{dash-if-empty discourse.installed_version}}
@@ -15,43 +23,32 @@
         </a>
       </div>
     </div>
-    
-    <div class="buttons">
-      {{#if updateTopic.event}}
-        <a href="{{updateTopic.url}}" class="{{updateClass}}">
-          <span>{{i18n updateTitle}}</span>
-          <div class="event">{{event-label updateTopic.event}}</div>
-        </a>
-      {{/if}}
-      
-      <a href="https://thepavilion.io/w/bug-report" class="btn btn-default" target="_blank">
-        {{d-icon "bug"}}
-        <span class="d-button-label">
-          {{i18n "discourse_server_status.bug_report"}}
-        </span>
-      </a>
-    </div>
   </div>
   
-  <div class="info">
-    {{d-icon 'info-circle'}}
-    {{i18n 'discourse_server_status.information'}}
+  <div class="buttons">
+    {{#if updateTopic.event}}
+      <a href="{{updateTopic.url}}" class="{{updateClass}}">
+        <span>{{i18n updateTitle}}</span>
+        <div class="event">{{event-label updateTopic.event}}</div>
+      </a>
+    {{/if}}
+    
+    <a href="https://thepavilion.io/w/bug-report" class="btn btn-default" target="_blank">
+      {{d-icon "bug"}}
+      <span class="d-button-label">
+        {{i18n "discourse_server_status.bug_report"}}
+      </span>
+    </a>
   </div>
 </div>
 
-<div class="plugin-statuses">
-  <h4>{{i18n 'discourse_server_status.plugins'}}</h4>
-  
-  <div class="statuses">
-    {{#each plugins as |plugin|}}
-      <div class="plugin-status details">
-        <div class="name">{{plugin.name}}</div>
-        <div class="sha-link">
-          <a href={{plugin.gitLink}} rel="noopener noreferrer" target="_blank">
-            {{plugin.shortSha}}
-          </a>
-        </div>
-      </div>
-    {{/each}}
-  </div>
+<div class="bottom">
+  {{plugin-statuses
+    type="plugins"
+    plugins=plugins
+    discourse=discourse}}
+  {{plugin-statuses
+    type="incompatible_plugins"
+    plugins=incompatiblePlugins
+    discourse=discourse}}
 </div>

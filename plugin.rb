@@ -42,10 +42,13 @@ after_initialize do
   
   class DiscourseServerStatus::StatusController < ::ApplicationController
     def show
+      plugins = DiscourseServerStatus::Plugins.new
+      
       render_json_dump(
         update: serialized_update,
         discourse: ::DiscourseUpdates.check_version,
-        plugins: DiscourseServerStatus::Plugins.stats
+        plugins: plugins.stats,
+        incompatible_plugins: plugins.incompatible_stats
       )
     end
     
@@ -62,53 +65,63 @@ after_initialize do
         (category = Category.find_by(id: SiteSetting.update_category_id)).present?
         TopicQuery.new(nil, 
           category: category.id,
-          limit: 1
-        ).list_agenda.topics.first
+        ).list_agenda.topics.reverse.first
       end
     end
   end
   
   class DiscourseServerStatus::Plugins
-    def self.stats
-      @@stats ||= begin
-        stats = []
-        base_path = "#{Rails.root}/plugins"
+    PLUGIN_PATH = "#{Rails.root}/plugins"
+    INCOMPATIBLE_PLUGIN_PATH = "#{Rails.root}/plugins-incompatible"
+    
+    def initialize
+    end
+    
+    def stats
+      gather_stats(PLUGIN_PATH)
+    end
+      
+    def incompatible_stats
+      gather_stats(INCOMPATIBLE_PLUGIN_PATH)
+    end
+    
+    def gather_stats(path)
+      stats = []
+      
+      Dir.each_child(path) do |folder|
+        plugin_path = "#{path}/#{folder}"
         
-        Dir.each_child(base_path) do |folder|
-          plugin_path = "#{base_path}/#{folder}"
-          
-          begin
-            file = File.read("#{plugin_path}/plugin.rb")
-          rescue
-            #
-          end
-          
-          if file.present?
-            metadata = Plugin::Metadata.parse(file)
-            
-            if metadata.present? && 
-              ::Plugin::Metadata::OFFICIAL_PLUGINS.exclude?(metadata.name)
-              
-              sha = nil
-              branch = nil
-              
-              Dir.chdir(plugin_path) do
-                sha = `git rev-parse HEAD`.strip
-                branch = `git rev-parse --abbrev-ref HEAD`.strip
-              end
-                        
-              stats.push(
-                name: metadata.name,
-                url: metadata.url,
-                installed_sha: sha,
-                git_branch: branch,
-              )
-            end
-          end
+        begin
+          file = File.read("#{plugin_path}/plugin.rb")
+        rescue
+          #
         end
         
-        stats
+        if file.present?
+          metadata = Plugin::Metadata.parse(file)
+          
+          if metadata.present? && 
+            ::Plugin::Metadata::OFFICIAL_PLUGINS.exclude?(metadata.name)
+            
+            sha = nil
+            branch = nil
+            
+            Dir.chdir(plugin_path) do
+              sha = `git rev-parse HEAD`.strip
+              branch = `git rev-parse --abbrev-ref HEAD`.strip
+            end
+                      
+            stats.push(
+              name: metadata.name,
+              url: metadata.url,
+              installed_sha: sha,
+              git_branch: branch,
+            )
+          end
+        end
       end
+      
+      stats
     end
   end
 end
