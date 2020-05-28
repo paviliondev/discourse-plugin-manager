@@ -1,6 +1,6 @@
 # name: discourse-server-status
 # about: Display public information about server status
-# version: 0.1
+# version: 0.1.1
 # authors: Angus McLeod
 # url: https://github.com/paviliondev/discourse-server-status
 
@@ -87,6 +87,8 @@ after_initialize do
     
     def gather_stats(path)
       stats = []
+      
+      return unless File.directory?(path)
       
       Dir.each_child(path) do |folder|
         plugin_path = "#{path}/#{folder}"

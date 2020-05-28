@@ -9,12 +9,19 @@ export default {
     ApplicationRoute.reopen({
       afterModel(model) {
         return ajax('/server-status/status').then(result => {
-          this.controllerFor('application').setProperties({
+          let props = {
             updateTopic: result.update,
             discourseStatus: ServerStatus.create(result.discourse),
             pluginStats: result.plugins.map(p => ServerStatus.create(p)),
-            incompatiblePluginStats: result.incompatible_plugins.map(p => ServerStatus.create(p))
-          })
+          }
+          
+          if (result.incompatible_plugins) {
+            props.incompatiblePluginStats = result.incompatible_plugins.map(p => 
+              ServerStatus.create(p)
+            )
+          }
+          
+          this.controllerFor('application').setProperties(props);
         })
       }
     })

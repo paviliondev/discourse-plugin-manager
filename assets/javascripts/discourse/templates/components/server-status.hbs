@@ -47,8 +47,11 @@
     type="plugins"
     plugins=plugins
     discourse=discourse}}
-  {{plugin-statuses
-    type="incompatible_plugins"
-    plugins=incompatiblePlugins
-    discourse=discourse}}
+  
+  {{#if incompatiblePlugins}}
+    {{plugin-statuses
+      type="incompatible_plugins"
+      plugins=incompatiblePlugins
+      discourse=discourse}}
+  {{/if}}
 </div>
