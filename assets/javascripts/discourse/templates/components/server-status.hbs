@@ -6,18 +6,19 @@
       {{i18n 'discourse_server_status.description'}}
     </div>
     
-    <div class="discourse">
-      <div class="name">{{i18n 'discourse_server_status.site'}}</div>
-      
+    <div class="discourse">      
       <div class="branch">
+        <label>{{i18n 'discourse_server_status.discourse.branch'}}</label>
         {{dash-if-empty discourse.git_branch}}
       </div>
       
       <div class="version">
+        <label>{{i18n 'discourse_server_status.discourse.version'}}</label>
         {{dash-if-empty discourse.installed_version}}
       </div>
       
       <div class="sha-link">
+        <label>{{i18n 'discourse_server_status.discourse.commit'}}</label>
         <a href={{discourse.gitLink}} rel="noopener noreferrer" target="_blank">
           {{discourse.shortSha}}
         </a>

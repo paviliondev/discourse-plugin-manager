@@ -2,19 +2,22 @@ en:
   js:
     discourse_server_status:
       title: "Status"
-      site: "Discourse"
       description: >
         This site is updated every 24 hours.
         You can use it to test how a plugin works on the latest version of Discourse.
       next_period: "Next Support Period"
       current_period: "Support Period Now"
       bug_report: "Report a bug"
+      discourse:
+        branch: "Branch"
+        version: "Version"
+        commit: "Commit"
       plugins: 
         header: "Plugins"
-        description: "Plugins running on this server. <a href='https://thepavilion.io/w/bug-report' Please report any issues here</a>."
+        description: "Plugins running on this server."
       incompatible_plugins:
         header: "Incompatible Plugins"
-        description: "Plugins incompatible with the version of Discourse on this server"
+        description: "Plugins that don't work with the version of Discourse on this server."
       
 
         

@@ -26,10 +26,19 @@
   }
   
   .discourse {
-    display: flex;
+    display: inline-flex;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: $primary-very-low;
     
     > div {
-      margin-right: 10px;
+      &:not(:last-of-type) {
+        margin-right: 20px;
+      }
+      
+      label {
+        font-size: 0.9em;
+      }
     }
   }
   
@@ -63,8 +72,12 @@
   }
   
   .plugin-statuses {
-    margin-top: 20px;
+    margin-top: 10px;
     margin-right: 20px;
+    
+    .description {
+      margin-bottom: 5px;
+    }
     
     .statuses {
       max-height: 120px;
