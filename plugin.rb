@@ -72,7 +72,7 @@ after_initialize do
   
   class DiscourseServerStatus::Plugins
     PLUGIN_PATH = "#{Rails.root}/plugins"
-    INCOMPATIBLE_PLUGIN_PATH = "#{Rails.root}/plugins-incompatible"
+    INCOMPATIBLE_PLUGIN_PATH = "#{Rails.root}/plugins_incompatible"
     
     def initialize
     end
