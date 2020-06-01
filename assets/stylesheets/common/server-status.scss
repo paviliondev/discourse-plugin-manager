@@ -75,15 +75,20 @@
     margin-top: 10px;
     margin-right: 20px;
     
+    &.plugins {
+      width: 75%;
+    }
+    
     .description {
       margin-bottom: 5px;
     }
     
     .statuses {
-      max-height: 120px;
+      max-height: 200px;
       display: inline-flex;
       flex-flow: column;
       flex-wrap: wrap;
+      width: 100%;
       
       .details {
         margin-right: 20px;

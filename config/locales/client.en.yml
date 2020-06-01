@@ -17,7 +17,7 @@ en:
         description: "Plugins running on this server."
       incompatible_plugins:
         header: "Incompatible Plugins"
-        description: "Plugins that don't work with the version of Discourse on this server."
+        description: "Plugins that don't work with this version of Discourse."
       
 
         
