@@ -5,8 +5,8 @@ class DiscourseServerStatus::StatusController < ::ApplicationController
     render_json_dump(
       update: serialized_update,
       discourse: ::DiscourseUpdates.check_version,
-      plugins: plugins.stats,
-      incompatible_plugins: plugins.incompatible_stats
+      plugins: plugins.compatible,
+      incompatible_plugins: plugins.incompatible
     )
   end
   

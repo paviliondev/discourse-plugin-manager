@@ -1,20 +1,32 @@
 class DiscourseServerStatus::Plugins
-  PLUGIN_PATH = "#{Rails.root}/plugins"
-  INCOMPATIBLE_PLUGIN_PATH = "#{Rails.root}/plugins_incompatible"
+  FOLDER = "plugins"
+  INCOMPATIBLE_FOLDER = "plugins_incompatible"
   
   def initialize
   end
   
-  def stats
-    gather_stats(PLUGIN_PATH)
+  def compatible
+    @compatible ||= get_state_by_status('compatible')
   end
     
-  def incompatible_stats
-    gather_stats(INCOMPATIBLE_PLUGIN_PATH)
+  def incompatible
+    @incompatible ||= get_state_by_status('incompatible')
   end
   
-  def gather_stats(path)
-    stats = []
+  def get_state_by_status(status)
+    PluginStoreRow.where("plugin_name = '#{build_plugin_name(status)}'")
+      .pluck(:value)
+      .map do |value|
+        begin
+          JSON.parse(value)
+        rescue JSON::ParserError
+          {}
+        end
+      end
+  end
+  
+  def set_state_by_status(status)    
+    path = "#{Rails.root}/#{status === "compatible" ? FOLDER : INCOMPATIBLE_FOLDER}"
     
     return unless File.directory?(path)
     
@@ -41,16 +53,34 @@ class DiscourseServerStatus::Plugins
             branch = `git rev-parse --abbrev-ref HEAD`.strip
           end
                     
-          stats.push(
+          set_plugin_state(status,
             name: metadata.name,
             url: metadata.url,
             installed_sha: sha,
-            git_branch: branch,
+            git_branch: branch
           )
         end
       end
     end
-    
-    stats
+  end
+  
+  def self.after_initialize
+    plugins = self.new
+    plugins.set_state_by_status("compatible")
+    plugins.set_state_by_status("incompatible")
+  end
+  
+  private
+  
+  def set_plugin_state(status, state)
+    PluginStore.set(build_plugin_name(status), state[:name], state)
+  end
+  
+  def get_plugin_state(status, plugin_name)
+    PluginStore.get(build_plugin_name(status), plugin_name)
+  end
+  
+  def build_plugin_name(status)
+    "#{DiscourseServerStatus::PLUGIN_NAME}-#{status}"
   end
 end

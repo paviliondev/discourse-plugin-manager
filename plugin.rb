@@ -23,4 +23,6 @@ after_initialize do
   ).each do |path|
     load File.expand_path(path, __FILE__)
   end
+  
+  DiscourseServerStatus::Plugins.after_initialize
 end
