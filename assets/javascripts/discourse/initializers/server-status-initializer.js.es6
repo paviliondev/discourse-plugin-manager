@@ -9,9 +9,14 @@ export default {
     ApplicationRoute.reopen({
       afterModel(model) {
         return ajax('/server-status/status').then(result => {
+          let discourseParams = Object.assign({},
+            result.discourse,
+            { url: "https://github.com/discourse/discourse" }
+          );
+          
           let props = {
             updateTopic: result.update,
-            discourseStatus: ServerStatus.create(result.discourse),
+            discourseStatus: ServerStatus.create(discourseParams),
             pluginStats: result.plugins.map(p => ServerStatus.create(p)),
           }
           
