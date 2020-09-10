@@ -3,8 +3,8 @@ en:
     discourse_server_status:
       title: "Status"
       description: >
-        This site is updated every 24 hours.
-        You can use it to test how a plugin works on the latest version of Discourse.
+        This site is updated automatically every 24 hours.
+        You can use it to test how a plugin works on the version of Discourse displayed below.
       next_period: "Next Support Period"
       current_period: "Support Period Now"
       bug_report: "Report a bug"
