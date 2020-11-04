@@ -10,7 +10,14 @@
     }
   }
   
+  .discourse-status {
+    > div, > a {
+      margin-bottom: 20px;
+    }
+  }
+  
   .buttons {
+    padding: 10px 0;
     
     > a:first-of-type {
       margin-right: 10px;

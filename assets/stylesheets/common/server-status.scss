@@ -28,6 +28,7 @@
     display: inline-flex;
     padding: 10px;
     background-color: $primary-very-low;
+    flex-wrap: wrap;
     
     > div, > a {
       display: block;
