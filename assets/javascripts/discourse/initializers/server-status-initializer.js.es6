@@ -9,23 +9,28 @@ export default {
     ApplicationRoute.reopen({
       afterModel(model) {
         return ajax('/server-status/status').then(result => {
-          let discourseParams = Object.assign({},
+          const discourseParams = Object.assign({},
             result.discourse,
             { url: "https://github.com/discourse/discourse" }
           );
+          const compatiablePlugins = result.plugins.map(p => ServerStatus.create(p));
           
           let props = {
             updateTopic: result.update,
             discourseStatus: ServerStatus.create(discourseParams),
-            pluginStats: result.plugins.map(p => ServerStatus.create(p)),
+            compatiablePlugins,
+            pluginCounts: { compatible: compatiablePlugins.length }
           }
-          
+                    
           if (result.incompatible_plugins) {
-            props.incompatiblePluginStats = result.incompatible_plugins.map(p => 
-              ServerStatus.create(p)
-            )
+            const incompatiblePlugins = result.incompatible_plugins.map(p => ServerStatus.create(p));
+            props.incompatiblePlugins = incompatiblePlugins;
+            
+            if (incompatiblePlugins.length) {
+              props.pluginCounts.incompatible = incompatiblePlugins.length;
+            }
           }
-          
+                    
           this.controllerFor('application').setProperties(props);
         })
       }

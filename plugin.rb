@@ -17,6 +17,7 @@ after_initialize do
     ../lib/server_status/engine.rb
     ../lib/server_status/plugins.rb
     ../lib/server_status/update.rb
+    ../app/jobs/regular/send_plugin_incompatible_notification.rb
     ../app/controllers/server_status/status_controller.rb
     ../app/serializers/server_status/update_serializer.rb
     ../config/routes.rb
@@ -24,5 +25,5 @@ after_initialize do
     load File.expand_path(path, __FILE__)
   end
   
-  DiscourseServerStatus::Plugins.after_initialize
+  DiscourseServerStatus::Plugins.set_all_from_local
 end

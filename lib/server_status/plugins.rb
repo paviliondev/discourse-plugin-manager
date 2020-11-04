@@ -6,16 +6,18 @@ class DiscourseServerStatus::Plugins
   end
   
   def compatible
-    @compatible ||= get_state_by_status('compatible')
+    @compatible ||= list_by_status(self.class.status[:compatible])
   end
     
   def incompatible
-    @incompatible ||= get_state_by_status('incompatible')
+    @incompatible ||= list_by_status(self.class.status[:incompatible])
   end
   
-  def get_state_by_status(status)
-    PluginStoreRow.where("plugin_name = '#{build_plugin_name(status)}'")
-      .pluck(:value)
+  def list_by_status(status)
+    PluginStoreRow.where("
+      plugin_name = '#{DiscourseServerStatus::PLUGIN_NAME}' AND
+      (value::json->>'status')::int = ?
+    ", status).pluck(:value)
       .map do |value|
         begin
           JSON.parse(value)
@@ -25,8 +27,9 @@ class DiscourseServerStatus::Plugins
       end
   end
   
-  def set_state_by_status(status)    
-    path = "#{Rails.root}/#{status === "compatible" ? FOLDER : INCOMPATIBLE_FOLDER}"
+  def set_from_local(status)
+    folder = status == self.class.status[:compatible] ? FOLDER : INCOMPATIBLE_FOLDER 
+    path = "#{Rails.root}/#{folder}"
     
     return unless File.directory?(path)
     
@@ -53,34 +56,52 @@ class DiscourseServerStatus::Plugins
             branch = `git rev-parse --abbrev-ref HEAD`.strip
           end
                     
-          set_plugin_state(status,
+          set_plugin(
             name: metadata.name,
             url: metadata.url,
             installed_sha: sha,
-            git_branch: branch
+            git_branch: branch,
+            status: status
           )
         end
       end
     end
   end
   
-  def self.after_initialize
+  def self.set_all_from_local
     plugins = self.new
-    plugins.set_state_by_status("compatible")
-    plugins.set_state_by_status("incompatible")
+    plugins.set_from_local(self.status[:compatible])
+    plugins.set_from_local(self.status[:incompatible])
+  end
+  
+  def self.status
+    @status ||= Enum.new(compatible: 1, incompatible: 2)
   end
   
   private
   
-  def set_plugin_state(status, state)
-    PluginStore.set(build_plugin_name(status), state[:name], state)
+  def set_plugin(state)
+    plugin_name = state[:name]
+    current_state = get_plugin(plugin_name)
+  
+    if current_state[:status] != state[:status]
+      handle_change(state)
+    end
+
+    new_state = current_state.merge(state)
+    PluginStore.set(DiscourseServerStatus::PLUGIN_NAME, plugin_name, new_state)
   end
   
-  def get_plugin_state(status, plugin_name)
-    PluginStore.get(build_plugin_name(status), plugin_name)
+  def get_plugin(plugin_name)
+    PluginStore.get(DiscourseServerStatus::PLUGIN_NAME, plugin_name) || {}
   end
   
-  def build_plugin_name(status)
-    "#{DiscourseServerStatus::PLUGIN_NAME}-#{status}"
+  def handle_change(state)
+    if state[:status] == self.class.status[:incompatible]
+      Jobs.enqueue(:send_plugin_incompatible_notification,
+        plugin: name,
+        site: SiteSetting.title
+      )
+    end
   end
 end

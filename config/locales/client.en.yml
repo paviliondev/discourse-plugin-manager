@@ -12,6 +12,7 @@ en:
         branch: "Branch"
         version: "Version"
         commit: "Commit"
+        updated_at: "Updated at"
       plugins: 
         header: "Plugins"
         description: "Plugins running on this server."

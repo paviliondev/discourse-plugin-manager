@@ -4,6 +4,7 @@ import { default as discourseComputed } from 'discourse-common/utils/decorators'
 
 export default Component.extend({
   classNameBindings: [':server-status', 'inUpdatePeriod', 'visible'],
+  maximized: false,
   
   init() {
     this._super(...arguments);
@@ -13,9 +14,10 @@ export default Component.extend({
 
     let props = {
       router,
-      discourse: controller.get('discourseStatus'),
-      plugins: controller.get('pluginStats'),
-      incompatiblePlugins: controller.get('incompatiblePluginStats')
+      discourseStatus: controller.get('discourseStatus'),
+      compatiablePlugins: controller.get('compatiablePlugins'),
+      incompatiblePlugins: controller.get('incompatiblePlugins'),
+      pluginCounts: controller.get('pluginCounts')
     }
     
     let dateUtilities;
@@ -59,5 +61,14 @@ export default Component.extend({
   @discourseComputed('router.currentPath')
   visible(currentPath) {
     return currentPath && currentPath.indexOf('admin') === -1;
+  },
+  
+  click() {
+    this.toggleProperty('maximized');
+  },
+  
+  @discourseComputed('maximized')
+  bottomClass(maximized) {
+    return maximized ? 'maximized' : '';
   }
 });

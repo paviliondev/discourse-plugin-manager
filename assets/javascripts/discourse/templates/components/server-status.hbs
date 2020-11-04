@@ -1,36 +1,15 @@
 <div class="top">
-  <div class="left">
-    <h4>{{i18n 'discourse_server_status.title'}}</h4>
-    
-    <div class="information">
-      {{i18n 'discourse_server_status.description'}}
-    </div>
-    
-    <div class="discourse">      
-      <div class="branch">
-        <label>{{i18n 'discourse_server_status.discourse.branch'}}</label>
-        {{dash-if-empty discourse.git_branch}}
-      </div>
-      
-      <div class="version">
-        <label>{{i18n 'discourse_server_status.discourse.version'}}</label>
-        {{dash-if-empty discourse.installed_version}}
-      </div>
-      
-      <div class="sha-link">
-        <label>{{i18n 'discourse_server_status.discourse.commit'}}</label>
-        <a href={{discourse.gitLink}} rel="noopener noreferrer" target="_blank">
-          {{discourse.shortSha}}
-        </a>
-      </div>
-    </div>
+  <div class="left">    
+    {{discourse-status
+      status=discourseStatus
+      pluginCounts=pluginCounts}}
   </div>
   
   <div class="buttons">
     {{#if updateTopic.event}}
       <a href="{{updateTopic.url}}" class="{{updateClass}}">
         <span>{{i18n updateTitle}}</span>
-        <div class="event">{{event-label updateTopic.event}}</div>
+        <div class="event">{{event-label updateTopic.event list=true}}</div>
       </a>
     {{/if}}
     
@@ -43,16 +22,16 @@
   </div>
 </div>
 
-<div class="bottom">
+<div class="bottom {{bottomClass}}">
   {{plugin-statuses
     type="plugins"
-    plugins=plugins
-    discourse=discourse}}
+    plugins=compatiablePlugins
+    discourseStatus=discourseStatus}}
   
   {{#if incompatiblePlugins}}
     {{plugin-statuses
       type="incompatible_plugins"
       plugins=incompatiblePlugins
-      discourse=discourse}}
+      discourseStatus=discourseStatus}}
   {{/if}}
 </div>
