@@ -29,13 +29,16 @@
     padding: 10px;
     background-color: $primary-very-low;
     
-    > div {
-      &:not(:last-of-type) {
+    > div, > a {
+      display: block;
+      
+      &:not(:last-child) {
         margin-right: 20px;
       }
       
       label {
         font-size: 0.9em;
+        cursor: pointer;
       }
     }
   }

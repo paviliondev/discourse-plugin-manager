@@ -24,7 +24,7 @@ export default Component.extend({
     try {
       dateUtilities = requirejs('discourse/plugins/discourse-events/discourse/lib/date-utilities');
     } catch(error) {
-      console.error(error);
+      console.warn("Events plugin missing");
     }
     
     const updateTopic = controller.get('updateTopic');
@@ -40,22 +40,6 @@ export default Component.extend({
     }
 
     this.setProperties(props);
-  },
-  
-  @discourseComputed('inUpdatePeriod')
-  updateClass(inUpdatePeriod) {
-    let classes = 'update-topic btn ';
-    if (inUpdatePeriod) {
-      classes += 'btn-success';
-    } else {
-      classes += 'btn-primary';
-    }
-    return classes;
-  },
-  
-  @discourseComputed('inUpdatePeriod')
-  updateTitle(inUpdatePeriod) {
-    return `discourse_server_status.${inUpdatePeriod ? 'current_period' : 'next_period'}`;
   },
   
   @discourseComputed('router.currentPath')

@@ -21,6 +21,9 @@ export default {
             compatiablePlugins,
             pluginCounts: { compatible: compatiablePlugins.length }
           }
+          
+          props.discourseStatus.updated_at = "2020-11-03T10:09:34.978Z";
+          props.discourseStatus.git_branch = "tests-passed";
                     
           if (result.incompatible_plugins) {
             const incompatiblePlugins = result.incompatible_plugins.map(p => ServerStatus.create(p));

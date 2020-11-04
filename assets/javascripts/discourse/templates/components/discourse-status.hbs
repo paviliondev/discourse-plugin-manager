@@ -17,7 +17,7 @@
 
 <div class="last-updated">
   <label>{{i18n 'discourse_server_status.discourse.updated_at'}}</label>
-  {{dash-if-empty status.updated_at}}
+  {{bound-date status.updated_at addAgo=true}}
 </div>
 
 <div class="compatible-count">
@@ -29,3 +29,10 @@
   <label>{{i18n "discourse_server_status.incompatible_plugins.header"}}</label>
   {{dash-if-empty pluginCounts.incompatible}}
 </div>
+
+{{#if updateTopic.event}}
+  <a href="{{updateTopic.url}}" class="{{updateClass}}">
+    <label>{{i18n updateTitle}}</label>
+    <div class="event">{{event-label updateTopic.event list=true}}</div>
+  </a>
+{{/if}}
