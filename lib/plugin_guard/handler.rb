@@ -21,6 +21,9 @@ class ::PluginGuard::Handler
   end
   
   def clean_up_assets
+    Discourse.plugins.reject! do |plugin|
+      plugin.name == @plugin_guard.metadata.name
+    end
     Rails.configuration.assets.paths.reject! do |path|
       path.include?(@plugin_guard.path)
     end
