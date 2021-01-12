@@ -1,5 +1,22 @@
 require_relative '../plugin_guard'
 
+PATH_WHITELIST ||= [
+  'message-bus'
+]
+
+def file_exists(guard, directive, directive_path)
+  paths = []
+  
+  if directive === 'require'
+    paths.push("#{Rails.root}/app/assets/javascripts/#{directive_path}")
+    paths.push("#{Rails.root}/vendor/assets/javascripts/#{directive_path}")
+  elsif directive === 'require_tree'
+    paths.push("#{guard.path}/assets/javascripts/#{directive_path[2..-1]}")
+  end
+  
+  paths.any? { |path| Dir.glob("#{path}.*").any? } || PATH_WHITELIST.include?(directive_path)
+end
+
 task 'assets:precompile:before' do
   ### Ensure all assets added to precompilation by plugins exist. 
   ### If they don't, remove them from precompilation and move the plugin to incompatible directory.
@@ -26,18 +43,8 @@ task 'assets:precompile:before' do
               directive_parts = line.split(' ')
               directive_path = directive_parts.last.split('.')[0]
               directive = directive_parts[1]
-              
-              asset_path = ''
-              vendor_asset_path = ''
 
-              if directive === 'require'
-                asset_path = "#{Rails.root}/app/assets/javascripts/#{directive_path}"
-                vendor_asset_path = "#{Rails.root}/vendor/assets/javascripts/#{directive_path}"
-              elsif directive === 'require_tree'
-                asset_path = "#{guard.path}/assets/javascripts/#{directive_path[2..-1]}"
-              end
-
-              unless Dir.glob("#{asset_path}.*").any? || Dir.glob("#{vendor_asset_path}.*").any?
+              unless file_exists(guard, directive, directive_path)
                 raise PluginGuard::Error.new, "Sprockets directive #{asset_path} does not exist."
               end
             end
