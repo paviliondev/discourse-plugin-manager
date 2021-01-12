@@ -55,7 +55,7 @@ class ::PluginGuard
   end
 end
 
-require 'plugin_guard/error'
-require 'plugin_guard/handler'
-require 'plugin_guard/log'
-require 'plugin_guard/logs'
+require_relative 'plugin_guard/error'
+require_relative 'plugin_guard/handler'
+require_relative 'plugin_guard/log'
+require_relative 'plugin_guard/logs'
