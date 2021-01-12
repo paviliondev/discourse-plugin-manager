@@ -1,4 +1,4 @@
-class DiscourseServerStatus::UpdateSerializer < ::BasicTopicSerializer
+class PluginManager::UpdateSerializer < ::BasicTopicSerializer
   attributes :event, :url
 
   def event

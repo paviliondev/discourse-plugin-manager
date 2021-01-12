@@ -15,6 +15,6 @@ export default Component.extend({
   
   @discourseComputed('inUpdatePeriod')
   updateTitle(inUpdatePeriod) {
-    return `discourse_server_status.${inUpdatePeriod ? 'current_period' : 'next_period'}`;
+    return `server_status.${inUpdatePeriod ? 'current_period' : 'next_period'}`;
   },
 });

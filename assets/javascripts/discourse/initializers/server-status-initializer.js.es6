@@ -8,23 +8,20 @@ export default {
   initialize() {
     ApplicationRoute.reopen({
       afterModel(model) {
-        return ajax('/server-status/status').then(result => {
+        return ajax('/plugin-manager/status').then(result => {
           const discourseParams = Object.assign({},
             result.discourse,
             { url: "https://github.com/discourse/discourse" }
           );
-          const compatiablePlugins = result.plugins.map(p => ServerStatus.create(p));
+          const plugins = result.plugins.map(p => ServerStatus.create(p));
           
           let props = {
             updateTopic: result.update,
             discourseStatus: ServerStatus.create(discourseParams),
-            compatiablePlugins,
-            pluginCounts: { compatible: compatiablePlugins.length }
+            plugins,
+            pluginCounts: { plugins: plugins.length }
           }
-          
-          props.discourseStatus.updated_at = "2020-11-03T10:09:34.978Z";
-          props.discourseStatus.git_branch = "tests-passed";
-                    
+                              
           if (result.incompatible_plugins) {
             const incompatiblePlugins = result.incompatible_plugins.map(p => ServerStatus.create(p));
             props.incompatiblePlugins = incompatiblePlugins;

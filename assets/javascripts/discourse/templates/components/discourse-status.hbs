@@ -1,32 +1,32 @@
 <div class="branch">
-  <label>{{i18n 'discourse_server_status.discourse.branch'}}</label>
+  <label>{{i18n 'server_status.discourse.branch'}}</label>
   {{dash-if-empty status.git_branch}}
 </div>
 
 <div class="version">
-  <label>{{i18n 'discourse_server_status.discourse.version'}}</label>
+  <label>{{i18n 'server_status.discourse.version'}}</label>
   {{dash-if-empty status.installed_version}}
 </div>
 
 <div class="sha-link">
-  <label>{{i18n 'discourse_server_status.discourse.commit'}}</label>
+  <label>{{i18n 'server_status.discourse.commit'}}</label>
   <a href={{status.gitLink}} rel="noopener noreferrer" target="_blank">
     {{status.shortSha}}
   </a>
 </div>
 
 <div class="last-updated">
-  <label>{{i18n 'discourse_server_status.discourse.updated_at'}}</label>
+  <label>{{i18n 'server_status.discourse.updated_at'}}</label>
   {{format-date status.updated_at leaveAgo="true"}}
 </div>
 
 <div class="compatible-count">
-  <label>{{i18n "discourse_server_status.plugins.header"}}</label>
-  {{dash-if-empty pluginCounts.compatible}}
+  <label>{{i18n "server_status.plugins.header"}}</label>
+  {{dash-if-empty pluginCounts.plugins}}
 </div>
 
 <div class="incompatible-count">
-  <label>{{i18n "discourse_server_status.incompatible_plugins.header"}}</label>
+  <label>{{i18n "server_status.incompatible_plugins.header"}}</label>
   {{dash-if-empty pluginCounts.incompatible}}
 </div>
 

@@ -1,7 +1,8 @@
-::DiscourseServerStatus::Engine.routes.draw do
+::PluginManager::Engine.routes.draw do
   get 'status' => 'status#show'
+  get 'manifest' => 'manifest#index'
 end
 
 ::Discourse::Application.routes.append do
-  mount ::DiscourseServerStatus::Engine, at: 'server-status'
+  mount ::PluginManager::Engine, at: 'plugin-manager'
 end

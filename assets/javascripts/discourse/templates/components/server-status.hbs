@@ -10,7 +10,7 @@
     <a href="https://thepavilion.io/w/bug-report" class="btn btn-default" target="_blank">
       {{d-icon "bug"}}
       <span class="d-button-label">
-        {{i18n "discourse_server_status.bug_report"}}
+        {{i18n "server_status.bug_report"}}
       </span>
     </a>
   </div>
@@ -19,7 +19,7 @@
 <div class="bottom {{bottomClass}}">
   {{plugin-statuses
     type="plugins"
-    plugins=compatiablePlugins
+    plugins=plugins
     discourseStatus=discourseStatus}}
   
   {{#if incompatiblePlugins}}

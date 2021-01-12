@@ -1,3 +1,4 @@
 en:
   site_settings:
-    update_category_id: Server update category
+    plugin_manager_update_category_id: Server update category
+    plugin_manager_test_host_tokens: "Test host tokens. Format <host>:<token>"

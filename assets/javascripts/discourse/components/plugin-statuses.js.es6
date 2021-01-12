@@ -8,13 +8,13 @@ export default Component.extend({
   
   @discourseComputed('type')
   header(type) {
-    return I18n.t(`discourse_server_status.${underscore(type)}.header`);
+    return I18n.t(`server_status.${underscore(type)}.header`);
   },
   
   @discourseComputed('type', 'discourseStatus')
   description(type, discourseStatus) {
     if (discourseStatus) {
-      return I18n.t(`discourse_server_status.${underscore(type)}.description`, {
+      return I18n.t(`server_status.${underscore(type)}.description`, {
         discourseVersion: discourseStatus.installed_version
       });
     }

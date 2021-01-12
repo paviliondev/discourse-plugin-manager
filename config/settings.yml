@@ -1,5 +1,9 @@
 plugins:
-  update_category_id:
+  plugin_manager_update_category_id:
     default: ""
     type: category
     client: true
+  plugin_manager_test_host_tokens:
+    type: list
+    default: ""
+    client: false

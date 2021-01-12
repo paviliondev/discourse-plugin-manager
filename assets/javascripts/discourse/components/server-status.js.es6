@@ -15,7 +15,7 @@ export default Component.extend({
     let props = {
       router,
       discourseStatus: controller.get('discourseStatus'),
-      compatiablePlugins: controller.get('compatiablePlugins'),
+      plugins: controller.get('plugins'),
       incompatiblePlugins: controller.get('incompatiblePlugins'),
       pluginCounts: controller.get('pluginCounts')
     }

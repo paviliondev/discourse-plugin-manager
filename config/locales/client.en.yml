@@ -1,6 +1,6 @@
 en:
   js:
-    discourse_server_status:
+    server_status:
       title: "Status"
       description: >
         This site is updated automatically every 24 hours.
@@ -19,6 +19,14 @@ en:
       incompatible_plugins:
         header: "Incompatible Plugins"
         description: "Plugins that don't work with this version of Discourse."
+
+  admin_js:
+    admin:
+      plugin_manager:
+        title: "Plugin Manager"
+        plugin: "Plugin"
+        travis_repo: "Travis URL"
+        
       
 
         
