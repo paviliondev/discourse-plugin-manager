@@ -15,11 +15,6 @@
   </a>
 </div>
 
-<div class="last-updated">
-  <label>{{i18n 'server_status.discourse.updated_at'}}</label>
-  {{format-date status.updated_at leaveAgo="true"}}
-</div>
-
 <div class="compatible-count">
   <label>{{i18n "server_status.plugins.header"}}</label>
   {{dash-if-empty pluginCounts.plugins}}
