@@ -45,7 +45,7 @@ task 'assets:precompile:before' do
               directive = directive_parts[1]
 
               unless file_exists(guard, directive, directive_path)
-                raise PluginGuard::Error.new, "Sprockets directive #{asset_path} does not exist."
+                raise PluginGuard::Error.new, "Sprockets directive #{directive_path} does not exist."
               end
             end
           end
