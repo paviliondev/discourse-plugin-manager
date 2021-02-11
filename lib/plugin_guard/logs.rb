@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative ('../../app/models/plugin_store_row.rb')
+require_relative ('../../app/models/plugin_store.rb')
+
 class ::PluginGuard::Logs
   attr_reader :plugin_guard
   

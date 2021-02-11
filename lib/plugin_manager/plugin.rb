@@ -1,6 +1,7 @@
 class ::PluginManager::Plugin
   attr_accessor :name,
                 :url,
+                :contact_emails,
                 :installed_sha,
                 :git_branch,
                 :status
@@ -8,6 +9,7 @@ class ::PluginManager::Plugin
   def initialize(plugin_name, attrs)
     @name = plugin_name
     @url = attrs[:url]
+    @contact_emails = attrs[:contact_emails]
     @installed_sha = attrs[:installed_sha]
     @git_branch = attrs[:git_branch]
     @status = attrs[:status]
@@ -19,6 +21,7 @@ class ::PluginManager::Plugin
     plugin.url = params[:url]
     plugin.installed_sha = params[:installed_sha]
     plugin.git_branch = params[:git_branch]
+    plugin.contact_emails = params[:contact_emails]
     
     if plugin.status != params[:status]
       plugin.status = params[:status]
@@ -65,9 +68,15 @@ class ::PluginManager::Plugin
     
   def self.handle_change(plugin_name, params)
     if params[:status] == ::PluginManager::Manifest.status[:incompatible]
-      Jobs.enqueue(:send_plugin_incompatible_notification,
-        plugin: name,
-        site: SiteSetting.title
+      Jobs.enqueue(:send_plugin_incompatible_notification_to_site,
+        plugin: @plugin_guard.metadata.name,
+        site: SiteSetting.title,
+        contact_emails:@plugin_guard.metadata.contact_emails
+      )
+      Jobs.enqueue(:send_plugin_incompatible_notification_to_support,
+        plugin: @plugin_guard.metadata.name,
+        site: SiteSetting.title,
+        contact_emails:@plugin_guard.metadata.contact_emails
       )
     end
   end

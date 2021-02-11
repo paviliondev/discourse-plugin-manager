@@ -51,6 +51,7 @@ class ::PluginManager::Manifest
           
           plugin_params = {
             url: metadata.url,
+            contact_emails: metadata.contact_emails,
             installed_sha: sha,
             git_branch: branch,
             status: status
