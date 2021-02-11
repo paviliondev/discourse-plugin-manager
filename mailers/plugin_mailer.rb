@@ -20,7 +20,6 @@ class PluginMailer < ::ActionMailer::Base
   end
 
   def incompatible_plugin_support(plugin, site, contact_emails)
-    byebug
     build_email(
       contact_emails,
       body: "The plugin #{plugin} you support is incompatible on #{site}, please take a look",
