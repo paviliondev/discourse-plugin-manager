@@ -69,14 +69,14 @@ class ::PluginManager::Plugin
   def self.handle_change(plugin_name, params)
     if params[:status] == ::PluginManager::Manifest.status[:incompatible]
       Jobs.enqueue(:send_plugin_incompatible_notification_to_site,
-        plugin: @plugin_guard.metadata.name,
+        plugin: plugin_name,
         site: SiteSetting.title,
-        contact_emails:@plugin_guard.metadata.contact_emails
+        contact_emails:params[:contact_emails]
       )
       Jobs.enqueue(:send_plugin_incompatible_notification_to_support,
-        plugin: @plugin_guard.metadata.name,
+        plugin: plugin_name,
         site: SiteSetting.title,
-        contact_emails:@plugin_guard.metadata.contact_emails
+        contact_emails:params[:contact_emails]
       )
     end
   end
