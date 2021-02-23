@@ -2,21 +2,15 @@ class PluginMailer < ::ActionMailer::Base
   include Email::BuildEmailHelper
 
   def incompatible_plugin_site(plugin, site, contact_emails)
-    if contact_emails.nil?
-      build_email(
-        SiteSetting.contact_email,
-        body: "The plugin #{plugin} is incompatible on #{site}",
-        subject: "Incompatible plugin on #{site}",
-        from: SiteSetting.notification_email,
-      )
-    else
-      build_email(
-        SiteSetting.contact_email,
-        body: "The plugin #{plugin} is incompatible on #{site}. The support contact for the plugin has also been contacted (#{contact_emails})",
-        subject: "Incompatible plugin on #{site}",
-        from: SiteSetting.notification_email,
-      )
-    end
+    message_body = contact_emails.nil? ?
+      "The plugin #{plugin} is incompatible on #{site}" :
+      "The plugin #{plugin} is incompatible on #{site}. The support contact for the plugin has also been contacted (#{contact_emails})"
+    build_email(
+      SiteSetting.contact_email,
+      body: message_body,
+      subject: "Incompatible plugin on #{site}",
+      from: SiteSetting.notification_email,
+    )
   end
 
   def incompatible_plugin_support(plugin, site, contact_emails)
