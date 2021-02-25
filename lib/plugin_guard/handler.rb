@@ -13,6 +13,7 @@ class ::PluginGuard::Handler
     if type === 'error'
       clean_up_assets
       move_to_incompatible_folder
+      puts Jobs.constants
       #mail_support
     end
   end
