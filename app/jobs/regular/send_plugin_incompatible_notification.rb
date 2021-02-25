@@ -1,5 +1,3 @@
-require_relative ('../../../mailers/plugin_mailer.rb')
-
 module Jobs
   class SendPluginIncompatibleNotificationToSite < ::Jobs::Base
     def execute(args)
