@@ -23,6 +23,7 @@ after_initialize do
     ../lib/plugin_manager/test_manager.rb
     ../lib/plugin_manager/test_hosts.rb
     ../lib/plugin_manager/update.rb
+    ../mailers/plugin_mailer.rb
     ../app/jobs/regular/fetch_plugin_tests_status.rb
     ../app/jobs/regular/send_plugin_incompatible_notification.rb
     ../app/controllers/plugin_manager/status_controller.rb

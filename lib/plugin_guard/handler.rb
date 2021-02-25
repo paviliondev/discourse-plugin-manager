@@ -13,8 +13,6 @@ class ::PluginGuard::Handler
     if type === 'error'
       clean_up_assets
       move_to_incompatible_folder
-      puts Jobs.constants
-      #mail_support
     end
   end
   
@@ -36,19 +34,6 @@ class ::PluginGuard::Handler
     end
   end
 
-  def mail_support
-    Jobs.enqueue(:send_plugin_incompatible_notification_to_site,
-      plugin: @plugin_guard.metadata.name,
-      site: SiteSetting.title,
-      contact_emails:@plugin_guard.metadata.contact_emails
-    )
-    Jobs.enqueue(:send_plugin_incompatible_notification_to_support,
-      plugin: @plugin_guard.metadata.name,
-      site: SiteSetting.title,
-      contact_emails:@plugin_guard.metadata.contact_emails
-    )
-  end
-    
   def log(message, type)
     PluginGuard::Logs.new(@plugin_guard).add(message, type)
   end
