@@ -25,7 +25,7 @@ class ::PluginGuard::Handler
       plugin.name == @plugin_guard.metadata.name
     end
     Rails.configuration.assets.paths.reject! do |path|
-      path.include?(@plugin_guard.path)
+      path.include?(@plugin_guard.path.to_s)
     end
     Rails.configuration.assets.precompile.reject! do |file|
       @plugin_guard.precompiled_assets.include?(file) || (
@@ -33,7 +33,7 @@ class ::PluginGuard::Handler
       )
     end
   end
-    
+
   def log(message, type)
     PluginGuard::Logs.new(@plugin_guard).add(message, type)
   end
