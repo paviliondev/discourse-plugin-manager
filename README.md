@@ -16,4 +16,9 @@ These are useful because this plugin requires changes to the discourse install d
 * run `dev_transfer.sh` to move altered files back to the plugin directory so that you can check changes into git
 * run `dev_clean.sh` to remove all changes to the Discourse instance to rid it of the plugins alterations.
 
+NB: they use a couple of ENV variables:
+
+* $CODE_ROOT: the root of your code directory one level above each plugin
+* $DISCOURSE_ROOT: the root of your development Discourse install
+
 **Be careful to run these in a logical order, don't clean up before transferring your changes back to the plugin folder!**
