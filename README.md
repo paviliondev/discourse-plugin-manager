@@ -1,8 +1,14 @@
-##Discourse Plugin Manager Server
+## Discourse Plugin Manager Server
 
 A plugin to protect a site from broken plugins.
 
-###Dev scripts
+Unusually it requires various files be placed and overriden in the Discourse installation itself.  This is necessary because the plugin overrides some of the plugin management systems within Discourse.
+
+In Production this is taken care of by custom templates.
+
+In Development, manual copying would be required, so a few scripts were developed to assist with this task.
+
+### Dev scripts
 
 These are useful because this plugin requires changes to the discourse install directly.  This would normally break plugin git code management workflows, so these scripts have been added:
 
