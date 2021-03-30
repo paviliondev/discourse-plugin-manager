@@ -84,7 +84,8 @@ class ::PluginManager::Plugin
       archetype: "regular"
       #created_at:
     }
-    unless SiteSetting.plugin_manager_issue_management_site_base_url.nil? || SiteSetting.plugin_manager_issue_management_site_api_key.nil? || SiteSetting.plugin_manager_issue_management_site_api_user.nil?
+    
+    unless SiteSetting.plugin_manager_issue_management_site_base_url.nil? || SiteSetting.plugin_manager_issue_management_site_api_token.nil? || SiteSetting.plugin_manager_issue_management_site_api_user.nil?
       post_topic_result = Excon.post("#{SiteSetting.plugin_manager_issue_management_site_base_url}/posts", :headers => {"Content-Type" => "application/x-www-form-urlencoded", "Api-Username" => "#{SiteSetting.plugin_manager_issue_management_site_api_user}", "Api-Key" => "#{SiteSetting.plugin_manager_issue_management_site_api_token}"}, :body => URI.encode_www_form(body))
     end
 
