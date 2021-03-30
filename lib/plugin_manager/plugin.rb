@@ -68,7 +68,9 @@ class ::PluginManager::Plugin
     
   def self.handle_change(plugin_name, params)
 
-    tag_name = plugin_name.slice!("discourse-")
+    tag_name = plugin_name
+    
+    tag_name.slice!("discourse-")
 
     body = {
       title: "Plugin #{plugin_name} preventing a rebuild", # string Required if creating a new topic or new private message.
@@ -84,7 +86,7 @@ class ::PluginManager::Plugin
       archetype: "regular"
       #created_at:
     }
-    
+
     unless SiteSetting.plugin_manager_issue_management_site_base_url.nil? || SiteSetting.plugin_manager_issue_management_site_api_token.nil? || SiteSetting.plugin_manager_issue_management_site_api_user.nil?
       post_topic_result = Excon.post("#{SiteSetting.plugin_manager_issue_management_site_base_url}/posts", :headers => {"Content-Type" => "application/x-www-form-urlencoded", "Api-Username" => "#{SiteSetting.plugin_manager_issue_management_site_api_user}", "Api-Key" => "#{SiteSetting.plugin_manager_issue_management_site_api_token}"}, :body => URI.encode_www_form(body))
     end
