@@ -67,6 +67,27 @@ class ::PluginManager::Plugin
   end
     
   def self.handle_change(plugin_name, params)
+
+    tag_name = plugin_name.slice!("discourse-")
+
+    body = {
+      title: "Plugin #{plugin_name} preventing a rebuild", # string Required if creating a new topic or new private message.
+
+      #topic_id: # integer Required if creating a new post.
+
+      raw:  "Plugin #{plugin_name} preventing a rebuild", # required string
+      tags: SiteSetting.plugin_manager_issue_management_site_issue_tags.split('|') << tag_name,
+      category: SiteSetting.plugin_manager_issue_management_site_issue_category, # integer # Optional if creating a new topic, and ignored if creating a new post.
+
+      # target_usernames: string  Required for private message, comma separated.
+
+      archetype: "regular"
+      #created_at:
+    }
+    unless SiteSetting.plugin_manager_issue_management_site_base_url.nil? || SiteSetting.plugin_manager_issue_management_site_api_key.nil? || SiteSetting.plugin_manager_issue_management_site_api_user.nil?
+      post_topic_result = Excon.post("#{SiteSetting.plugin_manager_issue_management_site_base_url}/posts", :headers => {"Content-Type" => "application/x-www-form-urlencoded", "Api-Username" => "#{SiteSetting.plugin_manager_issue_management_site_api_user}", "Api-Key" => "#{SiteSetting.plugin_manager_issue_management_site_api_token}"}, :body => URI.encode_www_form(body))
+    end
+
     if params[:status] == ::PluginManager::Manifest.status[:incompatible]
       Jobs.enqueue(:send_plugin_incompatible_notification_to_site,
         plugin: plugin_name,
@@ -78,6 +99,7 @@ class ::PluginManager::Plugin
         site: SiteSetting.title,
         contact_emails:params[:contact_emails]
       )
+
     end
   end
 end

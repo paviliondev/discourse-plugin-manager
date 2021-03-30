@@ -2,3 +2,8 @@ en:
   site_settings:
     plugin_manager_update_category_id: Server update category
     plugin_manager_test_host_tokens: "Test host tokens. Format <host>:<token>"
+    plugin_manager_issue_management_site_base_url: "URL of site where bug reports are being handled"
+    plugin_manager_issue_management_site_api_token: "API Token of site where bug reports are being handled"
+    plugin_manager_issue_management_site_api_user:  "API User of site where bug reports are being handled"
+    plugin_manager_issue_management_site_issue_tags: "Tags you wish to apply to issue topics raised on site where bug reports are being handled"
+    plugin_manager_issue_management_site_issue_category: "Category where bug reports are being handled"
