@@ -21,6 +21,5 @@ plugins:
     default: "automated"
     client: false
   plugin_manager_issue_management_site_issue_category:
-    default: ""
-    type: category
+    default: 46
     client: false
