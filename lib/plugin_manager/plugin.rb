@@ -68,37 +68,40 @@ class ::PluginManager::Plugin
     
   def self.handle_change(plugin_name, params)
 
-    tag_name = plugin_name
-
-    tag_name.slice!("discourse-")
-
-    report_tags = []
-
-    report_tags = report_tags.concat(SiteSetting.plugin_manager_issue_management_site_issue_tags.split('|')).concat([tag_name])
-
-    body = {
-      title: "Plugin '#{plugin_name}' almost prevented a rebuild on '#{SiteSetting.title}'",
-      raw:  "The Plugin '#{plugin_name}' almost prevented a rebuild on site: [#{SiteSetting.title}](#{Discourse.base_url}) so has been isolated - please take a look",
-      tags: report_tags,
-      category: SiteSetting.plugin_manager_issue_management_site_issue_category,
-      archetype: "regular"
-    }
-
-    unless SiteSetting.plugin_manager_issue_management_site_base_url.nil? || SiteSetting.plugin_manager_issue_management_site_api_token.nil? || SiteSetting.plugin_manager_issue_management_site_api_user.nil?
-      post_topic_result = Excon.post("#{SiteSetting.plugin_manager_issue_management_site_base_url}/posts", :headers => {"Content-Type" => "application/json", "Api-Username" => "#{SiteSetting.plugin_manager_issue_management_site_api_user}", "Api-Key" => "#{SiteSetting.plugin_manager_issue_management_site_api_token}"}, :body => body.to_json)
-    end
-
     if params[:status] == ::PluginManager::Manifest.status[:incompatible]
-      Jobs.enqueue(:send_plugin_incompatible_notification_to_site,
-        plugin: plugin_name,
-        site: SiteSetting.title,
-        contact_emails:params[:contact_emails]
-      )
-      Jobs.enqueue(:send_plugin_incompatible_notification_to_support,
-        plugin: plugin_name,
-        site: SiteSetting.title,
-        contact_emails:params[:contact_emails]
-      )
+      
+      tag_name = plugin_name
+
+      tag_name.slice!("discourse-")
+  
+      report_tags = []
+  
+      report_tags = report_tags.concat(SiteSetting.plugin_manager_issue_management_site_issue_tags.split('|')).concat([tag_name])
+  
+      body = {
+        title: "Plugin '#{plugin_name}' almost prevented a rebuild on '#{SiteSetting.title}'",
+        raw:  "The Plugin '#{plugin_name}' almost prevented a rebuild on site: [#{SiteSetting.title}](#{Discourse.base_url}) so has been isolated - please take a look",
+        tags: report_tags,
+        category: SiteSetting.plugin_manager_issue_management_site_issue_category,
+        archetype: "regular"
+      }
+  
+      unless SiteSetting.plugin_manager_issue_management_site_base_url.nil? || SiteSetting.plugin_manager_issue_management_site_api_token.nil? || SiteSetting.plugin_manager_issue_management_site_api_user.nil?
+        post_topic_result = Excon.post("#{SiteSetting.plugin_manager_issue_management_site_base_url}/posts", :headers => {"Content-Type" => "application/json", "Api-Username" => "#{SiteSetting.plugin_manager_issue_management_site_api_user}", "Api-Key" => "#{SiteSetting.plugin_manager_issue_management_site_api_token}"}, :body => body.to_json)
+      end 
+
+      # Jobs.enqueue(:send_plugin_incompatible_notification_to_site,
+      #   plugin: plugin_name,
+      #   site: SiteSetting.title,
+      #   contact_emails:params[:contact_emails]
+      # )
+
+      # Jobs.enqueue(:send_plugin_incompatible_notification_to_support,
+      #   plugin: plugin_name,
+      #   site: SiteSetting.title,
+      #   contact_emails:params[:contact_emails]
+      # )
+
     end
   end
 end
