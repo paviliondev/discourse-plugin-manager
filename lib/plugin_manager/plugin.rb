@@ -77,18 +77,11 @@ class ::PluginManager::Plugin
     report_tags = report_tags.concat(SiteSetting.plugin_manager_issue_management_site_issue_tags.split('|')).concat([tag_name])
 
     body = {
-      title: "Plugin #{plugin_name} preventing a rebuild", # string Required if creating a new topic or new private message.
-
-      #topic_id: # integer Required if creating a new post.
-
-      raw:  "Plugin #{plugin_name} preventing a rebuild", # required string
+      title: "Plugin '#{plugin_name}' almost prevented a rebuild on '#{SiteSetting.title}'",
+      raw:  "The Plugin '#{plugin_name}' almost prevented a rebuild on site: [#{SiteSetting.title}](#{Discourse.base_url}) so has been isolated - please take a look",
       tags: report_tags,
-      category: SiteSetting.plugin_manager_issue_management_site_issue_category, # integer # Optional if creating a new topic, and ignored if creating a new post.
-
-      # target_usernames: string  Required for private message, comma separated.
-
+      category: SiteSetting.plugin_manager_issue_management_site_issue_category,
       archetype: "regular"
-      #created_at:
     }
 
     unless SiteSetting.plugin_manager_issue_management_site_base_url.nil? || SiteSetting.plugin_manager_issue_management_site_api_token.nil? || SiteSetting.plugin_manager_issue_management_site_api_user.nil?
@@ -96,17 +89,16 @@ class ::PluginManager::Plugin
     end
 
     if params[:status] == ::PluginManager::Manifest.status[:incompatible]
-      # Jobs.enqueue(:send_plugin_incompatible_notification_to_site,
-      #   plugin: plugin_name,
-      #   site: SiteSetting.title,
-      #   contact_emails:params[:contact_emails]
-      # )
+      Jobs.enqueue(:send_plugin_incompatible_notification_to_site,
+        plugin: plugin_name,
+        site: SiteSetting.title,
+        contact_emails:params[:contact_emails]
+      )
       Jobs.enqueue(:send_plugin_incompatible_notification_to_support,
         plugin: plugin_name,
         site: SiteSetting.title,
         contact_emails:params[:contact_emails]
       )
-
     end
   end
 end
