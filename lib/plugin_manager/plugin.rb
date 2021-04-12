@@ -70,9 +70,7 @@ class ::PluginManager::Plugin
 
     if params[:status] == ::PluginManager::Manifest.status[:incompatible]
       
-      tag_name = plugin_name
-
-      tag_name.slice!("discourse-")
+      tag_name = plugin_name.gsub("discourse-", "")
   
       report_tags = []
   
@@ -88,20 +86,23 @@ class ::PluginManager::Plugin
   
       unless SiteSetting.plugin_manager_issue_management_site_base_url.nil? || SiteSetting.plugin_manager_issue_management_site_api_token.nil? || SiteSetting.plugin_manager_issue_management_site_api_user.nil?
         post_topic_result = Excon.post("#{SiteSetting.plugin_manager_issue_management_site_base_url}/posts", :headers => {"Content-Type" => "application/json", "Api-Username" => "#{SiteSetting.plugin_manager_issue_management_site_api_user}", "Api-Key" => "#{SiteSetting.plugin_manager_issue_management_site_api_token}"}, :body => body.to_json)
-      end 
+      end
 
-      # Jobs.enqueue(:send_plugin_incompatible_notification_to_site,
-      #   plugin: plugin_name,
-      #   site: SiteSetting.title,
-      #   contact_emails:params[:contact_emails]
-      # )
+      contacts = params[:contact_emails].split(",")
 
-      # Jobs.enqueue(:send_plugin_incompatible_notification_to_support,
-      #   plugin: plugin_name,
-      #   site: SiteSetting.title,
-      #   contact_emails:params[:contact_emails]
-      # )
+      external_contacts = contacts.reject do |contact|
+        contact.include? 'thepavilion.io'
+      end
 
+      external_contacts = external_contacts.map(&:strip)
+
+      external_contacts = external_contacts.join(",")
+
+      Jobs.enqueue(:send_plugin_incompatible_notification_to_support,
+        plugin: plugin_name,
+        site: SiteSetting.title,
+        contact_emails: external_contacts
+      )
     end
   end
 end
