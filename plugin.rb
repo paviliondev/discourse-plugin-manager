@@ -12,7 +12,7 @@ if respond_to?(:register_svg_icon)
   register_svg_icon "info-circle"
 end
 
-add_admin_route "admin.plugin_manager.title", "plugin-manager"
+# add_admin_route "admin.plugin_manager.title", "plugin-manager"
 
 after_initialize do
   %w(
