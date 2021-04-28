@@ -69,21 +69,30 @@ class ::PluginManager::Plugin
   def self.handle_change(plugin_name, params)
 
     if params[:status] == ::PluginManager::Manifest.status[:incompatible]
-      
+
+      last_error = ""
+
+      if PluginStoreRow.where("key = 'discourse-broken' and plugin_name = 'plugin-guard'").count >= 1
+        last_error = JSON.parse(PluginStoreRow.where("key = ? and plugin_name = 'plugin-guard'", plugin_name).last["value"]).last["message"]
+      end
+
       tag_name = plugin_name.gsub("discourse-", "")
-  
+
       report_tags = []
-  
+
       report_tags = report_tags.concat(SiteSetting.plugin_manager_issue_management_site_issue_tags.split('|')).concat([tag_name])
-  
+
+      title = "Plugin '#{plugin_name}' almost prevented a rebuild on '#{SiteSetting.title}'"
+      raw = "The Plugin '#{plugin_name}' almost prevented a rebuild on site: [#{SiteSetting.title}](#{Discourse.base_url}) so has been isolated - please take a look.\n\nLast error was: `#{last_error}`\n\nLogs: [View Logs](#{Discourse.base_url}/logs)"
+
       body = {
-        title: "Plugin '#{plugin_name}' almost prevented a rebuild on '#{SiteSetting.title}'",
-        raw:  "The Plugin '#{plugin_name}' almost prevented a rebuild on site: [#{SiteSetting.title}](#{Discourse.base_url}) so has been isolated - please take a look",
+        title: title,
+        raw: raw,
         tags: report_tags,
         category: SiteSetting.plugin_manager_issue_management_site_issue_category,
         archetype: "regular"
       }
-  
+
       unless SiteSetting.plugin_manager_issue_management_site_base_url.nil? || SiteSetting.plugin_manager_issue_management_site_api_token.nil? || SiteSetting.plugin_manager_issue_management_site_api_user.nil?
         post_topic_result = Excon.post("#{SiteSetting.plugin_manager_issue_management_site_base_url}/posts", :headers => {"Content-Type" => "application/json", "Api-Username" => "#{SiteSetting.plugin_manager_issue_management_site_api_user}", "Api-Key" => "#{SiteSetting.plugin_manager_issue_management_site_api_token}"}, :body => body.to_json)
       end
@@ -101,7 +110,9 @@ class ::PluginManager::Plugin
       Jobs.enqueue(:send_plugin_incompatible_notification_to_support,
         plugin: plugin_name,
         site: SiteSetting.title,
-        contact_emails: external_contacts
+        contact_emails: external_contacts,
+        title: title,
+        raw: raw
       )
     end
   end
