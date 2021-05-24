@@ -13,7 +13,7 @@ def file_exists(guard, directive, directive_path)
   elsif directive === 'require_tree'
     paths.push("#{guard.path}/assets/javascripts/#{directive_path[2..-1]}")
   elsif directive === 'require_tree_discourse'
-    paths.push("#{guard.path}/#{directive_path[2..-1]}")
+    paths.push("#{Rails.root}/app/assets/javascripts/#{directive_path[2..-1]}")
   end
   
   paths.any? { |path| Dir.glob("#{path}.*").any? } || PATH_WHITELIST.include?(directive_path)
