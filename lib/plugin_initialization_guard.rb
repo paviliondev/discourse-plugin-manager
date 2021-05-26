@@ -17,6 +17,8 @@ def plugin_initialization_guard(&block)
     
     guard = ::PluginGuard.new(plugin_path)
     if guard
+      puts error.inspect
+      puts error.to_yaml
       guard.handle(message: error.message, error.backtrace.join($/))
     else
       raise
