@@ -3,6 +3,7 @@
 class ::PluginGuard::Log  
   attr_reader :type,
               :message,
+              :backtrace,
               :discourse_sha,
               :discourse_branch,
               :plugin_sha,
