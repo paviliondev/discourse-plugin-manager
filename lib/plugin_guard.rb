@@ -50,8 +50,8 @@ class ::PluginGuard
     end
   end
   
-  def handle(message: '', type: 'error')
-    ::PluginGuard::Handler.new(self).perform(message, type)
+  def handle(message: '', backtrace: '', type: 'error')
+    ::PluginGuard::Handler.new(self).perform(message, backtrace, type)
   end
 end
 

@@ -17,7 +17,7 @@ def plugin_initialization_guard(&block)
     
     guard = ::PluginGuard.new(plugin_path)
     if guard
-      guard.handle(message: error.message) 
+      guard.handle(message: error.message, error.backtrace.join($/))
     else
       raise
     end

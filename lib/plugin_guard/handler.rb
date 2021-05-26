@@ -7,8 +7,8 @@ class ::PluginGuard::Handler
     @plugin_guard = plugin_guard
   end
   
-  def perform(message, type)
-    log(message, type)
+  def perform(message, backtrace, type)
+    log(message, backtrace, type)
     
     if type === 'error'
       clean_up_assets
@@ -34,7 +34,7 @@ class ::PluginGuard::Handler
     end
   end
 
-  def log(message, type)
-    PluginGuard::Logs.new(@plugin_guard).add(message, type)
+  def log(message, backtrace, type)
+    PluginGuard::Logs.new(@plugin_guard).add(message, backtrace, type)
   end
 end

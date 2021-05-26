@@ -9,11 +9,12 @@ class ::PluginGuard::Log
               :plugin_branch,
               :date
   
-  def initialize(plugin_guard, message, type)
+  def initialize(plugin_guard, message, backtrace, type)
     return nil unless message
     
     @type = type || 'error'
     @message = message
+    @backtrace = backtrace
     @discourse_sha = Discourse.git_version
     @discourse_branch = Discourse.git_branch
     @plugin_sha = plugin_guard.sha
