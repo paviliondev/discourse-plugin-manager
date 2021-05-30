@@ -73,7 +73,9 @@ class ::PluginManager::Plugin
       last_error = ""
 
       if PluginStoreRow.where("key = 'discourse-broken' and plugin_name = 'plugin-guard'").count >= 1
-        last_error = JSON.parse(PluginStoreRow.where("key = ? and plugin_name = 'plugin-guard'", plugin_name).last["value"]).last["message"]
+        last_entry = JSON.parse(PluginStoreRow.where("key = ? and plugin_name = 'plugin-guard'", plugin_name).last["value"]).last
+        last_error = last_entry["message"]
+        last_backtrace = last_entry["backtrace"]
       end
 
       tag_name = plugin_name.gsub("discourse-", "")
@@ -83,7 +85,7 @@ class ::PluginManager::Plugin
       report_tags = report_tags.concat(SiteSetting.plugin_manager_issue_management_site_issue_tags.split('|')).concat([tag_name])
 
       title = "Plugin '#{plugin_name}' almost prevented a rebuild on '#{SiteSetting.title}'"
-      raw = "The Plugin '#{plugin_name}' almost prevented a rebuild on site: [#{SiteSetting.title}](#{Discourse.base_url}) so has been isolated - please take a look.\n\nLast error was: `#{last_error}`\n\nLogs: [View Logs](#{Discourse.base_url}/logs)"
+      raw = "The Plugin '#{plugin_name}' almost prevented a rebuild on site: [#{SiteSetting.title}](#{Discourse.base_url}) so has been isolated - please take a look.\n\nLast error was: `#{last_error}`\n\nLast backtrace was : `#{last_backtrace}`\n\nLogs: [View Logs](#{Discourse.base_url}/logs)"
 
       body = {
         title: title,

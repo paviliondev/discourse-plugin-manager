@@ -7,8 +7,8 @@ class ::PluginGuard::Logs
     @plugin_guard = plugin_guard
   end
   
-  def add(message, type)
-    if log = PluginGuard::Log.new(@plugin_guard, message, type)
+  def add(message, backtrace, type)
+    if log = PluginGuard::Log.new(@plugin_guard, message, backtrace, type)
       logs = list
       logs.push(log.instance_values)
       PluginStore.set(PluginGuard::NAMESPACE, @plugin_guard.metadata.name, logs)
