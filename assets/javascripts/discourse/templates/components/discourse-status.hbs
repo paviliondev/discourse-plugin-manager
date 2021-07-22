@@ -1,33 +1,16 @@
 <div class="branch">
   <label>{{i18n 'server_status.discourse.branch'}}</label>
-  {{dash-if-empty status.git_branch}}
+  {{dash-if-empty discourse.git_branch}}
 </div>
 
 <div class="version">
   <label>{{i18n 'server_status.discourse.version'}}</label>
-  {{dash-if-empty status.installed_version}}
+  {{dash-if-empty discourse.installed_version}}
 </div>
 
 <div class="sha-link">
   <label>{{i18n 'server_status.discourse.commit'}}</label>
-  <a href={{status.gitLink}} rel="noopener noreferrer" target="_blank">
-    {{status.shortSha}}
+  <a href={{discourse.gitLink}} rel="noopener noreferrer" target="_blank">
+    {{discourse.shortSha}}
   </a>
 </div>
-
-<div class="compatible-count">
-  <label>{{i18n "server_status.plugins.header"}}</label>
-  {{dash-if-empty pluginCounts.plugins}}
-</div>
-
-<div class="incompatible-count">
-  <label>{{i18n "server_status.incompatible_plugins.header"}}</label>
-  {{dash-if-empty pluginCounts.incompatible}}
-</div>
-
-{{#if updateTopic.event}}
-  <a href="{{updateTopic.url}}" class="{{updateClass}}">
-    <label>{{i18n updateTitle}}</label>
-    <div class="event">{{event-label updateTopic.event list=true}}</div>
-  </a>
-{{/if}}

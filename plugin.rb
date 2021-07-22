@@ -12,26 +12,21 @@ if respond_to?(:register_svg_icon)
   register_svg_icon "info-circle"
 end
 
-# add_admin_route "admin.plugin_manager.title", "plugin-manager"
-
 after_initialize do
   %w(
     ../lib/plugin_manager/engine.rb
-    ../lib/plugin_manager/manifest.rb
-    ../lib/plugin_manager/plugin.rb
-    ../lib/plugin_manager/server.rb
-    ../lib/plugin_manager/test_manager.rb
-    ../lib/plugin_manager/test_hosts.rb
-    ../lib/plugin_manager/update.rb
     ../mailers/plugin_mailer.rb
-    ../app/jobs/regular/fetch_plugin_tests_status.rb
+    ../app/jobs/scheduled/fetch_plugin_tests_status.rb
     ../app/jobs/regular/send_plugin_incompatible_notification.rb
     ../app/controllers/plugin_manager/status_controller.rb
-    ../app/serializers/plugin_manager/update_serializer.rb
+    ../app/serializers/plugin_manager/discourse_serializer.rb
+    ../app/serializers/plugin_manager/log_serializer.rb
+    ../app/serializers/plugin_manager/plugin_serializer.rb
     ../config/routes.rb
   ).each do |path|
     load File.expand_path(path, __FILE__)
   end
-  
-  PluginManager::Manifest.update_status
+
+  PluginManager::Manifest.update_plugin_status
+  PluginManager::Manifest.update_test_status
 end

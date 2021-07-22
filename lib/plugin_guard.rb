@@ -5,36 +5,42 @@ class ::PluginGuard
   
   attr_reader :file,
               :metadata,
-              :path,
               :sha,
-              :branch
-  
-  def initialize(path)
-    return false unless File.exists?("#{path}/plugin.rb")
-    
-    @file = File.read("#{path}/plugin.rb")
+              :branch,
+              :handler
+
+  def initialize(directory)
+    return false unless File.exists?("#{directory}/plugin.rb")
+
+    @file = File.read("#{directory}/plugin.rb")
     @metadata = ::Plugin::Metadata.parse(file)
-    return false if ::Plugin::Metadata::OFFICIAL_PLUGINS.include?(metadata.name)
-    
-    @path = path
-    Dir.chdir(path) do
+    plugin_name = @metadata.name
+    return false if ::Plugin::Metadata::OFFICIAL_PLUGINS.include?(plugin_name)
+
+    Dir.chdir(directory) do
       @sha = Discourse.try_git('git rev-parse HEAD', nil)
       @branch = Discourse.try_git("git branch | sed -n '/\* /s///p'", 'tests-passed')
     end
+
+    @handler = ::PluginGuard::Handler.new(plugin_name, directory)
   end
-  
+
+  def present?
+    handler.present?
+  end
+
   def precompiled_assets
     @precompiled_assets ||= begin
       block_start = false
       in_block = false
       result = []
-      
+
       @file.each_line do |line|
         if line.include?("config.assets.precompile")
           block_start = true
           in_block = true
         end
-                  
+        
         if in_block && line.include?(".js")
           result += line.scan(/[\w|\-|\_]*\.js.*$/)
         else
@@ -45,17 +51,16 @@ class ::PluginGuard
           end
         end
       end
-      
+
       result
     end
   end
-  
-  def handle(message: '', backtrace: '', type: 'error')
-    ::PluginGuard::Handler.new(self).perform(message, backtrace, type)
+
+  def handle(message: '', backtrace: '')
+    @handler.perform(
+      message,
+      backtrace,
+      precompiled_assets
+    )
   end
 end
-
-require_relative 'plugin_guard/error'
-require_relative 'plugin_guard/handler'
-require_relative 'plugin_guard/log'
-require_relative 'plugin_guard/logs'

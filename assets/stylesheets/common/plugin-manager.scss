@@ -9,114 +9,195 @@
   border-top: 1px solid $primary-medium;
   border-left: 1px solid $primary-medium;
   border-right: 1px solid $primary-medium;
-  display: none;
-  cursor: pointer;
-  
+
   &.visible {
     display: block;
   }
-  
+
   .top {
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid $primary-medium;
-    
+    cursor: pointer;
+
     .left {
       display: inline-flex;
     }
   }
-  
+
   .discourse-status {
     display: inline-flex;
-    padding: 10px;
+    padding: 1em;
     flex-wrap: wrap;
-    
+
     > div, > a {
       display: block;
-      
+
       &:not(:last-child) {
         margin-right: 20px;
       }
-      
+
       label {
         font-size: 0.9em;
         cursor: pointer;
       }
     }
   }
-  
+
   .buttons {
     display: flex;
     justify-content: flex-end;
-    padding: 0 20px;
-    
+    padding: 1em;
+
     span {
       white-space: nowrap;
     }
-    
+
     a:not(:last-of-type) {
       margin-right: 10px;
-      
+
       span {
         line-height: 20px;
       }
     }
-    
+
     .update-topic {
       display: inline-flex;
       
       > span:first-of-type {
         margin-right: 8px;
       }
-      
+
       .event {
         display: flex;
         align-items: center;
       }
-      
+
       .d-icon {
         color: $secondary;
       }
     }
   }
-  
+
   .bottom {
-    display: flex;
     max-height: 0;
     transition: max-height 0.15s ease-out;
-    overflow: hidden;
-    
+    visibility: hidden;
+
     &.maximized {
       max-height: 600px;
+      visibility: visible;
       border-bottom: 1px solid $primary-medium;
+      display: grid;
+      grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
+      grid-gap: 1em;
+      padding: 1em;
     }
   }
-  
-  .plugin-statuses {
-    margin: 20px;
-    
-    &.plugins {
-      width: 75%;
+
+  .plugin-status {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    cursor: pointer;
+    padding: .25em .5em;
+
+    &.plugin-status.recommended {
+      border: 1px solid var(--success);
+
+      .status-icon .d-icon {
+        color: var(--success);
+      }
+
+      .details h4 {
+        color: var(--success);
+      }
     }
-    
-    .description {
-      margin-bottom: 5px;
+
+    &.plugin-status.compatible {
+      border: 1px solid var(--primary);
+
+      .status-icon .d-icon {
+        color: var(--primary);
+      }
+
+      .details h4 {
+        color: var(--primary);
+      }
     }
-    
-    .statuses {
-      max-height: 200px;
-      display: inline-flex;
-      flex-flow: column;
-      flex-wrap: wrap;
-      width: 100%;
-      
-      .details {
-        margin-right: 20px;
-        display: flex;
-        
-        .name {
-          margin-right: 5px;
+
+    &.plugin-status.incompatible {
+      border: 1px solid var(--danger);
+
+      .status-icon .d-icon {
+        color: var(--danger);
+      }
+
+      .details h4 {
+        color: var(--danger);
+      }
+    }
+
+    .name {
+      margin-right: 5px;
+    }
+
+    .details {
+      border-top: 1px solid var(--primary-low);
+      background-color: var(--secondary);
+      box-shadow: shadow('dropdown');
+      z-index: 1;
+      padding: 1em;
+      width: 650px;
+      max-width: 90vw;
+
+      p {
+        margin-bottom: 0;
+      }
+
+      .log {
+        margin-top: .5em;
+      }
+
+      .show-log {
+        margin: .5em 0;
+        color: var(--primary);
+
+        .d-icon {
+          font-size: .8em;
+        }
+      }
+
+      .log-url {
+        color: var(--primary);
+        margin-right: .5em;
+
+        .d-icon {
+          font-size: .8em;
+          margin-right: .25em;
+        }
+      }
+
+      .log-detail {
+        max-height: 300px;
+        overflow-y: scroll;
+        background-color: var(--primary);
+        color: var(--secondary);
+
+        .log-attr {
+          margin: .25em 0;
+
+          &:last-of-type {
+            margin-bottom: 0;
+          }
+        }
+
+        label {
+          display: inline-block;
+          padding: .15em;
+          margin: 0 .25em 0 0;
+          text-decoration: underline;
         }
       }
     }

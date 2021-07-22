@@ -1,21 +1,12 @@
 # frozen_string_literal: true
 
 class PluginManager::StatusController < ::ApplicationController
-  def show
-    plugins = PluginManager::Manifest.new
-    
+  def index
+    manifest = PluginManager::Manifest.new
+
     render_json_dump(
-      update: serialized_update,
-      discourse: PluginManager::Server.get_status,
-      plugins: plugins.active,
-      compatible_plugins: plugins.compatible,
-      incompatible_plugins: plugins.incompatible
+      discourse: PluginManager::DiscourseSerializer.new(manifest.discourse, root: false),
+      plugins: ActiveModel::ArraySerializer.new(manifest.plugins, each_serializer: PluginManager::PluginSerializer, root: false)
     )
-  end
-  
-  def serialized_update
-    if update_topic = PluginManager::Update.current
-      PluginManager::UpdateSerializer.new(update_topic, root: false)
-    end
   end
 end

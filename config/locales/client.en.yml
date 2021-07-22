@@ -13,12 +13,29 @@ en:
         version: "Version"
         commit: "Commit"
         updated_at: "Updated"
-      plugins: 
-        header: "Plugins"
-        description: "Plugins running on this server."
-      incompatible_plugins:
-        header: "Incompatible Plugins"
-        description: "Plugins that don't work with this version of Discourse."
+      plugin:
+        recommended:
+          title: "%{pluginName} (<a href='%{pluginGitLink}' target='_blank'>%{pluginSha}</a>) works well with Discourse %{discourseVersion} (<a href='%{discourseGitLink}' target='_blank'>%{discourseSha}</a>)"
+          description: This plugin works and is maintained according to recommended practices. 
+        compatible: 
+          title: "%{pluginName} (<a href='%{pluginGitLink}' target='_blank'>%{pluginSha}</a>) works with Discourse %{discourseVersion} (<a href='%{discourseGitLink}' target='_blank'>%{discourseSha}</a>)"
+          description: This plugin works but may break when you update discourse.
+        incompatible:
+          title: "%{pluginName} (<a href='%{pluginGitLink}' target='_blank'>%{pluginSha}</a>) does not work with Discourse %{discourseVersion} (<a href='%{discourseGitLink}' target='_blank'>%{discourseSha}</a>)"
+          description: Wait until this plugin is fixed, or remove it, before updating to this version of Discourse. 
+        learn_more: learn more
+        issue_report: issue report
+        test_log: test log
+        log:
+          show: log snippet
+          date: date
+          message: message
+          backtrace: backtrace
+          detail: |
+            date: %{date}
+            message: %{message}
+            backtrace:
+            %{backtrace}
 
   admin_js:
     admin:

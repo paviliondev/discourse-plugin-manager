@@ -1,0 +1,56 @@
+<div class="name">{{plugin.name}}</div>
+
+{{#if plugin.statusIcon}}
+  <div class="status-icon">
+    {{d-icon plugin.statusIcon}}
+  </div>
+{{/if}}
+
+{{#if showDetail}}
+  <div class="details">
+    <h4>{{{detailTitle}}}</h4>
+    <p>{{detailDescription}} ({{i18n "server_status.plugin.learn_more"}})</p>
+
+    {{#if hasLog}}
+      <div class="log">
+        {{#if plugin.log.test_url}}
+          <a class="log-test-url" href={{plugin.log.test_url}} target="_blank">
+            {{d-icon "external-link-alt"}}
+            <span>{{i18n "server_status.plugin.test_log"}}</span>
+          </a>
+        {{/if}}
+
+        {{#if plugin.log.issue_url}}
+          <a class="log-test-url" href={{plugin.log.issue_url}} target="_blank">
+            {{d-icon "external-link-alt"}}
+            <span>{{i18n "server_status.plugin.issue_report"}}</span>
+          </a>
+        {{/if}}
+
+        <a class="show-log" {{action "toggleLog"}}>
+          {{d-icon "file-alt"}}
+          <span>{{i18n "server_status.plugin.log.show"}}</span>
+        </a>
+
+        {{#if showLog}}
+          <div class="log-detail">
+            <div class="log-attr log-date">
+              <label>{{i18n "server_status.plugin.log.date"}}</label>
+              <span>{{plugin.log.date}}</span>
+            </div>
+            <div class="log-attr log-message">
+              <label>{{i18n "server_status.plugin.log.message"}}</label>
+              <span>{{plugin.log.message}}</span>
+            </div>
+            {{#if plugin.log.backtrace}}
+              <div class="log-attr log-backtrace">
+                <label>{{i18n "server_status.plugin.log.backtrace"}}</label>
+                <div class="backtrace-content">{{plugin.log.backtrace}}</div>
+              </div>
+            {{/if}}
+          </div>
+        {{/if}}
+      </div>
+    {{/if}}
+  </div>
+{{/if}}

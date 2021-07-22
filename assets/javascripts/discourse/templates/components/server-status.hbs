@@ -1,31 +1,18 @@
 <div class="top">
   <div class="left">    
-    {{discourse-status
-      status=discourseStatus
-      pluginCounts=pluginCounts
-      updateTopic=updateTopic}}
+    {{discourse-status discourse=discourse}}
   </div>
-  
+
   <div class="buttons">
     <a href="https://thepavilion.io/w/bug-report" class="btn btn-default" target="_blank">
       {{d-icon "bug"}}
-      <span class="d-button-label">
-        {{i18n "server_status.bug_report"}}
-      </span>
+      <span class="d-button-label">{{i18n "server_status.bug_report"}}</span>
     </a>
   </div>
 </div>
 
 <div class="bottom {{bottomClass}}">
-  {{plugin-statuses
-    type="plugins"
-    plugins=plugins
-    discourseStatus=discourseStatus}}
-  
-  {{#if incompatiblePlugins}}
-    {{plugin-statuses
-      type="incompatible_plugins"
-      plugins=incompatiblePlugins
-      discourseStatus=discourseStatus}}
-  {{/if}}
+  {{#each plugins as |plugin|}}
+    {{plugin-status plugin=plugin discourse=discourse}}
+  {{/each}}
 </div>

@@ -3,23 +3,15 @@ plugins:
     default: ""
     type: category
     client: true
-  plugin_manager_test_host_tokens:
-    type: list
-    default: ""
-    client: false
   plugin_manager_issue_management_site_base_url:
     default: "https://thepavilion.io"
-    client: false
   plugin_manager_issue_management_site_api_token:
     default: ""
-    client: false
   plugin_manager_issue_management_site_api_user:
     default: ""
-    client: false
   plugin_manager_issue_management_site_issue_tags:
     type: list
     default: "automated"
-    client: false
   plugin_manager_issue_management_site_issue_category:
-    default: 46
-    client: false
+    default: ""
+    type: category

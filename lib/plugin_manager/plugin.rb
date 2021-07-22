@@ -1,121 +1,142 @@
 class ::PluginManager::Plugin
+  include ActiveModel::Serialization
+
   attr_accessor :name,
                 :url,
                 :contact_emails,
                 :installed_sha,
                 :git_branch,
-                :status
-  
+                :status,
+                :test_host,
+                :test_status,
+                :test_backend_coverage,
+                :instance
+
   def initialize(plugin_name, attrs)
     @name = plugin_name
     @url = attrs[:url]
     @contact_emails = attrs[:contact_emails]
     @installed_sha = attrs[:installed_sha]
     @git_branch = attrs[:git_branch]
-    @status = attrs[:status]
+    @status = attrs[:status].to_i
+    @test_host = attrs[:test_host] if attrs[:test_host].present?
+    @test_status = attrs[:test_status].to_i if attrs[:test_status].present?
+    @test_backend_coverage = attrs[:test_backend_coverage].to_f if attrs[:test_backend_coverage].present?
+    @instance = Discourse.plugins.select { |p| p.metadata.name == plugin_name }.first
   end
 
-  def self.set(plugin_name, params)
+  def handle_status_change!
+    if !compatible?
+      notifier = ::PluginManager::Notifier.new(name)
+      notifier.send
+    end
+  end
+
+  def compatible?
+    status == ::PluginManager::Manifest.status[:compatible]
+  end
+
+  def present?
+    installed_sha.present?
+  end
+
+  def self.set(plugin_name, attrs)
     plugin = get(plugin_name)
-    
-    plugin.url = params[:url]
-    plugin.installed_sha = params[:installed_sha]
-    plugin.git_branch = params[:git_branch]
-    plugin.contact_emails = params[:contact_emails]
-    
-    if plugin.status != params[:status]
-      plugin.status = params[:status]
-      handle_change(plugin_name, params)
+    new_attrs = {
+      url: attrs[:url] || plugin.url,
+      installed_sha: attrs[:installed_sha] || plugin.installed_sha,
+      git_branch: attrs[:git_branch] || plugin.git_branch,
+      contact_emails: attrs[:contact_emails] || plugin.contact_emails,
+      test_host: attrs[:test_host] || plugin.test_host,
+      test_status: attrs[:test_status] || plugin.test_status,
+      test_backend_coverage: attrs[:test_backend_coverage] || plugin.test_backend_coverage,
+      status: attrs[:status].nil? ? plugin.status : attrs[:status].to_i
+    }
+
+    saved = ::PluginStore.set(::PluginManager::NAMESPACE, plugin_name, new_attrs)
+
+    if saved && plugin.status != new_attrs[:status]
+      plugin.handle_status_change!
     end
 
-    PluginStore.set(::PluginManager::PLUGIN_NAME, plugin_name, plugin.as_json)
+    saved
   end
-  
+
   def self.get(plugin_name)
-    raw = PluginStore.get(::PluginManager::PLUGIN_NAME, plugin_name) || {}
+    raw = ::PluginStore.get(::PluginManager::NAMESPACE, plugin_name) || {}
     new(plugin_name, raw)
   end
-  
-  def self.list_by(attr, value)
-    PluginStoreRow.where("
-      plugin_name = '#{::PluginManager::PLUGIN_NAME}' AND
-      value::json->>'#{attr}' = ?
-    ", value.to_s).map do |record|
-      create_from_record(record)
-    end
+
+  def self.get_or_create(plugin_name)
+    plugin = get(plugin_name)
+    plugin = set_from_file("#{Rails.root}/plugins/#{plugin_name}") if !plugin.present?
+    plugin
   end
-  
-  def self.with_attr(attr)
-    PluginStoreRow.where("
-      plugin_name = '#{::PluginManager::PLUGIN_NAME}' AND
-      value::json->>'#{attr}' IS NOT NULL
-    ").map do |record|
-      create_from_record(record)
-    end
+
+  def self.list(with_plugin_manager: false)
+    query = ::PluginStoreRow.where(plugin_name: ::PluginManager::NAMESPACE)
+    list_query(query, with_plugin_manager)
   end
-  
+
+  def self.list_by(attr, value, with_plugin_manager: false)
+    query = ::PluginStoreRow.where("plugin_name = '#{::PluginManager::NAMESPACE}' AND value::json->>'#{attr}' = ?", value.to_s)
+    list_query(query, with_plugin_manager)
+  end
+
+  def self.with_attr(attr, with_plugin_manager: false)
+    query = ::PluginStoreRow.where("plugin_name = '#{::PluginManager::NAMESPACE}' AND value::json->>'#{attr}' IS NOT NULL")
+    list_query(query, with_plugin_manager)
+  end
+
+  def self.list_query(query, with_plugin_manager)
+    query = query.where.not(key: "discourse-plugin-manager-server") unless with_plugin_manager
+    query.map { |record| create_from_record(record) }
+  end
+
   def self.create_from_record(record)
     name = record.key
-    
+
     begin
       attrs = JSON.parse(record.value)
     rescue JSON::ParserError
       attrs = {}
     end
-    
-    new(name, attrs)
+
+    new(name, attrs.with_indifferent_access)
   end
-    
-  def self.handle_change(plugin_name, params)
 
-    if params[:status] == ::PluginManager::Manifest.status[:incompatible]
+  def self.set_from_file(path)
+    begin
+      file = File.read("#{path}/plugin.rb")
+    rescue
+      return nil
+    end
 
-      last_error = ""
+    metadata = ::Plugin::Metadata.parse(file)
+    if metadata.present? && ::PluginManager::Manifest.excluded.exclude?(metadata.name)
+      sha = nil
+      branch = nil
+      test_host = nil
 
-      if PluginStoreRow.where("key = 'discourse-broken' and plugin_name = 'plugin-guard'").count >= 1
-        last_entry = JSON.parse(PluginStoreRow.where("key = ? and plugin_name = 'plugin-guard'", plugin_name).last["value"]).last
-        last_error = last_entry["message"]
-        last_backtrace = last_entry["backtrace"]
+      Dir.chdir(path) do
+        sha = `git rev-parse HEAD`.strip
+        branch = `git rev-parse --abbrev-ref HEAD`.strip
+        test_host = PluginManager::TestHost.detect
       end
 
-      tag_name = plugin_name.gsub("discourse-", "")
-
-      report_tags = []
-
-      report_tags = report_tags.concat(SiteSetting.plugin_manager_issue_management_site_issue_tags.split('|')).concat([tag_name])
-
-      title = "Plugin '#{plugin_name}' almost prevented a rebuild on '#{SiteSetting.title}'"
-      raw = "The Plugin '#{plugin_name}' almost prevented a rebuild on site: [#{SiteSetting.title}](#{Discourse.base_url}) so has been isolated - please take a look.\n\nLast error was: `#{last_error}`\n\nLast backtrace was : `#{last_backtrace}`\n\nLogs: [View Logs](#{Discourse.base_url}/logs)"
-
-      body = {
-        title: title,
-        raw: raw,
-        tags: report_tags,
-        category: SiteSetting.plugin_manager_issue_management_site_issue_category,
-        archetype: "regular"
+      attrs = {
+        url: metadata.url,
+        contact_emails: metadata.contact_emails,
+        installed_sha: sha,
+        git_branch: branch,
+        status: path.include?(PluginManager::Manifest::INCOMPATIBLE_FOLDER) ?
+          PluginManager::Manifest.status[:incompatible] :
+          PluginManager::Manifest.status[:compatible]
       }
+      attrs[:test_host] = test_host if test_host
 
-      unless SiteSetting.plugin_manager_issue_management_site_base_url.nil? || SiteSetting.plugin_manager_issue_management_site_api_token.nil? || SiteSetting.plugin_manager_issue_management_site_api_user.nil?
-        post_topic_result = Excon.post("#{SiteSetting.plugin_manager_issue_management_site_base_url}/posts", :headers => {"Content-Type" => "application/json", "Api-Username" => "#{SiteSetting.plugin_manager_issue_management_site_api_user}", "Api-Key" => "#{SiteSetting.plugin_manager_issue_management_site_api_token}"}, :body => body.to_json)
-      end
-
-      contacts = params[:contact_emails].split(",")
-
-      external_contacts = contacts.reject do |contact|
-        contact.include? 'thepavilion.io'
-      end
-
-      external_contacts = external_contacts.map(&:strip)
-
-      external_contacts = external_contacts.join(",")
-
-      Jobs.enqueue(:send_plugin_incompatible_notification_to_support,
-        plugin: plugin_name,
-        site: SiteSetting.title,
-        contact_emails: external_contacts,
-        title: title,
-        raw: raw
-      )
+      ::PluginManager::Plugin.set(metadata.name, attrs)
+      ::PluginManager::Plugin.get(metadata.name)
     end
   end
 end

@@ -1,7 +1,7 @@
 import discourseComputed from "discourse-common/utils/decorators";
 import EmberObject from "@ember/object";
 
-const ServerStatus = EmberObject.extend({
+const ManagerStatus = EmberObject.extend({
   @discourseComputed("url", "installed_sha")
   gitLink(url, installedSHA) {
     if (url && installedSHA) {
@@ -17,4 +17,4 @@ const ServerStatus = EmberObject.extend({
   }
 });
 
-export default ServerStatus;
+export default ManagerStatus;
