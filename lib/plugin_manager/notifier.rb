@@ -9,7 +9,6 @@ class PluginManager::Notifier
   end
 
   def send
-    byebug
     return unless @plugin && @log
 
     if send_post?
@@ -39,7 +38,7 @@ class PluginManager::Notifier
       category: post_category,
       archetype: "regular"
     }
-    byebug
+
     response = Excon.post("#{post_settings[:base_url]}/posts",
       :headers => {
         "Content-Type" => "application/json",
@@ -48,7 +47,7 @@ class PluginManager::Notifier
       },
       :body => body
     )
-    byebug
+
     response_body = JSON.parse(response.body)
     @log.issue_url = response_body['topic']['url']
     @log.save
