@@ -11,23 +11,13 @@ module PluginGuard::DiscourseExtension
         next
       end
 
-      if ::Plugin::Metadata::OFFICIAL_PLUGINS.include?(plugin_name)
+      begin
         plugin_instance.activate!
-        @plugins << plugin_instance
+      rescue => error
+        PluginGuard::Error.handle(error)
         next
       end
 
-      plugin = ::PluginManager::Plugin.get_or_create(plugin_name)
-      next unless plugin.present?
-
-      if plugin.test_status == ::PluginManager::TestManager.status[:failing]
-        guard = ::PluginGuard.new(plugin_instance.directory)
-        guard.handle if guard.present?
-
-        next
-      end
-
-      plugin_instance.activate!
       @plugins << plugin_instance
     end
 

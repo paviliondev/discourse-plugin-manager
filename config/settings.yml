@@ -15,3 +15,4 @@ plugins:
   plugin_manager_issue_management_site_issue_category:
     default: ""
     type: category
+  plugin_manager_recommended_coverage_threshold: 70

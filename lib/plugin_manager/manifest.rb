@@ -5,7 +5,9 @@ class ::PluginManager::Manifest
   def self.status
     @status ||= Enum.new(
       compatible: 0,
-      incompatible: 1
+      incompatible: 1,
+      tests_failing: 2,
+      recommended: 3
     )
   end
 
@@ -17,12 +19,20 @@ class ::PluginManager::Manifest
     @plugins ||= ::PluginManager::Plugin.list
   end
 
+  def recommended
+    @compatible ||= ::PluginManager::Plugin.list_by('status', self.class.status[:recommended])
+  end
+
   def compatible
     @compatible ||= ::PluginManager::Plugin.list_by('status', self.class.status[:compatible])
   end
 
   def incompatible
     @incompatible ||= ::PluginManager::Plugin.list_by('status', self.class.status[:incompatible])
+  end
+
+  def tests_failing
+    @tests_failing ||= ::PluginManager::Plugin.list_by('status', self.class.status[:tests_failing])
   end
 
   def discourse

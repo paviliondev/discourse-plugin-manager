@@ -10,6 +10,7 @@ class ::PluginManager::TestManager
     @host = PluginManager::TestHost.get(host_name)
     return unless @host
     @domain = host.domain
+    @recommended_coverage_threshold = SiteSetting.plugin_manager_recommended_coverage_threshold
   end
 
   def self.status
@@ -38,8 +39,14 @@ class ::PluginManager::TestManager
       plugin_attrs[:test_status] = test_status
     end
 
-    if plugin_attrs.present?
-      ::PluginManager::Plugin.set(@plugin.name, plugin_attrs)
+    if @plugin.status == PluginManager::Manifest.status[:compatible]
+      if test_status == PluginManager::TestManager.status[:passing] && test_backend_coverage >= @recommended_coverage_threshold
+        plugin_attrs[:status] = PluginManager::Manifest.status[:recommended]
+      end
+
+      if test_status == PluginManager::TestManager.status[:failing]
+        plugin_attrs[:status] = PluginManager::Manifest.status[:tests_failing]
+      end
     end
 
     if test_status == PluginManager::TestManager.status[:failing]
@@ -51,6 +58,10 @@ class ::PluginManager::TestManager
         message: I18n.t("plugin_manager.test.error", test_name: @host.test_name),
         test_url: @host.test_url
       )
+    end
+
+    if plugin_attrs.present?
+      ::PluginManager::Plugin.set(@plugin.name, plugin_attrs)
     end
   end
 
