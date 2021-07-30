@@ -4,6 +4,10 @@
   color: $secondary;
 }
 
+.server-status-container {
+  max-width: 1110px;
+}
+
 .server-status {
   margin-bottom: 20px;
   border-top: 1px solid $primary-medium;
