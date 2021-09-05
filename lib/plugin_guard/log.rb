@@ -38,7 +38,6 @@ class ::PluginGuard::Log
   end
 
   def self.add(plugin_name: nil, plugin_sha: nil, plugin_branch: nil, message: nil, backtrace: nil, test_url: nil, issue_url: nil, type: nil)
-    byebug
     plugin = ::PluginManager::Plugin.get_or_create(plugin_name)
     attrs = {
       plugin_name: plugin_name,
