@@ -139,7 +139,7 @@ class PluginManager::Notifier
   end
 
   def post_category
-    SiteSetting.plugin_manager_issue_management_site_issue_category
+    SiteSetting.plugin_manager_issue_management_site_issue_category_id
   end
 
   def post_tags

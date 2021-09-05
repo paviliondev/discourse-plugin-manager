@@ -12,7 +12,7 @@ plugins:
   plugin_manager_issue_management_site_issue_tags:
     type: list
     default: "automated"
-  plugin_manager_issue_management_site_issue_category:
+  plugin_manager_issue_management_site_issue_category_id:
     default: ""
-    type: category
+    type: integer
   plugin_manager_recommended_coverage_threshold: 70
