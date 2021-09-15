@@ -40,7 +40,7 @@ class ::PluginManager::TestManager
     end
 
     if @plugin.status == PluginManager::Manifest.status[:compatible]
-      if test_status == PluginManager::TestManager.status[:passing] && test_backend_coverage >= @recommended_coverage_threshold
+      if test_status == PluginManager::TestManager.status[:passing] && test_backend_coverage.to_i >= @recommended_coverage_threshold
         plugin_attrs[:status] = PluginManager::Manifest.status[:recommended]
       end
 
