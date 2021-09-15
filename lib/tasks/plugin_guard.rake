@@ -11,7 +11,7 @@ def file_exists(guard, directive, directive_path)
     paths.push("#{Rails.root}/app/assets/javascripts/#{directive_path}")
     paths.push("#{Rails.root}/vendor/assets/javascripts/#{directive_path}")
   elsif directive === 'require_tree'
-    paths.push("#{guard.path}/assets/javascripts/#{directive_path[2..-1]}")
+    paths.push("#{guard.directory}/assets/javascripts/#{directive_path[2..-1]}")
   elsif directive === 'require_tree_discourse'
     paths.push("#{Rails.root}/app/assets/javascripts/#{directive_path}")
   end
@@ -29,7 +29,7 @@ task 'assets:precompile:before' do
     if guard = PluginGuard.new("#{path}/#{folder}")
       begin
         guard.precompiled_assets.each do |filename|
-          pre_path = "#{guard.path}/assets/javascripts/#{filename}"
+          pre_path = "#{guard.directory}/assets/javascripts/#{filename}"
           
           unless File.exists?(pre_path)
             ## This will not prevent Discourse from working so we only warn
