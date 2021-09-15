@@ -23,7 +23,9 @@ Note: they use a couple of ENV variables:
 
 Deploying updates to production is a two step process:
 
-1. Go to ``/var/discourse/shared/standalone/discourse-plugin-manager-server`` and run ``git pull``. The pups template relies on the latest files being in place in the shared folder so it can copy them across before the plugin code is pulled from github
+1. Go to ``/var/discourse/shared/standalone/discourse-plugin-manager-server`` and run ``git pull``. This instance of the repo needs to be on the same branch as the one you've set for the ``discourse-plugin-manager-server`` in the ``app.yml``.
+
+   Why is this necessary? The pups template relies on the latest files being in place in the shared folder so it can copy them across before the other plugin code is pulled from GitHub.com
 
 2. Rebuild the app as normal (i.e. from ``/var/discourse``)
 
