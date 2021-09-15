@@ -59,11 +59,10 @@ class ::PluginGuard::Log
     "#{plugin_name}-log"
   end
 
-  def self.list(plugin_name)
-    PluginStoreRow.where("
-      plugin_name = '#{PluginGuard::NAMESPACE}' AND
-      key LIKE '#{key(plugin_name)}-%'
-    ").order("value::json->>'date' DESC")
+  def self.list(plugin_name = nil)
+    query = PluginStoreRow.where(plugin_name: PluginGuard::NAMESPACE)
+    query = query.where("key LIKE '#{key(plugin_name)}-%'") if plugin_name
+    query.order("value::json->>'date' DESC")
       .map do |record|
         new(JSON.parse(record.value), key: record.key)
       end
