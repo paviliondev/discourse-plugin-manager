@@ -6,9 +6,11 @@ require_relative "plugin_manager"
 @extensions_applied = false
 
 def plugin_initialization_guard(&block)
-  @after_initialize = block.source.include?("notify_after_initialize")
+  source_location = block.source_location
+  source_line = IO.readlines(block.source_location.first)[block.source_location.second]
+  @activating_plugins = source_line.include?("activate_plugins")
 
-  if !@after_initialize && !@extensions_applied
+  if @activating_plugins && !@extensions_applied
     Dir["./lib/plugin_guard/**/*.rb"].each { |file| require file }
     db_name = "discourse_#{Rails.env}"
 
