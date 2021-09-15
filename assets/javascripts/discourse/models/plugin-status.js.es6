@@ -15,7 +15,7 @@ const PluginStatus = ManagerStatus.extend({
 
   @discourseComputed("status", "test_status")
   statusClass(status, testStatus) {
-    if (status == 0 && testStatus == 0) return "recommended";
+    if (status == 3 && testStatus == 0) return "recommended";
     if (status == 0) return "compatible";
     return "incompatible";
   },
