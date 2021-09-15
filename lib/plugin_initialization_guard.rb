@@ -9,7 +9,6 @@ def plugin_initialization_guard(&block)
   @after_initialize = block.source.include?("notify_after_initialize")
 
   if !@after_initialize && !@extensions_applied
-    Dir["./lib/plugin_guard/*.rb"].each { |file| require file }
     Dir["./lib/plugin_guard/**/*.rb"].each { |file| require file }
     db_name = "discourse_#{Rails.env}"
 
@@ -29,7 +28,6 @@ def plugin_initialization_guard(&block)
       require './app/models/plugin_store_row.rb'
       require './app/models/plugin_store.rb'
       require './lib/enum.rb'
-      Dir["./lib/plugin_manager/*.rb"].each { |file| require file }
       Dir["./lib/plugin_manager/**/*.rb"].each { |file| require file }
       Discourse.singleton_class.prepend PluginGuard::DiscourseExtension
       Plugin::Instance.prepend PluginGuard::PluginInstanceExtension
