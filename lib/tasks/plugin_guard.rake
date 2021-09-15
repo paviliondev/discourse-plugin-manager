@@ -22,21 +22,18 @@ end
 task 'assets:precompile:before' do
   ### Ensure all assets added to precompilation by plugins exist. 
   ### If they don't, remove them from precompilation and move the plugin to incompatible directory.
-  
+
   path = "#{Rails.root}/plugins"
-  
+
   Dir.each_child(path) do |folder|
     if guard = PluginGuard.new("#{path}/#{folder}")
       begin
         guard.precompiled_assets.each do |filename|
           pre_path = "#{guard.directory}/assets/javascripts/#{filename}"
-          
+
           unless File.exists?(pre_path)
             ## This will not prevent Discourse from working so we only warn
-            guard.handle(
-              message:"Asset path #{pre_path} does not exist.",
-              type: 'warn'
-            )
+            guard.handle(message:"Asset path #{pre_path} does not exist.")
             next
           end
 
