@@ -16,4 +16,4 @@ plugins:
     default: ""
     type: integer
     min: 1
-  plugin_manager_recommended_coverage_threshold: 70
+  plugin_manager_recommended_coverage_threshold: 80
