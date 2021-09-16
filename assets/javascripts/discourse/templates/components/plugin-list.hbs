@@ -1,0 +1,20 @@
+<div class="plugin-list-title">
+  <h4>{{listTitle}}</h4>
+
+  {{d-button icon="info-circle" title="server_status.plugin.status_info" action="toggleStatusDescription"}}
+  {{#if showStatusDescription}}
+    <div class="status-description">
+      <p>{{statusDescription}}</p>
+      <div class="status-description-gutter">
+        <a href={{learnMoreUrl}} title={{i18n "server_status.plugin.learn_more"}}>
+          {{d-icon "external-link-alt"}}
+          {{i18n "server_status.plugin.learn_more"}}
+        </a>
+      </div>
+    </div>
+  {{/if}}
+</div>
+
+{{#each list.plugins as |plugin|}}
+  {{plugin-status plugin=plugin discourse=discourse}}
+{{/each}}

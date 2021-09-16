@@ -2,6 +2,13 @@ import Component from '@ember/component';
 import { getOwner } from 'discourse-common/lib/get-owner';
 import { default as discourseComputed } from 'discourse-common/utils/decorators';
 
+const pluginStatuses = [
+  'recommended',
+  'compatible',
+  'incompatible',
+  'tests_failing'
+]
+
 export default Component.extend({
   classNameBindings: [':server-status', 'visible'],
 
@@ -17,10 +24,12 @@ export default Component.extend({
     this.setProperties({
       router,
       discourse,
-      recommendedPlugins: plugins.filter(p => p.status === 'recommended'),
-      compatiblePlugins: plugins.filter(p => p.status === 'compatible'),
-      incompatiblePlugins: plugins.filter(p => p.status === 'incompatible'),
-      testsFailingPlugins: plugins.filter(p => p.status === 'tests_failing')
+      pluginLists: pluginStatuses.map(status => {
+        return {
+          status,
+          plugins: plugins.filter(p => p.status === status)
+        }
+      })
     });
   },
 

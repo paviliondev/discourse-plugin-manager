@@ -5,6 +5,10 @@
   </div>
 
   <div class="buttons">
+    <a href="mailto:angus@thepavilion.io?subject=Adding a plugin to the Plugin Manifest" class="btn btn-default" target="_blank">
+      {{d-icon "plus"}}
+      <span class="d-button-label">{{i18n "server_status.add_plugin"}}</span>
+    </a>
     <a href="https://thepavilion.io/w/bug-report" class="btn btn-default" target="_blank">
       {{d-icon "bug"}}
       <span class="d-button-label">{{i18n "server_status.bug_report"}}</span>
@@ -13,32 +17,7 @@
 </div>
 
 <div class="bottom">
-  <div class="plugin-list">
-    <h4>{{i18n 'server_status.plugin.recommended.title'}}</h4>
-    <p>{{i18n 'server_status.plugin.recommended.description'}}</p>
-    {{#each recommendedPlugins as |plugin|}}
-      {{plugin-status plugin=plugin discourse=discourse}}
-    {{/each}}
-  </div>
-  <div class="plugin-list">
-    <h4>{{i18n 'server_status.plugin.compatible.title'}}</h4>
-    <p>{{i18n 'server_status.plugin.compatible.description'}}</p>
-    {{#each compatiblePlugins as |plugin|}}
-      {{plugin-status plugin=plugin discourse=discourse}}
-    {{/each}}
-  </div>
-  <div class="plugin-list">
-    <h4>{{i18n 'server_status.plugin.tests_failing.title'}}</h4>
-    <p>{{i18n 'server_status.plugin.tests_failing.description'}}</p>
-    {{#each testsFailingPlugins as |plugin|}}
-      {{plugin-status plugin=plugin discourse=discourse}}
-    {{/each}}
-  </div>
-  <div class="plugin-list">
-    <h4>{{i18n 'server_status.plugin.incompatible.title'}}</h4>
-    <p>{{i18n 'server_status.plugin.incompatible.description'}}</p>
-    {{#each incompatiblePlugins as |plugin|}}
-      {{plugin-status plugin=plugin discourse=discourse}}
-    {{/each}}
-  </div>
+  {{#each pluginLists as |list|}}
+    {{plugin-list list=list discourse=discourse}}
+  {{/each}}
 </div>
