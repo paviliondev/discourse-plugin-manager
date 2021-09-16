@@ -4,7 +4,6 @@ import { default as discourseComputed } from 'discourse-common/utils/decorators'
 
 export default Component.extend({
   classNameBindings: [':server-status', 'visible'],
-  maximized: false,
 
   init() {
     this._super(...arguments);
@@ -12,27 +11,21 @@ export default Component.extend({
     const container = getOwner(this);
     const controller = container.lookup('controller:application');
     const router = container.lookup("router:main");
+    const plugins = controller.get('plugins');
+    const discourse = controller.get('discourse');
 
     this.setProperties({
       router,
-      discourse: controller.get('discourse'),
-      plugins: controller.get('plugins')
+      discourse,
+      recommendedPlugins: plugins.filter(p => p.status === 'recommended'),
+      compatiblePlugins: plugins.filter(p => p.status === 'compatible'),
+      incompatiblePlugins: plugins.filter(p => p.status === 'incompatible'),
+      testsFailingPlugins: plugins.filter(p => p.status === 'tests_failing')
     });
   },
 
   @discourseComputed('router.currentPath')
   visible(currentPath) {
     return currentPath && currentPath.indexOf('admin') === -1;
-  },
-
-  click(e) {
-    if ($(e.target).closest('.top').length > 0) {
-      this.toggleProperty('maximized');
-    }
-  },
-
-  @discourseComputed('maximized')
-  bottomClass(maximized) {
-    return maximized ? 'maximized' : '';
   }
 });

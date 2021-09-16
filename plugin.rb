@@ -21,6 +21,7 @@ after_initialize do
     ../app/controllers/plugin_manager/status_controller.rb
     ../app/serializers/plugin_manager/discourse_serializer.rb
     ../app/serializers/plugin_manager/log_serializer.rb
+    ../app/serializers/plugin_manager/basic_plugin_serializer.rb
     ../app/serializers/plugin_manager/plugin_serializer.rb
     ../config/routes.rb
   ).each do |path|

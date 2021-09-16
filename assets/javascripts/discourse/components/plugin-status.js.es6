@@ -5,40 +5,23 @@ import { bind, scheduleOnce } from "@ember/runloop";
 import { createPopper } from "@popperjs/core";
 
 export default Component.extend({
-  classNameBindings: [":plugin-status", "plugin.statusClass", "plugin.name"],
+  classNameBindings: [":plugin-status", "plugin.status", "plugin.name"],
   hasLog: notEmpty("plugin.log"),
 
   @discourseComputed(
-    "plugin.statusClass",
+    "plugin.status",
     "plugin.name",
-    "plugin.shortSha",
-    "plugin.gitLink",
     "discourse.installed_version",
-    "discourse.shortSha",
-    "discourse.gitLink"
   )
   detailTitle(
-    statusClass,
+    pluginStatus,
     pluginName,
-    pluginSha,
-    pluginGitLink,
     discourseVersion,
-    discourseSha,
-    discourseGitLink
   ) {
-    return I18n.t(`server_status.plugin.${statusClass}.title`, {
+    return I18n.t(`server_status.plugin.${pluginStatus}.detail_title`, {
       pluginName,
-      pluginSha,
-      pluginGitLink,
-      discourseVersion,
-      discourseSha,
-      discourseGitLink
+      discourseVersion
     });
-  },
-
-  @discourseComputed("plugin.statusClass", "plugin.name")
-  detailDescription(statusClass, pluginName) {
-    return I18n.t(`server_status.plugin.${statusClass}.description`, { pluginName });
   },
 
   click(e) {

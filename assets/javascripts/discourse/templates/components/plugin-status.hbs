@@ -8,8 +8,8 @@
 
 {{#if showDetail}}
   <div class="details">
-    <h4>{{{detailTitle}}}</h4>
-    <p>{{detailDescription}}</p>
+    <h4>{{detailTitle}}</h4>
+    {{plugin-metadata plugin=plugin}}
 
     {{#if hasLog}}
       <div class="log">

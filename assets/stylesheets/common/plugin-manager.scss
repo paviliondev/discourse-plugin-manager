@@ -24,10 +24,15 @@
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid $primary-medium;
-    cursor: pointer;
+
+    h3 {
+      margin: 0 1em;
+      line-height: 100%;
+    }
 
     .left {
       display: inline-flex;
+      align-items: center;
     }
   }
 
@@ -86,37 +91,37 @@
   }
 
   .bottom {
-    max-height: 0;
-    transition: max-height 0.15s ease-out;
-    visibility: hidden;
+    border-bottom: 1px solid $primary-medium;
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
+    grid-gap: 1em;
+    padding: 1em;
 
-    &.maximized {
-      max-height: 600px;
-      visibility: visible;
-      border-bottom: 1px solid $primary-medium;
-      display: grid;
-      grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
-      grid-gap: 1em;
-      padding: 1em;
+    .plugin-list {
+      > p {
+        font-size: .9em;
+      }
     }
   }
 
-  .plugin-status {
+  div.plugin-status {
     display: flex;
     justify-content: space-between;
     position: relative;
     cursor: pointer;
     padding: .25em .5em;
+    margin-bottom: .75em;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
 
     &.plugin-status.recommended {
-      border: 1px solid var(--success);
+      background-color: var(--success);
 
+      .name,
       .status-icon .d-icon {
-        color: var(--success);
-      }
-
-      .details h4 {
-        color: var(--success);
+        color: var(--secondary);
       }
     }
 
@@ -154,11 +159,20 @@
       box-shadow: shadow('dropdown');
       z-index: 1;
       padding: 1em;
-      width: 650px;
-      max-width: 90vw;
+      min-width: 300px;
 
       p {
         margin-bottom: 0;
+      }
+
+      .plugin-metadata {
+        margin: .5em 0 0 0;
+        padding: 0;
+        list-style: none;
+
+        .d-icon {
+          margin-right: .5em;
+        }
       }
 
       .log {
