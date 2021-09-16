@@ -20,19 +20,19 @@ en:
         recommended:
           title: Recommended
           detail_title: "%{pluginName} works well with Discourse %{discourseVersion}."
-          description: Plugins that work and use best practices.
+          description: Loads on the latest Discourse and uses best practices.
         compatible:
           title: Compatible
           detail_title: "%{pluginName} is compatible with Discourse %{discourseVersion}."
-          description: Plugins that work.
+          description: Loads on the latest Discourse.
         incompatible:
           title: Incompatible
           detail_title: "%{pluginName} does not work with Discourse %{discourseVersion}."
-          description: Plugins that don't work.
+          description: Doesn't load on the latest Discourse.
         tests_failing:
           title: Tests Failing
           detail_title: "%{pluginName} works with Discourse %{discourseVersion} but its tests are failing."
-          description: Plugins that work, but have a failing test.
+          description: Loads on the latest Discourse, but has a failing test.
         learn_more: learn more
         issue_report: issue report
         test_log: test log
