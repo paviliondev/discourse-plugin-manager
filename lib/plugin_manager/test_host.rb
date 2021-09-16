@@ -8,7 +8,8 @@ class ::PluginManager::TestHost
               :test_name,
               :test_url
 
-  attr_accessor :plugin
+  attr_accessor :plugin,
+                :branch
 
   def get_status_from_response
     PluginManager::TestManager.status[:failing]
