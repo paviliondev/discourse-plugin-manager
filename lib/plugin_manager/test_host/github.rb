@@ -3,7 +3,7 @@ class PluginManager::TestHost::Github < PluginManager::TestHost
     @name = 'github'
     @config = '.github/workflows/plugin-tests.yml'
     @domain = 'api.github.com'
-    @branch = 'master'
+    @branch = 'main'
   end
 
   def repo_path

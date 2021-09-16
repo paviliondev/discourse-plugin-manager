@@ -28,6 +28,7 @@ class ::PluginManager::TestManager
     @plugin = ::PluginManager::Plugin.get(plugin_name)
     return nil unless @plugin && @plugin.url
     @host.plugin = @plugin
+    @host.branch = @plugin.git_branch
 
     plugin_attrs = {}
 
