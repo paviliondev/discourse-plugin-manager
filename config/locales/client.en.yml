@@ -22,19 +22,19 @@ en:
         recommended:
           title: Recommended
           detail_title: "%{pluginName} works well with Discourse %{discourseVersion}."
-          description: Recommended plugins load on the latest commit of the Discourse branch running on this site and follow best practices.
+          description: Recommended plugins load succesfully on the latest commit of the Discourse branch running on this site and follow best practices.
         compatible:
           title: Compatible
           detail_title: "%{pluginName} is compatible with Discourse %{discourseVersion}."
-          description: Compatible plugins load on the latest commit of the Discourse branch running on this site.
+          description: Compatible plugins load succesfully on the latest commit of the Discourse branch running on this site.
         incompatible:
           title: Incompatible
           detail_title: "%{pluginName} does not work with Discourse %{discourseVersion}."
-          description: Incompatible plugins do not load on the latest commit of the Discourse branch running on this site.
+          description: Incompatible plugins do not load succesfully on the latest commit of the Discourse branch running on this site.
         tests_failing:
           title: Tests Failing
           detail_title: "%{pluginName} works with Discourse %{discourseVersion} but its tests are failing."
-          description: Tests failing plugins load on the latest commit of the Discourse branch running on this site, but have a failing test.
+          description: Tests failing plugins load succesfully on the latest commit of the Discourse branch running on this site, but have a failing test.
         learn_more: Learn more about what this means.
         issue_report: issue report
         test_log: test log
