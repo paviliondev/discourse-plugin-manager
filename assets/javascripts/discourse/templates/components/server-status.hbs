@@ -1,6 +1,8 @@
 <div class="top">
   <div class="left">
-    <h3>{{i18n 'server_status.title'}}</h3>   
+    <div class="logo">
+      <img src='/plugins/discourse-plugin-manager-server/images/logo-manifest.png' alt={{i18n 'server_status.title'}}>
+    </div>
     {{discourse-status discourse=discourse}}
   </div>
 

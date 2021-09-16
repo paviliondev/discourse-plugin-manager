@@ -3,7 +3,7 @@ import discourseComputed from "discourse-common/utils/decorators";
 import { bind } from "@ember/runloop";
 
 export default Component.extend({
-  classNames: 'plugin-list',
+  classNameBindings: [':plugin-list', 'list.status'],
   learnMoreUrl: 'https://thepavilion.io/t/4822',
   showStatusDescription: false,
 
@@ -18,18 +18,19 @@ export default Component.extend({
   },
 
   didInsertElement() {
-    $(document).on("click", bind(this, this.documentClick));
+    $(document).on(`mouseup.status-description.${this.list.status}`, bind(this, this.documentClick));
   },
 
   willDestroyElement() {
-    $(document).off("click", bind(this, this.documentClick));
+    $(document).off(`mouseup.status-description.${this.list.status}`, bind(this, this.documentClick));
   },
 
   documentClick(e) {
     if (this._state === "destroying") { return; }
-    let $target = $(e.target);
+    const $target = $(e.target);
+    const status = this.list.status;
 
-    if (!$target.closest(this.element).length) {
+    if (!$target.closest(`.plugin-list.${status} .plugin-list-title, .plugin-list.${status} .status-description`).length) {
       this.set('showStatusDescription', false);
     }
   },

@@ -25,9 +25,12 @@
     align-items: center;
     border-bottom: 1px solid $primary-medium;
 
-    h3 {
-      margin: 0 1em;
-      line-height: 100%;
+    .logo {
+      padding: 1em;
+
+      img {
+        height: 40px;
+      }
     }
 
     .left {
@@ -98,41 +101,48 @@
     padding: 1em;
 
     .plugin-list {
+      position: relative;
+
       > p {
         font-size: .9em;
       }
-      
+
       .plugin-list-title {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        position: relative;
+        cursor: pointer;
+        margin-bottom: .25em;
 
         > h4 {
           margin: 0;
         }
 
-        > .btn {
-          background: unset;
+        .plugin-list-info {
           padding: .5em;
+          color: var(--primary);
+        }
+      }
+
+      .status-description {
+        position: absolute;
+        padding: 1em;
+        border-top: 1px solid var(--primary-very-low);
+        box-shadow: shadow('dropdown');
+        background-color: var(--secondary);
+        top: 34px;
+        width: 300px;
+        z-index: 1;
+
+        p {
+          margin: 0;
         }
 
-        .status-description {
-          position: absolute;
-          padding: 1em;
-          border-top: 1px solid var(--primary-very-low);
-          box-shadow: shadow('dropdown');
-          background-color: var(--secondary);
-          top: 34px;
-          width: 300px;
-          z-index: 1;
+        .status-description-gutter {
+          margin-top: .75em;
 
-          p {
-            margin: 0;
-          }
-
-          .status-description-gutter {
-            margin-top: .75em;
+          .d-icon {
+            margin-right: .25em;
           }
         }
       }
@@ -151,6 +161,10 @@
       margin-bottom: 0;
     }
 
+    .details h4 {
+      white-space: nowrap;
+    }
+
     &.plugin-status.recommended {
       background-color: var(--success);
 
@@ -166,20 +180,12 @@
       .status-icon .d-icon {
         color: var(--primary);
       }
-
-      .details h4 {
-        color: var(--primary);
-      }
     }
 
     &.plugin-status.incompatible {
       border: 1px solid var(--danger);
 
       .status-icon .d-icon {
-        color: var(--danger);
-      }
-
-      .details h4 {
         color: var(--danger);
       }
     }
