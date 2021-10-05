@@ -3,10 +3,16 @@ import { default as discourseComputed } from 'discourse-common/utils/decorators'
 import { notEmpty } from "@ember/object/computed";
 import { bind, scheduleOnce } from "@ember/runloop";
 import { createPopper } from "@popperjs/core";
+import { dasherize } from "@ember/string";
 
 export default Component.extend({
-  classNameBindings: [":plugin-status", "plugin.status", "plugin.name"],
+  classNameBindings: [":plugin-status", "statusClass", "plugin.name"],
   hasLog: notEmpty("plugin.log"),
+
+  @discourseComputed("plugin.status")
+  statusClass(status) {
+    return dasherize(status);
+  },
 
   @discourseComputed(
     "plugin.status",

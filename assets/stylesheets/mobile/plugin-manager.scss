@@ -1,50 +1,55 @@
 .server-status {
-  padding: 10px;
-  
   .top {
     flex-direction: column;
-    
+
+    .logo {
+      padding-bottom: 0;
+    }
+
     .left {
       width: 100%;
-      margin-bottom: 10px;
+      margin-bottom: 0;
+      flex-direction: column;
     }
   }
-  
+
   .discourse-status {
+    padding-bottom: 0;
+
     > div, > a {
-      margin-bottom: 20px;
+      margin-bottom: 1em;
     }
   }
-  
+
   .buttons {
     padding: 10px 0;
-    
+
     > a:first-of-type {
       margin-right: 10px;
     }
-    
+
     .btn {
       margin: 0;
     }
-    
+
     .update-topic {
       flex-flow: wrap;
     }
-    
+
     .btn-default {
       white-space: nowrap;
       align-self: flex-start;
     }
   }
-  
+
   .plugin-statuses {
     margin-top: 10px;
-    
+
     .statuses {
       overflow-y: scroll;
     }
   }
-  
+
   .statuses {
     max-height: initial;
   }

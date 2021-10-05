@@ -109,7 +109,6 @@
 
       .plugin-list-title {
         display: flex;
-        justify-content: space-between;
         align-items: center;
         cursor: pointer;
         margin-bottom: .25em;
@@ -161,8 +160,11 @@
       margin-bottom: 0;
     }
 
-    .details h4 {
-      white-space: nowrap;
+    border: 1px solid var(--primary-low);
+
+    .name,
+    .status-icon .d-icon {
+      color: var(--primary);
     }
 
     &.plugin-status.recommended {
@@ -174,20 +176,21 @@
       }
     }
 
-    &.plugin-status.compatible {
-      border: 1px solid var(--primary);
+    &.plugin-status.incompatible {
+      background-color: var(--danger);
 
+      .name,
       .status-icon .d-icon {
-        color: var(--primary);
+        color: var(--secondary);
       }
     }
 
-    &.plugin-status.incompatible {
-      border: 1px solid var(--danger);
+    &.plugin-status.compatible {
+      background-color: var(--primary-very-low);
+    }
 
-      .status-icon .d-icon {
-        color: var(--danger);
-      }
+    &.plugin-status.tests-failing {
+      background-color: var(--highlight);
     }
 
     .name {
@@ -218,6 +221,10 @@
 
       .log {
         margin-top: .5em;
+
+        a {
+          
+        }
       }
 
       .show-log {

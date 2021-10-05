@@ -7,10 +7,13 @@ en:
     plugin_manager_issue_management_site_issue_tags: "Tags you wish to apply to issue topics raised on site where bug reports are being handled"
     plugin_manager_issue_management_site_issue_category_id: "Category (id) where bug reports are being handled"
     plugin_manager_recommended_coverage_threshold: "Test coverage threshold for recommended plugins."
+    plugin_manager_github_oauth_client_id: "Client id of Github OAuth app for Plugin Manager Server."
+    plugin_manager_github_oauth_client_secret: "Client secret of Github OAuth app for Plugin Manager Server."
 
   plugin_manager:
     notifier:
       incompatible:
         title: "%{plugin_name} is incompatible with the latest Discourse"
     test:
-      error: "The '%{test_name}' test is failing."
+      error: "The tests are failing."
+      error_test: "The '%{test_name}' test is failing."

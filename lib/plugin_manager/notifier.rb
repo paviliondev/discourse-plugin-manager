@@ -38,30 +38,48 @@ class PluginManager::Notifier
       category: post_category,
       archetype: "regular"
     }
-
     response = Excon.post("#{post_settings[:base_url]}/posts",
       :headers => {
         "Content-Type" => "application/json",
         "Api-Username" => "#{post_settings[:api_user]}",
         "Api-Key" => "#{post_settings[:api_token]}"
       },
-      :body => body
+      :body => body.to_json
     )
 
-    response_body = JSON.parse(response.body)
-    @log.issue_url = response_body['topic']['url']
-    @log.save
+    if response.status == 200
+      result = nil
+
+      begin
+        result = JSON.parse(response.body)
+      rescue JSON::ParserError
+        #
+      end
+
+      if result && result['topic_id']
+        @log.issue_url = post_settings[:base_url] + "/t/" + result['topic_id'].to_s
+        @log.save
+
+        return true
+      end
+    end
+
+    if send_email?
+      send_email
+    else
+      false
+    end
   end
 
   def email_and_post_title
-    I18n.t('plugin_manager.notifier.incompatible.title', plugin_name: @plugin.name)
+    I18n.t('plugin_manager.notifier.incompatible.title', plugin_name: @plugin.display_name)
   end
 
   def email_body
     <<~EOF
-      #{@plugin.name} encountered an error.
+      #{@plugin.display_name} encountered an error.
 
-      Time: #{@log.date}
+      Time: #{@log.updated_at}
       Message: #{@log.message}
       Discourse Commit: #{@log.discourse_sha}
       Discourse Branch: #{@log.discourse_branch}
@@ -73,9 +91,10 @@ class PluginManager::Notifier
 
   def post_markdown
     <<~EOF
-      #{@plugin.name} encountered an error.
+      #{@plugin.display_name} encountered an error.
 
-      Time: #{@log.date}
+      Plugin: #{@plugin.name}
+      Time: #{@log.updated_at}
       Message: ``#{@log.message}``
 
       ### Discourse
@@ -148,7 +167,7 @@ class PluginManager::Notifier
 
   def post_tags
     tags = SiteSetting.plugin_manager_issue_management_site_issue_tags.split('|')
-    tags << @plugin.name
+    tags << @plugin.name.sub("discourse-", "")
     tags
   end
 end

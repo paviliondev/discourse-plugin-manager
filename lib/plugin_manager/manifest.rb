@@ -65,4 +65,35 @@ class ::PluginManager::Manifest
       end
     end
   end
+
+  def self.working?(status)
+    compatible?(status) || recommended?(status)
+  end
+
+  def self.not_working?(status)
+    incompatible?(status) || tests_failing?(status)
+  end
+
+  def self.compatible?(status)
+    status == ::PluginManager::Manifest.status[:compatible]
+  end
+
+  def self.incompatible?(status)
+    status == ::PluginManager::Manifest.status[:incompatible]
+  end
+
+  def self.tests_failing?(status)
+    status == ::PluginManager::Manifest.status[:tests_failing]
+  end
+
+  def self.recommended?(status)
+    status == ::PluginManager::Manifest.status[:recommended]
+  end
+
+  def self.handle_status_change(plugin_name, old_status, new_status)
+    if working?(old_status) && not_working?(new_status)
+      notifier = ::PluginManager::Notifier.new(plugin_name)
+      notifier.send
+    end
+  end
 end

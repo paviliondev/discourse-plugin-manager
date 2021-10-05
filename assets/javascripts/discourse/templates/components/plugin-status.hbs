@@ -14,14 +14,14 @@
     {{#if hasLog}}
       <div class="log">
         {{#if plugin.log.test_url}}
-          <a class="log-test-url" href={{plugin.log.test_url}} target="_blank">
+          <a class="log-url" href={{plugin.log.test_url}} target="_blank">
             {{d-icon "external-link-alt"}}
             <span>{{i18n "server_status.plugin.test_log"}}</span>
           </a>
         {{/if}}
 
         {{#if plugin.log.issue_url}}
-          <a class="log-test-url" href={{plugin.log.issue_url}} target="_blank">
+          <a class="log-url" href={{plugin.log.issue_url}} target="_blank">
             {{d-icon "external-link-alt"}}
             <span>{{i18n "server_status.plugin.issue_report"}}</span>
           </a>
@@ -35,8 +35,8 @@
         {{#if showLog}}
           <div class="log-detail">
             <div class="log-attr log-date">
-              <label>{{i18n "server_status.plugin.log.date"}}</label>
-              <span>{{plugin.log.date}}</span>
+              <label>{{i18n "server_status.plugin.log.updated_at"}}</label>
+              <span>{{plugin.log.updated_at}}</span>
             </div>
             <div class="log-attr log-message">
               <label>{{i18n "server_status.plugin.log.message"}}</label>

@@ -4,5 +4,6 @@ class PluginManager::LogSerializer < ::ApplicationSerializer
              :backtrace,
              :issue_url,
              :test_url,
-             :date
+             :created_at,
+             :updated_at
 end

@@ -3,6 +3,7 @@ class PluginManager::TestHost::Github < PluginManager::TestHost
     @name = 'github'
     @config = '.github/workflows/plugin-tests.yml'
     @domain = 'api.github.com'
+    @domain = "#{client_id}:#{client_secret}@#{@domain}" if basic_auth?
     @branch = 'main'
   end
 
@@ -16,20 +17,30 @@ class PluginManager::TestHost::Github < PluginManager::TestHost
 
   def get_status_from_response(response)
     runs = response['workflow_runs']
+    return nil unless runs.present?
+    latest_run = runs.first
 
-    if runs.present?
-      latest_run = runs.first
+    @test_sha = latest_run['head_sha']
+    @test_branch = latest_run['head_branch']
+    @test_name = latest_run['name']
+    @test_url = latest_run['html_url']
 
-      @test_sha = latest_run['head_sha']
-      @test_branch = latest_run['head_branch']
-      @test_name = latest_run['name']
-      @test_url = latest_run['html_url']
-
-      if latest_run["conclusion"] === "success"
-        return PluginManager::TestManager.status[:passing]
-      end
+    if latest_run["conclusion"] === "success"
+      PluginManager::TestManager.status[:passing]
+    else
+      PluginManager::TestManager.status[:failing]
     end
+  end
 
-    PluginManager::TestManager.status[:failing]
+  def basic_auth?
+    client_id.present? && client_secret.present?
+  end
+
+  def client_id
+    SiteSetting.plugin_manager_github_oauth_client_id
+  end
+
+  def client_secret
+    SiteSetting.plugin_manager_github_oauth_client_secret
   end
 end

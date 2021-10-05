@@ -7,7 +7,7 @@ const pluginStatuses = [
   'compatible',
   'incompatible',
   'tests_failing'
-]
+];
 
 export default Component.extend({
   classNameBindings: [':server-status', 'visible'],

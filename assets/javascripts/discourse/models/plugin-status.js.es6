@@ -4,7 +4,8 @@ import ManagerStatus from "./status";
 const statusIcons = {
   recommended: "check",
   compatible: "check",
-  incompatible: "times"
+  incompatible: "times",
+  tests_failing: "exclamation-circle"
 }
 
 const PluginStatus = ManagerStatus.extend({

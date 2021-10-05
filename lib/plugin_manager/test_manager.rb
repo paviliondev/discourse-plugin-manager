@@ -10,7 +10,6 @@ class ::PluginManager::TestManager
     @host = PluginManager::TestHost.get(host_name)
     return unless @host
     @domain = host.domain
-    @recommended_coverage_threshold = SiteSetting.plugin_manager_recommended_coverage_threshold
   end
 
   def self.status
@@ -30,6 +29,8 @@ class ::PluginManager::TestManager
     @host.plugin = @plugin
     @host.branch = @plugin.git_branch
 
+    test_status = get_test_status
+    test_backend_coverage = get_test_backend_coverage
     plugin_attrs = {}
 
     if test_backend_coverage.present? && plugin.test_backend_coverage != test_backend_coverage
@@ -40,23 +41,19 @@ class ::PluginManager::TestManager
       plugin_attrs[:test_status] = test_status
     end
 
-    if @plugin.status == PluginManager::Manifest.status[:compatible]
-      if test_status == PluginManager::TestManager.status[:passing] && test_backend_coverage.to_i >= @recommended_coverage_threshold
-        plugin_attrs[:status] = PluginManager::Manifest.status[:recommended]
-      end
-
-      if test_status == PluginManager::TestManager.status[:failing]
-        plugin_attrs[:status] = PluginManager::Manifest.status[:tests_failing]
-      end
-    end
-
     if test_status == PluginManager::TestManager.status[:failing]
+      sha = @host.test_sha || @plugin.installed_sha
+      branch = @host.test_branch || @plugin.git_branch
+      message = @host.test_name ?
+        I18n.t("plugin_manager.test.error_test", test_name: @host.test_name) :
+        I18n.t("plugin_manager.test.error")
+
       PluginGuard::Log.add(
         type: 'test_error',
         plugin_name: @plugin.name,
-        plugin_sha: @host.test_sha,
-        plugin_branch: @host.test_branch,
-        message: I18n.t("plugin_manager.test.error", test_name: @host.test_name),
+        plugin_sha: sha,
+        plugin_branch: branch,
+        message: message,
         test_url: @host.test_url
       )
     end
@@ -66,24 +63,34 @@ class ::PluginManager::TestManager
     end
   end
 
-  def test_backend_coverage
-    @test_backend_coverage ||= begin
-      file_path = "#{Rails.root}/plugins/#{@plugin.name}/#{COVERAGE_FILE}"
-      return nil if !File.exist?(file_path)
-      coverage = JSON.parse(File.read(file_path))
-      coverage["result"]["line"]
-    end
+  def self.passing?(test_status)
+    test_status == PluginManager::TestManager.status[:passing]
   end
 
-  def test_status
-    @test_status ||= begin
-      status_path = @host.get_status_path
+  def self.failing?(test_status)
+    test_status == PluginManager::TestManager.status[:failing]
+  end
 
-      if status_path && response = request(status_path)
-        @host.get_status_from_response(response)
-      else
-        nil
-      end
+  def self.recommended_coverage?(coverage)
+    coverage.to_i >= SiteSetting.plugin_manager_recommended_coverage_threshold.to_i
+  end
+
+  protected
+
+  def get_test_backend_coverage
+    file_path = "#{Rails.root}/plugins/#{@plugin.name}/#{COVERAGE_FILE}"
+    return nil if !File.exist?(file_path)
+    coverage = JSON.parse(File.read(file_path))
+    coverage["result"]["line"]
+  end
+
+  def get_test_status
+    status_path = @host.get_status_path
+
+    if status_path && response = request(status_path)
+      @host.get_status_from_response(response)
+    else
+      nil
     end
   end
 

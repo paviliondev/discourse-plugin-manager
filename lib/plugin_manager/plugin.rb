@@ -10,7 +10,8 @@ class ::PluginManager::Plugin
                 :test_host,
                 :test_status,
                 :test_backend_coverage,
-                :instance
+                :instance,
+                :status_changed_at
 
   def initialize(plugin_name, attrs)
     @name = plugin_name
@@ -19,44 +20,57 @@ class ::PluginManager::Plugin
     @installed_sha = attrs[:installed_sha]
     @git_branch = attrs[:git_branch]
     @status = attrs[:status].to_i
+    @status_changed_at = attrs[:status_changed_at]
     @test_host = attrs[:test_host] if attrs[:test_host].present?
     @test_status = attrs[:test_status].to_i if attrs[:test_status].present?
     @test_backend_coverage = attrs[:test_backend_coverage].to_f if attrs[:test_backend_coverage].present?
     @instance = Discourse.plugins.select { |p| p.metadata.name == plugin_name }.first
   end
 
-  def handle_status_change!
-    if !compatible?
-      notifier = ::PluginManager::Notifier.new(name)
-      notifier.send
-    end
-  end
-
-  def compatible?
-    status == ::PluginManager::Manifest.status[:compatible]
-  end
-
   def present?
     installed_sha.present?
   end
 
+  def display_name
+    name.titleize
+  end
+
   def self.set(plugin_name, attrs)
     plugin = get(plugin_name)
+
     new_attrs = {
       url: attrs[:url] || plugin.url,
       installed_sha: attrs[:installed_sha] || plugin.installed_sha,
       git_branch: attrs[:git_branch] || plugin.git_branch,
       contact_emails: attrs[:contact_emails] || plugin.contact_emails,
       test_host: attrs[:test_host] || plugin.test_host,
-      test_status: attrs[:test_status] || plugin.test_status,
       test_backend_coverage: attrs[:test_backend_coverage] || plugin.test_backend_coverage,
+      test_status: attrs[:test_status].nil? ? plugin.test_status : attrs[:test_status].to_i,
       status: attrs[:status].nil? ? plugin.status : attrs[:status].to_i
     }
 
+    manifest = PluginManager::Manifest
+    test_manager = PluginManager::TestManager
+
+    if manifest.incompatible?(new_attrs[:status])
+      new_attrs[:status] = manifest.status[:incompatible]
+    elsif test_manager.failing?(new_attrs[:test_status])
+      new_attrs[:status] = manifest.status[:tests_failing]
+    elsif test_manager.passing?(new_attrs[:test_status]) && test_manager.recommended_coverage?(new_attrs[:test_backend_coverage])
+      new_attrs[:status] = manifest.status[:recommended]
+    else
+      new_attrs[:status] = manifest.status[:compatible]
+    end
+
+    old_status = plugin.status
+    new_status = new_attrs[:status]
+    status_changed = old_status != new_status
+    new_attrs[:status_changed_at] = status_changed ? Time.now : plugin.status_changed_at
+
     saved = ::PluginStore.set(::PluginManager::NAMESPACE, plugin_name, new_attrs)
 
-    if saved && plugin.status != new_attrs[:status]
-      plugin.handle_status_change!
+    if saved && status_changed
+      PluginManager::Manifest.handle_status_change(plugin_name, old_status, new_status)
     end
 
     saved

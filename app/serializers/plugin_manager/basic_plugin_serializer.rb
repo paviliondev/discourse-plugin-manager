@@ -1,6 +1,7 @@
 class PluginManager::BasicPluginSerializer < ::ApplicationSerializer
   attributes :name,
-             :status
+             :status,
+             :status_changed_at
 
   def status
     PluginManager::Manifest.status.key(object.status).to_s
