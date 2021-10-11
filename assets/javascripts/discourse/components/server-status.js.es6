@@ -1,13 +1,7 @@
 import Component from '@ember/component';
 import { getOwner } from 'discourse-common/lib/get-owner';
-import { default as discourseComputed } from 'discourse-common/utils/decorators';
-
-const pluginStatuses = [
-  'recommended',
-  'compatible',
-  'incompatible',
-  'tests_failing'
-];
+import discourseComputed from 'discourse-common/utils/decorators';
+import { bind, scheduleOnce } from "@ember/runloop";
 
 export default Component.extend({
   classNameBindings: [':server-status', 'visible'],
@@ -24,12 +18,7 @@ export default Component.extend({
     this.setProperties({
       router,
       discourse,
-      pluginLists: pluginStatuses.map(status => {
-        return {
-          status,
-          plugins: plugins.filter(p => p.status === status)
-        }
-      })
+      plugins
     });
   },
 

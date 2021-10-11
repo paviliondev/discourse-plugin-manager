@@ -1,0 +1,63 @@
+<div class="detail-title">
+  <h4>{{detailTitle}}</h4>
+</div>
+
+<ul class="detail-metadata">
+  <li>
+    <span>{{i18n 'server_status.plugin.commit'}}:</span>
+    <span>
+      <a href={{plugin.gitLink}} title={{i18n 'server_status.plugin.commit'}}>
+        {{plugin.shortSha}}
+      </a>
+    </span>
+  </li>
+  {{#if plugin.test_backend_coverage}}
+    <li>
+      <span>{{i18n 'server_status.plugin.test_backend_coverage'}}:</span>
+      <span>{{plugin.test_backend_coverage}}%</span>
+    </li>
+  {{/if}}
+</ul>
+
+{{#if hasLog}}
+  <div class="detail-actions log">
+    {{#if plugin.log.test_url}}
+      {{action-link
+        url=plugin.log.test_url
+        icon="external-link-alt"
+        labelKey="server_status.plugin.test_log"}}
+    {{/if}}
+    {{#if plugin.log.issue_url}}
+      {{action-link
+        url=plugin.log.issue_url
+        icon="external-link-alt"
+        labelKey="server_status.plugin.issue_report"}}
+    {{/if}}
+
+    <a class="show-log" {{action "toggleLog"}}>
+      {{d-icon "file-alt"}}
+      <span>{{i18n "server_status.plugin.log.show"}}</span>
+    </a>
+
+    {{#if showLog}}
+      <div class="log-detail">
+        <div class="log-attr log-date">
+          <label>{{i18n "server_status.plugin.log.updated_at"}}</label>
+          <span>{{plugin.log.updated_at}}</span>
+        </div>
+
+        <div class="log-attr log-message">
+          <label>{{i18n "server_status.plugin.log.message"}}</label>
+          <span>{{plugin.log.message}}</span>
+        </div>
+
+        {{#if plugin.log.backtrace}}
+          <div class="log-attr log-backtrace">
+            <label>{{i18n "server_status.plugin.log.backtrace"}}</label>
+            <div class="backtrace-content">{{plugin.log.backtrace}}</div>
+          </div>
+        {{/if}}
+      </div>
+    {{/if}}
+  </div>
+{{/if}}

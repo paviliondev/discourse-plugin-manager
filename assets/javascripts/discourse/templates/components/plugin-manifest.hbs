@@ -1,0 +1,16 @@
+{{#if plugins}}
+  <table class="table plugin-manifest-table grid">
+    <thead>
+      <th>{{i18n "server_status.plugin.title"}}</th>
+      <th>{{i18n "server_status.plugin.owner.label"}}</th>
+      <th>{{i18n "server_status.plugin.status"}}</th>
+    </thead>
+    <tbody>
+      {{#each plugins as |plugin|}}
+        {{plugin-status plugin=plugin discourse=discourse}}
+      {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  <p>{{i18n "search.no_results"}}</p>
+{{/if}}

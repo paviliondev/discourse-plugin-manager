@@ -154,7 +154,7 @@ class PluginManager::Notifier
   end
 
   def send_post?
-    contact_emails&.include?("thepavilion.io") && (
+    @plugin.pavilion && (
       post_settings[:base_url].present? &&
       post_settings[:api_user].present? &&
       post_settings[:api_token].present?

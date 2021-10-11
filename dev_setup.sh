@@ -3,6 +3,7 @@ mkdir -p lib/plugin_guard
 mkdir -p lib/plugin_guard/extensions
 mkdir -p lib/plugin_manager
 mkdir -p lib/plugin_manager/test_host
+mkdir -p lib/plugin_manager/repository_host
 
 cp -rf ${CODE_ROOT}/discourse-plugin-manager-server/lib/plugin_guard/extensions/discourse.rb lib/plugin_guard/extensions/discourse.rb
 cp -rf ${CODE_ROOT}/discourse-plugin-manager-server/lib/plugin_guard/extensions/plugin_instance.rb lib/plugin_guard/extensions/plugin_instance.rb
@@ -19,6 +20,10 @@ cp -rf ${CODE_ROOT}/discourse-plugin-manager-server/lib/plugin_manager/test_host
 cp -rf ${CODE_ROOT}/discourse-plugin-manager-server/lib/plugin_manager/test_host/github.rb lib/plugin_manager/test_host/github.rb
 cp -rf ${CODE_ROOT}/discourse-plugin-manager-server/lib/plugin_manager/test_manager.rb lib/plugin_manager/test_manager.rb
 cp -rf ${CODE_ROOT}/discourse-plugin-manager-server/lib/plugin_manager/update.rb lib/plugin_manager/update.rb
+cp -rf ${CODE_ROOT}/discourse-plugin-manager-server/lib/plugin_manager/repository_owner.rb lib/plugin_manager/repository_owner.rb
+cp -rf ${CODE_ROOT}/discourse-plugin-manager-server/lib/plugin_manager/repository_host.rb lib/plugin_manager/repository_host.rb
+cp -rf ${CODE_ROOT}/discourse-plugin-manager-server/lib/plugin_manager/repository_host/github.rb lib/plugin_manager/repository_host/github.rb
+cp -rf ${CODE_ROOT}/discourse-plugin-manager-server/lib/plugin_manager/repository_manager.rb lib/plugin_manager/repository_manager.rb
 
 cp -rf ${CODE_ROOT}/discourse-plugin-manager-server/lib/plugin_guard.rb lib/plugin_guard.rb
 cp -rf ${CODE_ROOT}/discourse-plugin-manager-server/lib/plugin_manager.rb lib/plugin_manager.rb

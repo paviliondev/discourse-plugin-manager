@@ -3,6 +3,7 @@ class ::PluginManager::Plugin
 
   attr_accessor :name,
                 :url,
+                :authors,
                 :contact_emails,
                 :installed_sha,
                 :git_branch,
@@ -11,11 +12,13 @@ class ::PluginManager::Plugin
                 :test_status,
                 :test_backend_coverage,
                 :instance,
-                :status_changed_at
+                :status_changed_at,
+                :owner
 
   def initialize(plugin_name, attrs)
     @name = plugin_name
     @url = attrs[:url]
+    @authors = attrs[:authors]
     @contact_emails = attrs[:contact_emails]
     @installed_sha = attrs[:installed_sha]
     @git_branch = attrs[:git_branch]
@@ -25,6 +28,7 @@ class ::PluginManager::Plugin
     @test_status = attrs[:test_status].to_i if attrs[:test_status].present?
     @test_backend_coverage = attrs[:test_backend_coverage].to_f if attrs[:test_backend_coverage].present?
     @instance = Discourse.plugins.select { |p| p.metadata.name == plugin_name }.first
+    @owner = PluginManager::RepositoryOwner.new(attrs[:owner]) if attrs[:owner].present?
   end
 
   def present?
@@ -42,11 +46,13 @@ class ::PluginManager::Plugin
       url: attrs[:url] || plugin.url,
       installed_sha: attrs[:installed_sha] || plugin.installed_sha,
       git_branch: attrs[:git_branch] || plugin.git_branch,
+      authors: attrs[:authors] || plugin.authors,
       contact_emails: attrs[:contact_emails] || plugin.contact_emails,
       test_host: attrs[:test_host] || plugin.test_host,
       test_backend_coverage: attrs[:test_backend_coverage] || plugin.test_backend_coverage,
       test_status: attrs[:test_status].nil? ? plugin.test_status : attrs[:test_status].to_i,
-      status: attrs[:status].nil? ? plugin.status : attrs[:status].to_i
+      status: attrs[:status].nil? ? plugin.status : attrs[:status].to_i,
+      owner: attrs[:owner]&.instance_values || plugin.owner&.instance_values
     }
 
     manifest = PluginManager::Manifest
@@ -141,6 +147,7 @@ class ::PluginManager::Plugin
       attrs = {
         url: metadata.url,
         contact_emails: metadata.contact_emails,
+        authors: metadata.authors,
         installed_sha: sha,
         git_branch: branch,
         status: path.include?(PluginManager::Manifest::INCOMPATIBLE_FOLDER) ?
@@ -148,6 +155,14 @@ class ::PluginManager::Plugin
           PluginManager::Manifest.status[:compatible]
       }
       attrs[:test_host] = test_host if test_host
+
+      if host_name = ::PluginManager::RepositoryHost.get_name(metadata.url)
+        respository_manager = ::PluginManager::RepositoryManager.new(host_name)
+
+        if respository_manager.ready?
+          attrs[:owner] = respository_manager.get_owner(metadata.name)
+        end
+      end
 
       ::PluginManager::Plugin.set(metadata.name, attrs)
       ::PluginManager::Plugin.get(metadata.name)

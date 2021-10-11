@@ -1,0 +1,24 @@
+<div class="detail-title">
+  {{owner-logo owner label=true linked=true}}
+
+  <div class="owner-type">
+    {{d-icon typeIcon}}
+    <span>{{typeLabel}}</span>
+  </div>
+</div>
+
+<ul class="detail-metadata">
+  {{#if owner.description}}
+    <li>{{owner.description}}</li>
+  {{/if}}
+</ul>
+
+<div class="detail-actions log">
+  {{#if owner.website}}
+    {{action-link url=owner.website icon="globe" labelKey="server_status.plugin.owner.website"}}
+  {{/if}}
+
+  {{#if owner.contact}}
+    {{action-link url=owner.website icon="envelope" labelKey="server_status.plugin.owner.website"}}
+  {{/if}}
+</div>

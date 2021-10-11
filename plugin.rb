@@ -9,7 +9,11 @@ register_asset "stylesheets/mobile/plugin-manager.scss", :mobile
 
 if respond_to?(:register_svg_icon)
   register_svg_icon "bug"
-  register_svg_icon "info-circle"
+  register_svg_icon "far-check-circle"
+  register_svg_icon "far-times-circle"
+  register_svg_icon "code-branch"
+  register_svg_icon "vial"
+  register_svg_icon "building"
 end
 
 after_initialize do
@@ -23,6 +27,7 @@ after_initialize do
     ../app/serializers/plugin_manager/log_serializer.rb
     ../app/serializers/plugin_manager/basic_plugin_serializer.rb
     ../app/serializers/plugin_manager/plugin_serializer.rb
+    ../app/serializers/plugin_manager/owner_serializer.rb
     ../config/routes.rb
   ).each do |path|
     load File.expand_path(path, __FILE__)

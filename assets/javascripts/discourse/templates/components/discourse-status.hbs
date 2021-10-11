@@ -1,16 +1,27 @@
-<div class="branch">
-  <label>{{i18n 'server_status.discourse.branch'}}</label>
-  {{dash-if-empty discourse.git_branch}}
-</div>
+<button class="btn btn-icon-text" {{action "toggleDiscourseStatus"}}>
+  {{d-icon "code-branch"}}
+  <span classs="d-button-label">{{discourse.git_branch}}</span>
+</button>
 
-<div class="version">
-  <label>{{i18n 'server_status.discourse.version'}}</label>
-  {{dash-if-empty discourse.installed_version}}
-</div>
+{{#if showDiscourseDetail}}
+  <div class="discourse-detail">
+    <div class="branch status-item">
+      <label>{{i18n 'server_status.discourse.branch'}}</label>
+      <span>{{d-icon "code-branch"}}{{dash-if-empty discourse.git_branch}}</span>
+    </div>
 
-<div class="sha-link">
-  <label>{{i18n 'server_status.discourse.commit'}}</label>
-  <a href={{discourse.gitLink}} rel="noopener noreferrer" target="_blank">
-    {{discourse.shortSha}}
-  </a>
-</div>
+    <div class="version status-item">
+      <label>{{i18n 'server_status.discourse.version'}}</label>
+      <span>{{dash-if-empty discourse.installed_version}}</span>
+    </div>
+
+    <div class="sha-link status-item">
+      <label>{{i18n 'server_status.discourse.commit'}}</label>
+      <span>
+        <a href={{discourse.gitLink}} rel="noopener noreferrer" target="_blank">
+          {{discourse.shortSha}}
+        </a>
+      </span>
+    </div>
+  </div>
+{{/if}}

@@ -1,7 +1,7 @@
 en:
   js:
     server_status:
-      title: "Plugin Manifest"
+      title: "Plugins"
       description: >
         This site is updated automatically every 24 hours.
         You can use it to test how a plugin works on the version of Discourse displayed below.
@@ -11,30 +11,44 @@ en:
       bug_report: "Report a bug"
       commit: "Commit"
       discourse:
-        branch: "Discourse Branch"
-        version: "Discourse Version"
-        commit: "Discourse Commit"
+        branch: "Branch"
+        version: "Version"
+        commit: "Commit"
       plugin:
+        title: "Plugin"
+        authors: "Authors"
+        owner:
+          label: Owner
+          logo: "%{ownerName} logo"
+          website: Website
+          email: Email
+          type:
+            user: User
+            organization: Organization
+        status: "Status"
         commit: "Plugin Commit"
         test_backend_coverage: "Test Coverage"
         contact_emails: "Contacts"
         status_info: Information on what this means
+        test_link:
+          label: Test
+          title: "Test the %{pluginName} plugin"
         recommended:
-          title: Recommended Plugins
-          detail_title: "%{pluginName} is recommended on Discourse %{discourseVersion}"
-          description: Recommended plugins load succesfully on the latest commit of the Discourse branch running on this site and follow best practices.
+          title: Recommended
+          detail_title: "Recommended on Discourse %{discourseBranch}"
+          description: This plugin loads succesfully on Discourse %{discourseBranch} and follow best practices.
         compatible:
-          title: Compatible Plugins
-          detail_title: "%{pluginName} is compatible with Discourse %{discourseVersion}"
-          description: Compatible plugins load succesfully on the latest commit of the Discourse branch running on this site.
+          title: Compatible
+          detail_title: "Compatible with Discourse %{discourseBranch}"
+          description: This plugin loads succesfully on Discourse %{discourseBranch}.
         incompatible:
-          title: Incompatible Plugins
-          detail_title: "%{pluginName} is not compatible with Discourse %{discourseVersion}"
-          description: Incompatible plugins do not load succesfully on the latest commit of the Discourse branch running on this site.
+          title: Incompatible
+          detail_title: "Not compatible with Discourse %{discourseBranch}"
+          description: This plugin does not load succesfully on Discourse %{discourseBranch}.
         tests_failing:
-          title: Tests Failing Plugins
-          detail_title: "%{pluginName} works with Discourse %{discourseVersion}, but its tests are failing"
-          description: Tests failing plugins load succesfully on the latest commit of the Discourse branch running on this site, but have a failing test.
+          title: Tests Failing
+          detail_title: "Tests are failing on Discourse %{discourseBranch}"
+          description: This plugin loads succesfully on Discourse %{discourseBranch}, but its tests are failing.
         learn_more: Learn more about what this means.
         issue_report: issue report
         test_log: test log

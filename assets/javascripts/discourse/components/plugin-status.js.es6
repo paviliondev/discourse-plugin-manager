@@ -1,48 +1,12 @@
 import Component from "@ember/component";
-import { default as discourseComputed } from 'discourse-common/utils/decorators';
-import { notEmpty } from "@ember/object/computed";
 import { bind, scheduleOnce } from "@ember/runloop";
 import { createPopper } from "@popperjs/core";
-import { dasherize } from "@ember/string";
 
 export default Component.extend({
-  classNameBindings: [":plugin-status", "statusClass", "plugin.name"],
-  hasLog: notEmpty("plugin.log"),
-
-  @discourseComputed("plugin.status")
-  statusClass(status) {
-    return dasherize(status);
-  },
-
-  @discourseComputed(
-    "plugin.status",
-    "plugin.name",
-    "discourse.installed_version",
-  )
-  detailTitle(
-    pluginStatus,
-    pluginName,
-    discourseVersion,
-  ) {
-    return I18n.t(`server_status.plugin.${pluginStatus}.detail_title`, {
-      pluginName,
-      discourseVersion
-    });
-  },
-
-  click(e) {
-    if (!$(e.target).closest('.show-log').length) {
-      if (this.showDetail) {
-        this.setProperties({
-          showDetail: false,
-          showLog: false
-        });
-      } else {
-        this.set("showDetail", true);
-        scheduleOnce("afterRender", this, this.createDetailsModal);
-      }
-    }
-  },
+  tagName: 'tr',
+  classNameBindings: [":plugin-status", "plugin.statusClass", "plugin.name"],
+  showPluginDetail: false,
+  showStatusDetail: false,
 
   didInsertElement() {
     $(document).on("click", bind(this, this.documentClick));
@@ -52,22 +16,41 @@ export default Component.extend({
     $(document).off("click", bind(this, this.documentClick));
   },
 
-  documentClick(e) {
+  documentClick(event) {
     if (this._state === "destroying") { return; }
-    let $target = $(e.target);
 
-    if (!$target.closest(this.element).length) {
-      this.setProperties({
-        showDetail: false,
-        showLog: false
-      });
+    if (!event.target.closest(`.plugin-status.${this.plugin.name} .status-container`)) {
+      this.set('showStatusDetail', false);
+    }
+
+    if (!event.target.closest(`.plugin-status.${this.plugin.name} .name-container`)) {
+      this.set('showPluginDetail', false);
+    }
+
+    if (!event.target.closest(`.plugin-status.${this.plugin.name} .owner-container`)) {
+      this.set('showOwnerDetail', false);
     }
   },
 
-  createDetailsModal() {
-    let container = document.querySelector(`.plugin-status.${this.plugin.name}`);
-    let modal = document.querySelector(`.plugin-status.${this.plugin.name} .details`);
+  createPluginDetailModal() {
+    let container = this.element.querySelector('.name-container');
+    let modal = this.element.querySelector('.plugin-detail');
+    this.createModal(container, modal);
+  },
 
+  createStatusDetailModal() {
+    let container = this.element.querySelector('.status-container');
+    let modal = this.element.querySelector('.plugin-status-detail');
+    this.createModal(container, modal);
+  },
+
+  createOwnerDetailModal() {
+    let container = this.element.querySelector('.owner-container');
+    let modal = this.element.querySelector('.owner-detail');
+    this.createModal(container, modal);
+  },
+
+  createModal(container, modal) {
     this._popper = createPopper(
       container,
       modal, {
@@ -89,8 +72,30 @@ export default Component.extend({
   },
 
   actions: {
-    toggleLog() {
-      this.toggleProperty('showLog');
+    togglePluginDetail() {
+      this.toggleProperty('showPluginDetail');
+
+      if (this.showPluginDetail) {
+        scheduleOnce("afterRender", this, this.createPluginDetailModal);
+      }
+    },
+
+    toggleStatusDetail() {
+      if (!event.target.closest(`.plugin-status.${this.plugin.name} .log`)) {
+        this.toggleProperty('showStatusDetail');
+
+        if (this.showStatusDetail) {
+          scheduleOnce("afterRender", this, this.createStatusDetailModal);
+        }
+      }
+    },
+
+    toggleOwnerDetail() {
+      this.toggleProperty('showOwnerDetail');
+
+      if (this.showOwnerDetail) {
+        scheduleOnce("afterRender", this, this.createOwnerDetailModal);
+      }
     }
   }
 })
