@@ -21,6 +21,7 @@ after_initialize do
     ../mailers/plugin_mailer.rb
     ../app/jobs/scheduled/fetch_plugin_tests_status.rb
     ../app/jobs/regular/send_plugin_incompatible_notification.rb
+    ../app/controllers/plugin_manager/plugin_controller.rb
     ../app/controllers/plugin_manager/status_controller.rb
     ../app/serializers/plugin_manager/discourse_serializer.rb
     ../app/serializers/plugin_manager/log_serializer.rb

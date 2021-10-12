@@ -2,6 +2,7 @@ import discourseComputed from "discourse-common/utils/decorators";
 import ManagerStatus from "./status";
 import { dasherize } from "@ember/string";
 import { ajax } from 'discourse/lib/ajax';
+import { popupAjaxError } from 'discourse/lib/ajax-error';
 import { notEmpty } from "@ember/object/computed";
 
 const statusIcons = {
@@ -46,9 +47,28 @@ const PluginStatus = ManagerStatus.extend({
 });
 
 PluginStatus.reopenClass({
-  list() {
+  status() {
     return ajax('/plugin-manager/status');
-  }
+  },
+
+  list() {
+    return ajax('/admin/plugin-manager/plugin').catch(popupAjaxError);
+  },
+
+  save(plugin) {
+    return ajax(`/admin/plugin-manager/plugin/${plugin.name}`, {
+      type: "PUT",
+      data: {
+        plugin
+      },
+    }).catch(popupAjaxError);
+  },
+
+  destroy(plugin) {
+    return ajax(`/admin/plugin-manager/plugin/${plugin.name}`, {
+      type: "DELETE",
+    }).catch(popupAjaxError);
+  },
 });
 
 export default PluginStatus;

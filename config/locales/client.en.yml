@@ -61,9 +61,17 @@ en:
     admin:
       plugin_manager:
         title: "Plugin Manager"
-        plugin: "Plugin"
-        travis_repo: "Travis URL"
-        
-      
-
-        
+        plugin:
+          add: Add Plugin
+          save: Save
+          delete: Delete
+          title: "Plugin"
+          name: "Name"
+          url: "URL"
+          authors: "Authors"
+          about: "About"
+          version: "Version"
+          contact_emails: "Contact Emails"
+          test_host: "Test Host"
+          support_url: "Support URL"
+          status: "Status"

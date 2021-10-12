@@ -1,0 +1,13 @@
+<div class="plugin-manager-buttons">
+  {{d-button
+    action="addPlugin"
+    label="admin.plugin_manager.add_plugin"
+    title="admin.plugin_manager.add_plugin"}}
+</div>
+
+<div class="plugin-manager-plugins">
+  {{#each plugins as |plugin|}}
+    {{plugin-manager-plugin plugin=plugin}}
+  {{/each}}
+</div>
+

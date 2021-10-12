@@ -1,0 +1,89 @@
+<div class="attributes">
+  <div class="plugin-attr">
+    <label>{{i18n "admin.plugin_manager.plugin.name"}}</label>
+    {{input type="text" value=plugin.name disabled=plugin.from_file}}
+  </div>
+
+  <div class="plugin-attr">
+    <label>{{i18n "admin.plugin_manager.plugin.url"}}</label>
+    {{input type="text" value=plugin.url disabled=plugin.from_file}}
+  </div>
+
+  <div class="plugin-attr">
+    <label>{{i18n "admin.plugin_manager.plugin.authors"}}</label>
+    {{multi-select
+      value=plugin.authors
+      onChange=(action "updateNames")
+      options=(hash
+        disabled=plugin.from_file
+      )
+    }}
+  </div>
+
+  <div class="plugin-attr">
+    <label>{{i18n "admin.plugin_manager.plugin.about"}}</label>
+    {{textarea value=plugin.about disabled=plugin.from_file}}
+  </div>
+
+  <div class="plugin-attr">
+    <label>{{i18n "admin.plugin_manager.plugin.version"}}</label>
+    {{input type="text" value=plugin.version}}
+  </div>
+
+  <div class="plugin-attr">
+    <label>{{i18n "admin.plugin_manager.plugin.contact_emails"}}</label>
+    {{multi-select
+      value=plugin.contact_emails
+      onChange=(action "updateContactEmails")
+      options=(hash
+        disabled=plugin.from_file
+      )
+    }}
+  </div>
+
+  <div class="plugin-attr">
+    <label>{{i18n "admin.plugin_manager.plugin.test_host"}}</label>
+    {{combo-box
+      content=testHosts
+      value=plugin.test_host
+      options=(hash
+        disabled=plugin.from_file
+      )
+    }}
+  </div>
+
+  <div class="plugin-attr">
+    <label>{{i18n "admin.plugin_manager.plugin.status"}}</label>
+    {{combo-box
+      content=pluginStatuses
+      value=plugin.status
+    }}
+  </div>
+
+  <div class="plugin-attr">
+    <label>{{i18n "admin.plugin_manager.plugin.support_url"}}</label>
+    {{input type="text" value=plugin.support_url}}
+  </div>
+</div>
+
+<div class="actions">
+  {{conditional-loading-spinner
+    size="small"
+    condition=loading}}
+  {{#unless plugin.from_file}}
+    {{d-button
+      action="delete"
+      label="admin.plugin_manager.plugin.delete"
+      title="admin.plugin_manager.plugin.delete"
+      icon="trash-alt"
+      class="destroy"
+      disabled=loading}}
+  {{/unless}}
+  {{d-button
+    icon="save"
+    label="admin.plugin_manager.plugin.save"
+    title="admin.plugin_manager.plugin.save"
+    action="save"
+    disabled=loading
+    class="save"}}
+</div>

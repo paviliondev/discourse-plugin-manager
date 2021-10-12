@@ -7,7 +7,7 @@ export default {
   initialize() {
     ApplicationRoute.reopen({
       afterModel(model) {
-        return PluginStatus.list().then(result => {
+        return PluginStatus.status().then(result => {
           this.controllerFor('application').setProperties({
             discourse: DiscourseStatus.create(result.discourse),
             plugins: result.plugins.map((plugin) => PluginStatus.create(plugin))

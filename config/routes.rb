@@ -6,4 +6,11 @@ end
 
 Discourse::Application.routes.prepend do
   mount PluginManager::Engine, at: PluginManager::NAMESPACE
+
+  scope module: 'plugin_manager', constraints: AdminConstraint.new do
+    get 'admin/plugin-manager' => 'plugin#index'
+    get 'admin/plugin-manager/plugin' => 'plugin#index'
+    put 'admin/plugin-manager/plugin/:plugin_name' => 'plugin#index'
+    delete 'admin/plugin-manager/plugin/:plugin_name' => 'plugin#index'
+  end
 end
