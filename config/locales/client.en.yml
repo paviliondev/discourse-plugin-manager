@@ -60,11 +60,14 @@ en:
   admin_js:
     admin:
       plugin_manager:
-        title: "Plugin Manager"
+        nav_label: "Plugin Manager"
+        title: "Plugins"
         plugin:
+          edit: Edit Plugin
           add: Add Plugin
           save: Save
           delete: Delete
+          remove: Remove
           title: "Plugin"
           name: "Name"
           url: "URL"
@@ -75,3 +78,4 @@ en:
           test_host: "Test Host"
           support_url: "Support URL"
           status: "Status"
+          controls: "Controls"

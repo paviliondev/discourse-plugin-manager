@@ -5,14 +5,14 @@ class PluginManager::PluginController < Admin::AdminController
   end
 
   def update
-    plugin = ::PluginManager::Plugin.get(params[:name])
+    name = params[:plugin_name].dasherize
+    plugin = ::PluginManager::Plugin.get(name)
 
     if plugin.from_file
       attrs = params.require(:plugin).permit(:support_url)
     else
       attrs = params.require(:plugin)
         .permit(
-          :name,
           :url,
           :authors,
           :about,
@@ -28,19 +28,19 @@ class PluginManager::PluginController < Admin::AdminController
       end
     end
 
-    if PluginManager::Plugin.set(attrs)
+    if PluginManager::Plugin.set(name, attrs)
       render json: success_json.merge(
-        plugin: PluginManager::Plugin.get(params[:name])
+        plugin: PluginManager::Plugin.get(name)
       )
     else
       render json: failed_json
     end
   end
 
-  def destroy
-    params.require(:name)
+  def delete
+    name = params[:plugin_name].dasherize
 
-    if PluginManager::Plugin.remove(params[:name])
+    if PluginManager::Plugin.remove(name)
       render json: success_json
     else
       render json: failed_json

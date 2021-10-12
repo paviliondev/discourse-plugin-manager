@@ -10,7 +10,7 @@ Discourse::Application.routes.prepend do
   scope module: 'plugin_manager', constraints: AdminConstraint.new do
     get 'admin/plugin-manager' => 'plugin#index'
     get 'admin/plugin-manager/plugin' => 'plugin#index'
-    put 'admin/plugin-manager/plugin/:plugin_name' => 'plugin#index'
-    delete 'admin/plugin-manager/plugin/:plugin_name' => 'plugin#index'
+    put 'admin/plugin-manager/plugin/:plugin_name' => 'plugin#update'
+    delete 'admin/plugin-manager/plugin/:plugin_name' => 'plugin#delete'
   end
 end

@@ -67,7 +67,7 @@ class ::PluginManager::Plugin
       status: attrs[:status].nil? ? plugin.status : attrs[:status].to_i,
       owner: attrs[:owner]&.instance_values || plugin.owner&.instance_values,
       support_url: attrs[:support_url] || plugin.support_url,
-      from_file: attrs[:from_file] || false
+      from_file: attrs[:from_file] || plugin.from_file || false
     }
 
     manifest = PluginManager::Manifest

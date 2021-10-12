@@ -1,13 +1,45 @@
-<div class="plugin-manager-buttons">
-  {{d-button
-    action="addPlugin"
-    label="admin.plugin_manager.add_plugin"
-    title="admin.plugin_manager.add_plugin"}}
+<div class="plugin-manager-title">
+  <h3>{{i18n "admin.plugin_manager.title"}}</h3>
+  <div class="plugin-manager-buttons">
+    {{d-button
+      action="addPlugin"
+      icon="plus"
+      label="admin.plugin_manager.plugin.add"
+      title="admin.plugin_manager.plugin.add"}}
+  </div>
 </div>
 
 <div class="plugin-manager-plugins">
-  {{#each plugins as |plugin|}}
-    {{plugin-manager-plugin plugin=plugin}}
-  {{/each}}
+  <table class="grid">
+    <thead>
+      <th>{{i18n "admin.plugin_manager.plugin.title"}}</th>
+      <th>{{i18n "admin.plugin_manager.plugin.controls"}}</th>
+    </thead>
+    <tbody>
+      {{#each plugins as |plugin|}}
+        <tr>
+          <td class="plugin-name">{{plugin.display_name}}</td>
+          <td class="plugin-controls">
+            {{d-button
+              icon="pencil-alt"
+              label="admin.plugin_manager.plugin.edit"
+              title="admin.plugin_manager.plugin.edit"
+              action="editPlugin"
+              actionParam=plugin}}
+
+              {{#if plugin.new}}
+                {{d-button
+                  action="removePlugin"
+                  actionParam=plugin
+                  label="admin.plugin_manager.plugin.remove"
+                  title="admin.plugin_manager.plugin.remove"
+                  icon="times"
+                  class="destroy"}}
+              {{/if}}
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
 </div>
 
