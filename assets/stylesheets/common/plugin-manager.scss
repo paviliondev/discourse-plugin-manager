@@ -1,4 +1,5 @@
 @import "common/admin/admin_base.scss";
+@import "common/components/buttons.scss";
 
 $recommended: rgb(101, 221, 70);
 $compatible: rgb(72, 163, 226);
@@ -56,37 +57,9 @@ $incompatible: rgb(218, 59, 42);
     display: inline-flex;
     padding: 1em;
     flex-wrap: wrap;
-
-    .status-item {
-      display: block;
-
-      &:not(:last-child) {
-        margin-right: 20px;
-      }
-
-      label {
-        font-size: 0.8em;
-        margin-bottom: .25em;
-      }
-
-      span {
-        background-color: $primary-low;
-        padding: .3em .6em;
-        font-size: 1.1em;
-        border-radius: 4px;
-        display: inline-block;
-
-        .d-icon {
-          margin-right: .5em;
-        }
-      }
-    }
   }
 
-  .plugin-status-detail,
-  .plugin-detail,
-  .discourse-detail,
-  .owner-detail {
+  .plugin-manager-detail {
     border-top: 1px solid var(--primary-low);
     background-color: var(--secondary);
     color: var(--primary);
@@ -94,9 +67,24 @@ $incompatible: rgb(218, 59, 42);
     z-index: 1;
     padding: 1em;
     min-width: 300px;
+    max-width: 90vw;
 
-    p {
-      margin-bottom: 0;
+    .detail-label {
+      display: block;
+      font-size: 0.8em;
+      margin-bottom: .25em;
+    }
+
+    .detail-value {
+      background-color: $primary-low;
+      padding: .3em .6em;
+      font-size: 1.1em;
+      border-radius: 4px;
+      display: inline-block;
+
+      .d-icon {
+        margin-right: .5em;
+      }
     }
   }
 
@@ -184,63 +172,20 @@ $incompatible: rgb(218, 59, 42);
       thead {
         display: none;
       }
-      .label {
-        display: block;
-        color: var(--primary-medium);
-        font-size: $font-down-1;
-        margin: 0.5em 0 0.15em 0;
+
+      tbody {
+        border-top: 1px solid var(--primary-low);
       }
+
       tr {
-        grid-template-columns: repeat(3, 1fr);
-        display: grid;
-        line-height: $line-height-medium;
+        display: flex;
+        flex-flow: wrap;
         padding: 8px 0;
         min-width: 0;
-        td {
-          padding: 2px;
-          align-self: center;
-        }
-      }
 
-      tr.flagged-topic {
-        grid-template-columns: 0.25fr 1fr 1fr;
-        td.topic-title {
-          grid-column-start: 2;
-          grid-column-end: -2;
-          min-width: 0;
-          align-self: start;
+        td.name {
+          width: 100%;
         }
-        td.last-flagged {
-          grid-row: 1;
-          grid-column-end: -1;
-          text-align: right;
-          align-self: start;
-        }
-        td.flag-details {
-          grid-row: 2;
-          grid-column-end: -1;
-          text-align: right;
-        }
-        td.flagged-topic-users {
-          grid-row: 1;
-          grid-column-start: 1;
-          max-width: 60px;
-          align-self: start;
-          a {
-            display: inline-block;
-            margin: 0 0.25em 0.25em 0;
-          }
-        }
-        td.flag-counts {
-          grid-row: 2;
-          grid-column-start: 2;
-        }
-      }
-    }
-
-    @media screen and (min-width: 550px) {
-      tr {
-        grid-template-columns: repeat(6, 1fr);
       }
     }
   }
@@ -250,7 +195,6 @@ $incompatible: rgb(218, 59, 42);
     align-items: center;
     padding: .45em .85em;
     max-height: 34px;
-    border-radius: 4px;
     position: relative;
     cursor: pointer;
 
@@ -293,29 +237,51 @@ $incompatible: rgb(218, 59, 42);
 
   .detail-title {
     display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--primary-low);
+    padding-bottom: .5em;
 
-    h4 {
+    h3 {
       display: inline-block;
       margin: 0;
+      font-size: 1.1em;
+    }
+
+    .detail-links {
+      margin-left: auto;
+
+      a {
+        color: var(--primary);
+
+        .d-icon {
+          height: 1.3em;
+          width: 1.3em;
+        }
+      }
     }
   }
 
   .detail-metadata {
-    margin: .5em 0 0 0;
+    margin: 1em 0 0 0;
     padding: 0;
     list-style: none;
-
-    .d-icon {
-      margin-right: .5em;
-    }
+    display: flex;
+    flex-flow: wrap;
+    width: 100%;
 
     li {
-      margin-bottom: .2em;
+      margin: 0 1em 0 0;
 
       &:last-of-type {
-        margin-bottom: 0;
+        margin-right: 0;
       }
     }
+  }
+
+  .btn-owner-logo {
+    border: 1px solid var(--primary-low);
+    background: transparent;
+    padding: .45em .85em;
   }
 
   .owner-logo {
@@ -327,24 +293,42 @@ $incompatible: rgb(218, 59, 42);
       height: 20px;
     }
 
+    &.medium {
+      .owner-logo-img {
+        height: 30px;
+      }
+
+      .owner-logo-label {
+        font-size: 1.25em;
+      }
+    }
+
+    &.large {
+      .owner-logo-img {
+        height: 40px;
+      }
+
+      .owner-logo-label {
+        font-size: 1.5em;
+      }
+    }
+
     &.has-label .owner-logo-img {
       margin-right: .5em;
     }
   }
 
-  .owner-type {
+  .detail-actions {
+    margin-top: 1em;
+    padding-top: 1em;
+    border-top: 1px solid var(--primary-low);
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
 
-    .d-icon {
-      margin-right: .3em;
-      width: 13px;
-      height: 13px;
+    a.action-link {
+      @include btn;
+      margin-right: 1em;
     }
-  }
-
-  .log {
-    margin-top: .5em;
   }
 
   .show-log {
@@ -368,9 +352,12 @@ $incompatible: rgb(218, 59, 42);
 
   .log-detail {
     max-height: 300px;
+    width: 100%;
     overflow-y: scroll;
     background-color: var(--primary);
     color: var(--secondary);
+    margin-top: 1em;
+    padding: .5em;
 
     .log-attr {
       margin: .25em 0;

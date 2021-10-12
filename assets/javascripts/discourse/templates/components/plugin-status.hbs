@@ -12,7 +12,7 @@
 
 <td class="owner">
   <div class="owner-container">
-    <button class="btn btn-icon-text" {{action "toggleOwnerDetail"}}>
+    <button class="btn-owner-logo" {{action "toggleOwnerDetail"}}>
       {{owner-logo plugin.owner label=true}}
     </button>
 
@@ -33,4 +33,11 @@
       {{plugin-status-detail plugin=plugin discourse=discourse}}
     {{/if}}
   </div>
+</td>
+
+<td class="actions">
+  <a href={{supportLink}} class="btn btn-default" target="_blank">
+    {{d-icon "far-life-ring"}}
+    <span class="d-button-label">{{i18n "server_status.support"}}</span>
+  </a>
 </td>

@@ -1,32 +1,33 @@
 <div class="detail-title">
-  <h4>{{detailTitle}}</h4>
+  <h3>{{detailTitle}}</h3>
 </div>
 
 <ul class="detail-metadata">
   <li>
-    <span>{{i18n 'server_status.plugin.commit'}}:</span>
-    <span>
-      <a href={{plugin.gitLink}} title={{i18n 'server_status.plugin.commit'}}>
+    <label class="detail-label">{{i18n 'server_status.plugin.commit'}}</label>
+    <span class="detail-value">
+      <a href={{plugin.gitLink}} title={{i18n 'server_status.plugin.commit'}} target="_blank">
         {{plugin.shortSha}}
       </a>
     </span>
   </li>
   {{#if plugin.test_backend_coverage}}
     <li>
-      <span>{{i18n 'server_status.plugin.test_backend_coverage'}}:</span>
-      <span>{{plugin.test_backend_coverage}}%</span>
+      <label class="detail-label">{{i18n 'server_status.plugin.test_backend_coverage'}}</label>
+      <span class="detail-value">{{plugin.test_backend_coverage}}%</span>
     </li>
   {{/if}}
 </ul>
 
 {{#if hasLog}}
-  <div class="detail-actions log">
+  <div class="detail-actions">
     {{#if plugin.log.test_url}}
       {{action-link
         url=plugin.log.test_url
         icon="external-link-alt"
         labelKey="server_status.plugin.test_log"}}
     {{/if}}
+
     {{#if plugin.log.issue_url}}
       {{action-link
         url=plugin.log.issue_url
@@ -34,7 +35,7 @@
         labelKey="server_status.plugin.issue_report"}}
     {{/if}}
 
-    <a class="show-log" {{action "toggleLog"}}>
+    <a class="show-log action-link" {{action "toggleLog"}}>
       {{d-icon "file-alt"}}
       <span>{{i18n "server_status.plugin.log.show"}}</span>
     </a>

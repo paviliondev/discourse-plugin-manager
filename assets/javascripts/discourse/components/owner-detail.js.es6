@@ -3,7 +3,7 @@ import discourseComputed from "discourse-common/utils/decorators";
 import I18n from 'I18n';
 
 export default Component.extend({
-  classNames: 'owner-detail',
+  classNames: ['owner-detail', 'plugin-manager-detail'],
 
   @discourseComputed('owner.type')
   typeIcon(type) {
@@ -14,7 +14,12 @@ export default Component.extend({
   },
 
   @discourseComputed('owner.type')
-  typeLabel(type) {
+  typeTitle(type) {
     return I18n.t(`server_status.plugin.owner.type.${type}`);;
+  },
+
+  @discourseComputed('owner.email')
+  mailtoUrl(email) {
+    return `mailto:${email}`;
   }
 });

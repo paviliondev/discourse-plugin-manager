@@ -7,14 +7,13 @@
 register_asset "stylesheets/common/plugin-manager.scss"
 register_asset "stylesheets/mobile/plugin-manager.scss", :mobile
 
-if respond_to?(:register_svg_icon)
-  register_svg_icon "bug"
-  register_svg_icon "far-check-circle"
-  register_svg_icon "far-times-circle"
-  register_svg_icon "code-branch"
-  register_svg_icon "vial"
-  register_svg_icon "building"
-end
+register_svg_icon "bug"
+register_svg_icon "far-check-circle"
+register_svg_icon "far-times-circle"
+register_svg_icon "code-branch"
+register_svg_icon "vial"
+register_svg_icon "building"
+register_svg_icon "far-life-ring"
 
 after_initialize do
   %w(

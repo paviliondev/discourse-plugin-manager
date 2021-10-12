@@ -3,7 +3,7 @@ import discourseComputed from 'discourse-common/utils/decorators';
 import { notEmpty } from "@ember/object/computed";
 
 export default Component.extend({
-  classNames: "plugin-status-detail",
+  classNames: ["plugin-status-detail", "plugin-manager-detail"],
   hasLog: notEmpty("plugin.log"),
 
   @discourseComputed(

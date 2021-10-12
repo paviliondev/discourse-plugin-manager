@@ -1,24 +1,28 @@
 <div class="detail-title">
-  {{owner-logo owner label=true linked=true}}
+  {{owner-logo owner label=true linked=true class="medium"}}
 
-  <div class="owner-type">
-    {{d-icon typeIcon}}
-    <span>{{typeLabel}}</span>
+  <div class="detail-links">
+    <a href={{owner.url}} class="detail-link" target="_blank" title={{typeTitle}}>
+      {{d-icon "fab-github"}}
+    </a>
   </div>
 </div>
 
 <ul class="detail-metadata">
   {{#if owner.description}}
-    <li>{{owner.description}}</li>
+    <li>
+      <label class="detail-label">{{i18n 'server_status.plugin.owner.description'}}</label>
+      <span class="detail-value">{{owner.description}}</span>
+    </li>
   {{/if}}
 </ul>
 
-<div class="detail-actions log">
+<div class="detail-actions">
   {{#if owner.website}}
     {{action-link url=owner.website icon="globe" labelKey="server_status.plugin.owner.website"}}
   {{/if}}
 
-  {{#if owner.contact}}
-    {{action-link url=owner.website icon="envelope" labelKey="server_status.plugin.owner.website"}}
+  {{#if owner.email}}
+    {{action-link url=mailtoUrl icon="envelope" labelKey="server_status.plugin.owner.email"}}
   {{/if}}
 </div>

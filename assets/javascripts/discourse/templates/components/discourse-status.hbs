@@ -4,24 +4,26 @@
 </button>
 
 {{#if showDiscourseDetail}}
-  <div class="discourse-detail">
-    <div class="branch status-item">
-      <label>{{i18n 'server_status.discourse.branch'}}</label>
-      <span>{{d-icon "code-branch"}}{{dash-if-empty discourse.git_branch}}</span>
-    </div>
-
-    <div class="version status-item">
-      <label>{{i18n 'server_status.discourse.version'}}</label>
-      <span>{{dash-if-empty discourse.installed_version}}</span>
-    </div>
-
-    <div class="sha-link status-item">
-      <label>{{i18n 'server_status.discourse.commit'}}</label>
-      <span>
-        <a href={{discourse.gitLink}} rel="noopener noreferrer" target="_blank">
-          {{discourse.shortSha}}
-        </a>
-      </span>
-    </div>
+  <div class="discourse-detail plugin-manager-detail">
+    <ul class="detail-metadata">
+      <li>
+        <label class="detail-label">{{i18n 'server_status.discourse.branch'}}</label>
+        <span class="detail-value">
+          {{d-icon "code-branch"}}{{dash-if-empty discourse.git_branch}}
+        </span>
+      </li>
+      <li>
+        <label class="detail-label">{{i18n 'server_status.discourse.version'}}</label>
+        <span class="detail-value">{{dash-if-empty discourse.installed_version}}</span>
+      </li>
+      <li>
+        <label class="detail-label">{{i18n 'server_status.discourse.commit'}}</label>
+        <span class="detail-value">
+          <a href={{discourse.gitLink}} rel="noopener noreferrer" target="_blank">
+            {{discourse.shortSha}}
+          </a>
+        </span>
+      </li>
+    </ul>
   </div>
 {{/if}}

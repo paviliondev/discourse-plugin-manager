@@ -1,6 +1,7 @@
 import Component from "@ember/component";
 import { bind, scheduleOnce } from "@ember/runloop";
 import { createPopper } from "@popperjs/core";
+import discourseComputed from "discourse-common/utils/decorators";
 
 export default Component.extend({
   tagName: 'tr',
@@ -69,6 +70,14 @@ export default Component.extend({
         ],
       }
     );
+  },
+
+  @discourseComputed('plugin.contactEmails', 'plugin.owner')
+  supportLink(contactEmails, owner) {
+    if (owner && owner.name && owner.name.toLowerCase() === 'pavilion') {
+      return `https://thepavilion.io`;
+    }
+    return `mailto:${contactEmails[0]}`;
   },
 
   actions: {

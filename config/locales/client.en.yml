@@ -2,14 +2,10 @@ en:
   js:
     server_status:
       title: "Plugins"
-      description: >
-        This site is updated automatically every 24 hours.
-        You can use it to test how a plugin works on the version of Discourse displayed below.
-      next_period: "Next Support Period"
-      current_period: "Support Period Now"
-      add_plugin: "Add a plugin"
-      bug_report: "Report a bug"
-      commit: "Commit"
+      add_plugin: Add a plugin
+      documentation: Documentation
+      support: Support
+      commit: Commit
       discourse:
         branch: "Branch"
         version: "Version"
@@ -22,6 +18,7 @@ en:
           logo: "%{ownerName} logo"
           website: Website
           email: Email
+          description: Description
           type:
             user: User
             organization: Organization
@@ -30,6 +27,7 @@ en:
         test_backend_coverage: "Test Coverage"
         contact_emails: "Contacts"
         status_info: Information on what this means
+        actions: "Actions"
         test_link:
           label: Test
           title: "Test the %{pluginName} plugin"
