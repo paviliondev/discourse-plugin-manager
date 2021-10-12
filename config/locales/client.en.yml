@@ -13,6 +13,7 @@ en:
       plugin:
         title: "Plugin"
         authors: "Authors"
+        about: "About"
         owner:
           label: Owner
           logo: "%{ownerName} logo"

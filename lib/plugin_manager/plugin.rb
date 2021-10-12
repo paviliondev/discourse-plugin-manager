@@ -4,6 +4,8 @@ class ::PluginManager::Plugin
   attr_accessor :name,
                 :url,
                 :authors,
+                :about,
+                :version,
                 :contact_emails,
                 :installed_sha,
                 :git_branch,
@@ -19,6 +21,8 @@ class ::PluginManager::Plugin
     @name = plugin_name
     @url = attrs[:url]
     @authors = attrs[:authors]
+    @about = attrs[:about]
+    @version = attrs[:version]
     @contact_emails = attrs[:contact_emails]
     @installed_sha = attrs[:installed_sha]
     @git_branch = attrs[:git_branch]
@@ -47,6 +51,8 @@ class ::PluginManager::Plugin
       installed_sha: attrs[:installed_sha] || plugin.installed_sha,
       git_branch: attrs[:git_branch] || plugin.git_branch,
       authors: attrs[:authors] || plugin.authors,
+      about: attrs[:about] || plugin.about,
+      version: attrs[:version] || plugin.version,
       contact_emails: attrs[:contact_emails] || plugin.contact_emails,
       test_host: attrs[:test_host] || plugin.test_host,
       test_backend_coverage: attrs[:test_backend_coverage] || plugin.test_backend_coverage,
@@ -148,6 +154,8 @@ class ::PluginManager::Plugin
         url: metadata.url,
         contact_emails: metadata.contact_emails,
         authors: metadata.authors,
+        about: metadata.about,
+        version: metadata.version,
         installed_sha: sha,
         git_branch: branch,
         status: path.include?(PluginManager::Manifest::INCOMPATIBLE_FOLDER) ?

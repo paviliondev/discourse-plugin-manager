@@ -2,6 +2,8 @@ class PluginManager::PluginSerializer < ::PluginManager::BasicPluginSerializer
   attributes :display_name,
              :url,
              :authors,
+             :about,
+             :version,
              :owner,
              :contact_emails,
              :installed_sha,

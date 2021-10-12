@@ -7,6 +7,12 @@
 </div>
 
 <ul class="detail-metadata">
+  <li class="full-width">
+    <label class="detail-label">{{i18n 'server_status.plugin.about'}}</label>
+    <span class="detail-value">
+      {{plugin.about}}
+    </span>
+  </li>
   {{#if plugin.authorList}}
     <li>
       <label class="detail-label">{{i18n 'server_status.plugin.authors'}}</label>

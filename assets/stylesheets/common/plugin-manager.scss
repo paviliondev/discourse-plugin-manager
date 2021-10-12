@@ -65,7 +65,7 @@ $incompatible: rgb(218, 59, 42);
     color: var(--primary);
     box-shadow: shadow('dropdown');
     z-index: 1;
-    padding: 1em;
+    padding: 0 1em;
     min-width: 300px;
     max-width: 90vw;
 
@@ -240,6 +240,7 @@ $incompatible: rgb(218, 59, 42);
     align-items: center;
     border-bottom: 1px solid var(--primary-low);
     padding-bottom: .5em;
+    margin-top: 1em;
 
     h3 {
       display: inline-block;
@@ -270,9 +271,14 @@ $incompatible: rgb(218, 59, 42);
     width: 100%;
 
     li {
-      margin: 0 1em 0 0;
+      margin: 0 1em 1em 0;
 
       &:last-of-type {
+        margin-right: 0;
+      }
+
+      &.full-width {
+        width: 100%;
         margin-right: 0;
       }
     }
@@ -319,8 +325,8 @@ $incompatible: rgb(218, 59, 42);
   }
 
   .detail-actions {
-    margin-top: 1em;
     padding-top: 1em;
+    margin-bottom: 1em;
     border-top: 1px solid var(--primary-low);
     display: flex;
     flex-wrap: wrap;
