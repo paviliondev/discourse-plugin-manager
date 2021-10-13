@@ -12,7 +12,7 @@ class ::PluginGuard::Handler
   def perform(message, backtrace, precompiled_assets)
     clean_up_assets(precompiled_assets)
     move_to(PluginManager::Manifest::INCOMPATIBLE_FOLDER)
-    log(message, backtrace) if @plugin.compatible? && message.present?
+    log(message, backtrace) if @plugin&.compatible? && message.present?
   end
 
   def move_to(dir)
