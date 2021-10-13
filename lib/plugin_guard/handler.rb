@@ -10,9 +10,10 @@ class ::PluginGuard::Handler
   end
 
   def perform(message, backtrace, precompiled_assets)
+    manifest = PluginManager::Manifest
     clean_up_assets(precompiled_assets)
-    move_to(PluginManager::Manifest::INCOMPATIBLE_FOLDER)
-    log(message, backtrace) if @plugin&.compatible? && message.present?
+    move_to(manifest::INCOMPATIBLE_FOLDER)
+    log(message, backtrace) if manifest.working?(@plugin.status) && message.present?
   end
 
   def move_to(dir)
