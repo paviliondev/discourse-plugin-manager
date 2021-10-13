@@ -156,15 +156,17 @@ class ::PluginManager::Plugin
       sha = nil
       branch = nil
       test_host = nil
+      url = nil
 
       Dir.chdir(path) do
         sha = `git rev-parse HEAD`.strip
         branch = `git rev-parse --abbrev-ref HEAD`.strip
+        url = `git config --get remote.origin.url`.strip
         test_host = PluginManager::TestHost.detect
       end
 
       attrs = {
-        url: metadata.url,
+        url: url,
         contact_emails: metadata.contact_emails,
         authors: metadata.authors,
         about: metadata.about,
@@ -178,7 +180,7 @@ class ::PluginManager::Plugin
       }
       attrs[:test_host] = test_host if test_host
 
-      if host_name = ::PluginManager::RepositoryHost.get_name(metadata.url)
+      if host_name = ::PluginManager::RepositoryHost.get_name(url)
         respository_manager = ::PluginManager::RepositoryManager.new(host_name)
 
         if respository_manager.ready?

@@ -15,7 +15,7 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
 
   def get_owner_from_response(response)
     owner = ::PluginManager::RepositoryOwner.new(
-      name: response['name'],
+      name: response['name'] || response['login'],
       url: response['html_url'],
       website: response['blog'],
       email: response['email'],

@@ -12,12 +12,14 @@
 
 <td class="owner">
   <div class="owner-container">
-    <button class="btn-owner-logo" {{action "toggleOwnerDetail"}}>
-      {{owner-logo plugin.owner label=true}}
-    </button>
+    {{#if plugin.owner}}
+      <button class="btn-owner-logo" {{action "toggleOwnerDetail"}}>
+        {{owner-logo plugin.owner label=true}}
+      </button>
 
-    {{#if showOwnerDetail}}
-      {{owner-detail owner=plugin.owner}}
+      {{#if showOwnerDetail}}
+        {{owner-detail owner=plugin.owner}}
+      {{/if}}
     {{/if}}
   </div>
 </td>
