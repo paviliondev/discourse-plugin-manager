@@ -14,6 +14,7 @@ class ::PluginManager::Manifest
 
   def self.excluded
     @excluded ||= %w(
+      docker_manager
       discourse-plugin-manager-server
       discourse-details
       discourse-local-dates
