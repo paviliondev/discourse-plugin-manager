@@ -8,21 +8,25 @@
   </div>
 </div>
 
-<ul class="detail-metadata">
-  {{#if owner.description}}
-    <li>
-      <label class="detail-label">{{i18n 'server_status.plugin.owner.description'}}</label>
-      <span class="detail-value">{{owner.description}}</span>
-    </li>
-  {{/if}}
-</ul>
+{{#if hasMetadata}}
+  <ul class="detail-metadata">
+    {{#if owner.description}}
+      <li>
+        <label class="detail-label">{{i18n 'server_status.plugin.owner.description'}}</label>
+        <span class="detail-value">{{owner.description}}</span>
+      </li>
+    {{/if}}
+  </ul>
+{{/if}}
 
-<div class="detail-actions">
-  {{#if owner.website}}
-    {{action-link url=owner.website icon="globe" labelKey="server_status.plugin.owner.website"}}
-  {{/if}}
+{{#if hasActions}}
+  <div class="detail-actions">
+    {{#if owner.website}}
+      {{action-link url=owner.website icon="globe" labelKey="server_status.plugin.owner.website"}}
+    {{/if}}
 
-  {{#if owner.email}}
-    {{action-link url=mailtoUrl icon="envelope" labelKey="server_status.plugin.owner.email"}}
-  {{/if}}
-</div>
+    {{#if owner.email}}
+      {{action-link url=mailtoUrl icon="envelope" labelKey="server_status.plugin.owner.email"}}
+    {{/if}}
+  </div>
+{{/if}}

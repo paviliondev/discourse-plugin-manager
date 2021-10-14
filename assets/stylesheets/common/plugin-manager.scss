@@ -239,8 +239,7 @@ $incompatible: rgb(218, 59, 42);
   .detail-title {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid var(--primary-low);
-    padding-bottom: .5em;
+    padding-bottom: 1em;
     margin-top: 1em;
 
     h3 {
@@ -264,12 +263,13 @@ $incompatible: rgb(218, 59, 42);
   }
 
   .detail-metadata {
-    margin: 1em 0 0 0;
-    padding: 0;
+    margin: 0;
+    padding: 1em 0 0 0;
     list-style: none;
     display: flex;
     flex-flow: wrap;
     width: 100%;
+    border-top: 1px solid var(--primary-low);
 
     li {
       margin: 0 1em 1em 0;
