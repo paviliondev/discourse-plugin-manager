@@ -4,10 +4,11 @@ class ::PluginManager::Manifest
 
   def self.status
     @status ||= Enum.new(
-      compatible: 0,
-      incompatible: 1,
-      tests_failing: 2,
-      recommended: 3
+      unknown: 0,
+      compatible: 1,
+      incompatible: 2,
+      tests_failing: 3,
+      recommended: 4
     )
   end
 

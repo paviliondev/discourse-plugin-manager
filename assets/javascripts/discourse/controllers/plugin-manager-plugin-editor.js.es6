@@ -74,6 +74,7 @@ export default Controller.extend(ModalFunctionality, {
         contact_emails: plugin.contact_emails,
         test_host: plugin.test_host,
         support_url: plugin.support_url,
+        test_url: plugin.test_url,
         status: plugin.status
       }
 

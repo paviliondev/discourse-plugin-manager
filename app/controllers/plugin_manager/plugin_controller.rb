@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 class PluginManager::PluginController < Admin::AdminController
   def index
-    render_serialized(PluginManager::Plugin.list, PluginManager::PluginSerializer, root: 'plugins')
+    plugins = PluginManager::Plugin.list(page: params[:page].to_i, filter: params[:filter])
+    render_serialized(plugins, PluginManager::PluginSerializer, root: 'plugins')
   end
 
   def update
@@ -9,7 +10,10 @@ class PluginManager::PluginController < Admin::AdminController
     plugin = ::PluginManager::Plugin.get(name)
 
     if plugin.from_file
-      attrs = params.require(:plugin).permit(:support_url)
+      attrs = params.require(:plugin).permit(
+        :support_url,
+        :test_url
+      )
     else
       attrs = params.require(:plugin)
         .permit(
@@ -20,6 +24,7 @@ class PluginManager::PluginController < Admin::AdminController
           :contact_emails,
           :test_host,
           :support_url,
+          :test_url,
           :status
         )
 

@@ -208,6 +208,9 @@ $incompatible: rgb(218, 59, 42);
     position: relative;
     cursor: pointer;
 
+    &.unknown {
+      color: $primary;
+    }
     &.recommended {
       color: $recommended;
     }
@@ -228,6 +231,10 @@ $incompatible: rgb(218, 59, 42);
         margin-right: .4em;
       }
 
+      &.unknown {
+        background-color: rgba($primary-medium, 0.1);
+        border: 1px solid rgba($primary-medium, 0.5);
+      }
       &.recommended {
         background-color: rgba($recommended, 0.1);
         border: 1px solid rgba($recommended, 0.5);

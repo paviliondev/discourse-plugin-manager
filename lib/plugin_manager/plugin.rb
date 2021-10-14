@@ -1,4 +1,6 @@
 class ::PluginManager::Plugin
+  PAGE_LIMIT = 30
+
   include ActiveModel::Serialization
 
   attr_accessor :name,
@@ -17,6 +19,7 @@ class ::PluginManager::Plugin
                 :status_changed_at,
                 :owner,
                 :support_url,
+                :test_url,
                 :from_file
 
   def initialize(plugin_name, attrs)
@@ -35,6 +38,7 @@ class ::PluginManager::Plugin
     @test_backend_coverage = attrs[:test_backend_coverage].to_f if attrs[:test_backend_coverage].present?
     @owner = PluginManager::RepositoryOwner.new(attrs[:owner]) if attrs[:owner].present?
     @support_url = attrs[:support_url]
+    @test_url = attrs[:test_url]
     @from_file = attrs[:from_file]
 
     if @from_file
@@ -67,8 +71,17 @@ class ::PluginManager::Plugin
       status: attrs[:status].nil? ? plugin.status : attrs[:status].to_i,
       owner: attrs[:owner]&.instance_values || plugin.owner&.instance_values,
       support_url: attrs[:support_url] || plugin.support_url,
+      test_url: attrs[:test_url] || plugin.test_url,
       from_file: attrs[:from_file] || plugin.from_file || false
     }
+
+    if host_name = ::PluginManager::RepositoryHost.get_name(new_attrs[:url])
+      respository_manager = ::PluginManager::RepositoryManager.new(host_name)
+
+      if respository_manager.ready?
+        attrs[:owner] = respository_manager.get_owner(plugin_name)
+      end
+    end
 
     manifest = PluginManager::Manifest
     test_manager = PluginManager::TestManager
@@ -79,8 +92,10 @@ class ::PluginManager::Plugin
       new_attrs[:status] = manifest.status[:tests_failing]
     elsif test_manager.passing?(new_attrs[:test_status]) && test_manager.recommended_coverage?(new_attrs[:test_backend_coverage])
       new_attrs[:status] = manifest.status[:recommended]
-    else
+    elsif manifest.compatible?(new_attrs[:status])
       new_attrs[:status] = manifest.status[:compatible]
+    else
+      new_attrs[:status] = manifest.status[:unknown]
     end
 
     old_status = plugin.status
@@ -112,9 +127,9 @@ class ::PluginManager::Plugin
     plugin
   end
 
-  def self.list(with_plugin_manager: false)
+  def self.list(with_plugin_manager: false, page: 0, filter: nil)
     query = ::PluginStoreRow.where(plugin_name: ::PluginManager::NAMESPACE)
-    list_query(query, with_plugin_manager)
+    list_query(query, with_plugin_manager, page, filter)
   end
 
   def self.list_by(attr, value, with_plugin_manager: false)
@@ -127,8 +142,21 @@ class ::PluginManager::Plugin
     list_query(query, with_plugin_manager)
   end
 
-  def self.list_query(query, with_plugin_manager)
+  def self.list_query(query, with_plugin_manager, page = nil, filter = nil)
     query = query.where.not(key: "discourse-plugin-manager-server") unless with_plugin_manager
+
+    if filter
+      query = query.where("
+        value::json->>'name' ~ '#{filter}' OR
+        value::json->>'about' ~ '#{filter}' OR
+        value::json->>'owner'->>'name' ~ '#{filter}'
+      ")
+    end
+
+    if page
+      query = query.limit(PAGE_LIMIT).offset(page * PAGE_LIMIT)
+    end
+
     query.map { |record| create_from_record(record) }
   end
 
@@ -176,17 +204,9 @@ class ::PluginManager::Plugin
         status: path.include?(PluginManager::Manifest::INCOMPATIBLE_FOLDER) ?
           PluginManager::Manifest.status[:incompatible] :
           PluginManager::Manifest.status[:compatible],
-        from_file: true
+        from_file: true,
+        test_host: test_host
       }
-      attrs[:test_host] = test_host if test_host
-
-      if host_name = ::PluginManager::RepositoryHost.get_name(url)
-        respository_manager = ::PluginManager::RepositoryManager.new(host_name)
-
-        if respository_manager.ready?
-          attrs[:owner] = respository_manager.get_owner(metadata.name)
-        end
-      end
 
       ::PluginManager::Plugin.set(metadata.name, attrs)
       ::PluginManager::Plugin.get(metadata.name)

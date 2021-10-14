@@ -14,6 +14,7 @@ register_svg_icon "code-branch"
 register_svg_icon "vial"
 register_svg_icon "building"
 register_svg_icon "far-life-ring"
+register_svg_icon "far-question-circle"
 
 after_initialize do
   %w(

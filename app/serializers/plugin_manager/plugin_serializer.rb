@@ -13,6 +13,7 @@ class PluginManager::PluginSerializer < ::PluginManager::BasicPluginSerializer
              :log,
              :owner,
              :support_url,
+             :test_url,
              :from_file
 
   def log

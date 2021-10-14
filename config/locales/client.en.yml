@@ -14,6 +14,7 @@ en:
         title: "Plugin"
         authors: "Authors"
         about: "About"
+        filter: "filter plugins"
         owner:
           label: Owner
           logo: "%{ownerName} logo"
@@ -32,6 +33,10 @@ en:
         test_link:
           label: Test
           title: "Test the %{pluginName} plugin"
+        unknown:
+          title: Unknown
+          detail_title: "Unknown status on"
+          description: This plugin's status is unknown on %{branch}.
         recommended:
           title: Recommended
           detail_title: "Recommended on"
@@ -77,5 +82,6 @@ en:
           contact_emails: "Contact Emails"
           test_host: "Test Host"
           support_url: "Support URL"
+          test_url: "Test URL"
           status: "Status"
           controls: "Controls"

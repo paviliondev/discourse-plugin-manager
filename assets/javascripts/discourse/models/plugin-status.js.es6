@@ -6,6 +6,7 @@ import { popupAjaxError } from 'discourse/lib/ajax-error';
 import { notEmpty } from "@ember/object/computed";
 
 const statusIcons = {
+  unknown: "far-question-circle",
   recommended: "check-circle",
   compatible: "far-check-circle",
   tests_failing: "far-times-circle",
