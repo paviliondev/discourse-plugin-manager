@@ -1,10 +1,10 @@
 @import "common/admin/admin_base.scss";
 @import "common/components/buttons.scss";
 
-$recommended: rgb(101, 221, 70);
-$compatible: rgb(72, 163, 226);
-$tests-failing: rgb(242, 153, 55);
-$incompatible: rgb(218, 59, 42);
+$recommended: #339b18;
+$compatible: #038ae7;
+$tests-failing: #d47e00;
+$incompatible: #ef1700;
 
 .discourse-no-touch .btn-success,
 .discourse-no-touch .btn-success:hover {
@@ -355,7 +355,7 @@ $incompatible: rgb(218, 59, 42);
   }
 
   .btn-owner-logo {
-    border: 1px solid var(--primary-low);
+    border: 1px solid rgba($primary, 0.3);
     background: transparent;
     padding: .45em .85em;
   }
