@@ -6,20 +6,14 @@ export default Component.extend({
   classNames: ["plugin-status-detail", "plugin-manager-detail"],
   hasLog: notEmpty("plugin.log"),
 
-  @discourseComputed(
-    "plugin.status",
-    "plugin.display_name",
-    "discourse.git_branch",
-  )
-  detailTitle(
-    pluginStatus,
-    pluginName,
-    discourseBranch,
-  ) {
-    return I18n.t(`server_status.plugin.${pluginStatus}.detail_title`, {
-      pluginName,
-      discourseBranch
-    });
+  @discourseComputed("plugin.status")
+  detailTitle(pluginStatus) {
+    return I18n.t(`server_status.plugin.${pluginStatus}.detail_title`);
+  },
+
+  @discourseComputed("plugin.status")
+  detailDescription(pluginStatus) {
+    return I18n.t(`server_status.plugin.${pluginStatus}.description`);
   },
 
   actions: {

@@ -1,5 +1,13 @@
 <div class="detail-title">
-  <h3>{{detailTitle}}</h3>
+  <h3 title={{detailDescription}}>
+    {{detailTitle}}<span class="discourse-branch">{{discourse.git_branch}}</span>
+  </h3>
+
+  <div class="detail-links">
+    <span class="status-badge {{plugin.statusClass}}" title={{plugin.statusTitle}}>
+      {{d-icon plugin.statusIcon}}
+    </span>
+  </div>
 </div>
 
 <ul class="detail-metadata">

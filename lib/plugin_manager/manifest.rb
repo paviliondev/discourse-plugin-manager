@@ -12,7 +12,15 @@ class ::PluginManager::Manifest
   end
 
   def self.excluded
-    @excluded ||= ::Plugin::Metadata::OFFICIAL_PLUGINS
+    @excluded ||= %w(
+      discourse-details
+      discourse-local-dates
+      discourse-narrative-bot
+      discourse-presence
+      lazy-yt
+      poll
+      styleguide
+    )
   end
 
   def plugins

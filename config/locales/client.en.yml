@@ -34,20 +34,20 @@ en:
           title: "Test the %{pluginName} plugin"
         recommended:
           title: Recommended
-          detail_title: "Recommended on Discourse %{discourseBranch}"
-          description: This plugin loads succesfully on Discourse %{discourseBranch} and follow best practices.
+          detail_title: "Recommended on"
+          description: This plugin loads succesfully on %{branch} and follow best practices.
         compatible:
           title: Compatible
-          detail_title: "Compatible with Discourse %{discourseBranch}"
-          description: This plugin loads succesfully on Discourse %{discourseBranch}.
+          detail_title: "Compatible with"
+          description: This plugin loads succesfully on %{branch}.
         incompatible:
           title: Incompatible
-          detail_title: "Not compatible with Discourse %{discourseBranch}"
-          description: This plugin does not load succesfully on Discourse %{discourseBranch}.
+          detail_title: "Not compatible with"
+          description: This plugin does not load succesfully on %{branch}.
         tests_failing:
           title: Tests Failing
-          detail_title: "Tests are failing on Discourse %{discourseBranch}"
-          description: This plugin loads succesfully on Discourse %{discourseBranch}, but its tests are failing.
+          detail_title: "Tests are failing on"
+          description: This plugin loads succesfully on %{branch}, but its tests are failing.
         learn_more: Learn more about what this means.
         issue_report: issue report
         test_log: test log

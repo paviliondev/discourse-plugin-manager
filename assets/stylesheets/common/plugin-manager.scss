@@ -54,12 +54,6 @@ $incompatible: rgb(218, 59, 42);
     }
   }
 
-  .discourse-detail {
-    display: inline-flex;
-    padding: 1em;
-    flex-wrap: wrap;
-  }
-
   .plugin-manager-detail {
     border-top: 1px solid var(--primary-low);
     background-color: var(--secondary);
@@ -67,7 +61,7 @@ $incompatible: rgb(218, 59, 42);
     box-shadow: shadow('dropdown');
     z-index: 1;
     padding: 0 1em;
-    min-width: 300px;
+    width: 400px;
     max-width: 90vw;
 
     .detail-label {
@@ -80,11 +74,27 @@ $incompatible: rgb(218, 59, 42);
       background-color: $primary-low;
       padding: .3em .6em;
       font-size: 1.1em;
-      border-radius: 4px;
       display: inline-block;
+      max-width: 300px;
 
       .d-icon {
         margin-right: .5em;
+      }
+    }
+  }
+
+  .discourse-detail {
+    display: inline-flex;
+    padding: 1em;
+    flex-wrap: wrap;
+    width: unset;
+
+    .detail-metadata {
+      padding: 0;
+      border: unset;
+
+      li {
+        margin: 0 1em 0 0;
       }
     }
   }
@@ -194,33 +204,46 @@ $incompatible: rgb(218, 59, 42);
   .status-badge {
     display: inline-flex;
     align-items: center;
-    padding: .45em .85em;
     max-height: 34px;
     position: relative;
     cursor: pointer;
 
-    .d-icon {
-      margin-right: .4em;
-    }
-
     &.recommended {
-      background-color: rgba($recommended, 0.2);
       color: $recommended;
     }
-
     &.incompatible {
-      background-color: rgba($incompatible, 0.2);
       color: $incompatible;
     }
-
     &.compatible {
-      background-color: rgba($compatible, 0.2);
       color: $compatible;
     }
-
     &.tests-failing {
-      background-color: rgba($tests-failing, 0.2);
       color: $tests-failing;
+    }
+
+    &.with-text {
+      padding: .45em .85em;
+
+      .d-icon {
+        margin-right: .4em;
+      }
+
+      &.recommended {
+        background-color: rgba($recommended, 0.1);
+        border: 1px solid rgba($recommended, 0.5);
+      }
+      &.incompatible {
+        background-color: rgba($incompatible, 0.1);
+        border: 1px solid rgba($incompatible, 0.5);
+      }
+      &.compatible {
+        background-color: rgba($compatible, 0.1);
+        border: 1px solid rgba($compatible, 0.5);
+      }
+      &.tests-failing {
+        background-color: rgba($tests-failing, 0.1);
+        border: 1px solid rgba($tests-failing, 0.5);
+      }
     }
   }
 
@@ -245,19 +268,26 @@ $incompatible: rgb(218, 59, 42);
     h3 {
       display: inline-block;
       margin: 0;
-      font-size: 1.1em;
+      font-weight: normal;
     }
 
     .detail-links {
       margin-left: auto;
+      display: flex;
+      align-items: center;
+
+      .detail-link {
+        display: flex;
+        align-items: center;
+      }
 
       a {
         color: var(--primary);
+      }
 
-        .d-icon {
-          height: 1.3em;
-          width: 1.3em;
-        }
+      .d-icon {
+        height: 1.2em;
+        width: 1.2em;
       }
     }
   }
@@ -302,11 +332,12 @@ $incompatible: rgb(218, 59, 42);
 
     &.medium {
       .owner-logo-img {
-        height: 30px;
+        height: 22px;
       }
 
       .owner-logo-label {
-        font-size: 1.25em;
+        font-size: 1.2em;
+        line-height: 1.2em;
       }
     }
 
@@ -321,7 +352,7 @@ $incompatible: rgb(218, 59, 42);
     }
 
     &.has-label .owner-logo-img {
-      margin-right: .5em;
+      margin-right: .75em;
     }
   }
 
@@ -381,6 +412,12 @@ $incompatible: rgb(218, 59, 42);
       text-decoration: underline;
     }
   }
+}
+
+.discourse-branch {
+  background-color: var(--primary-low);
+  padding: .05em .3em;
+  margin-left: .35em;
 }
 
 .plugin-manager-title {
