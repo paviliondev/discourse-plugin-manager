@@ -14,6 +14,7 @@ class ::PluginManager::Manifest
 
   def self.excluded
     @excluded ||= %w(
+      discourse-plugin-manager-server
       discourse-details
       discourse-local-dates
       discourse-narrative-bot

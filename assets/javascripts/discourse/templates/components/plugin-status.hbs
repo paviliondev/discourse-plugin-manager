@@ -38,8 +38,16 @@
 </td>
 
 <td class="actions">
-  <a href={{supportLink}} class="btn btn-default" target="_blank">
-    {{d-icon "far-life-ring"}}
-    <span class="d-button-label">{{i18n "server_status.support"}}</span>
-  </a>
+  {{#if supportLink}}
+    <a href={{supportLink}} class="btn btn-default" target="_blank">
+      {{d-icon "far-life-ring"}}
+      <span class="d-button-label">{{i18n "server_status.support"}}</span>
+    </a>
+  {{/if}}
+  {{#if plugin.test_url}}
+    <a href={{plugin.test_url}} class="btn btn-default" target="_blank">
+      {{d-icon "desktop"}}
+      <span class="d-button-label">{{i18n "server_status.test"}}</span>
+    </a>
+  {{/if}}
 </td>

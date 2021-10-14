@@ -5,7 +5,7 @@ import discourseComputed from "discourse-common/utils/decorators";
 
 export default Component.extend({
   tagName: 'tr',
-  classNameBindings: [":plugin-status", "plugin.statusClass", "plugin.name"],
+  classNameBindings: [":plugin-status", "plugin.statusClass", "plugin.name", "plugin.ownerClass"],
   showPluginDetail: false,
   showStatusDetail: false,
 

@@ -1,6 +1,7 @@
 import ApplicationRoute from 'discourse/routes/application';
 import DiscourseStatus from "../models/discourse-status";
 import PluginStatus from "../models/plugin-status";
+import { withPluginApi } from "discourse/lib/plugin-api";
 
 export default {
   name: 'server-status',
@@ -14,6 +15,14 @@ export default {
           });
         })
       }
-    })
+    });
+
+    withPluginApi("0.8.13", (api) => {
+      api.modifyClass("route:discovery-categories", {
+        renderTemplate() {
+          this.render("discovery/categories", { outlet: "list-container" });
+        }
+      });
+    });
   }
 }

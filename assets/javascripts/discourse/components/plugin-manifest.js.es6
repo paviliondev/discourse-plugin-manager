@@ -17,10 +17,10 @@ export default Component.extend({
       page: 0,
       canLoadMore: true
     });
-    this.loadPlugins();
+    this.loadPlugins(false);
   },
 
-  loadPlugins() {
+  loadPlugins(addingPage) {
     this.set("loading", true);
 
     const currentNames = this.plugins.map(p => p.name);
@@ -35,8 +35,7 @@ export default Component.extend({
       .then((result) => {
         let plugins = result.plugins;
 
-        if (this.addingPage) {
-          this.set('addingPage', false);
+        if (addingPage) {
           plugins = plugins.filter(p => !currentNames.includes(p.name));
 
           if (plugins.length === 0) {
@@ -53,14 +52,13 @@ export default Component.extend({
       })
       .finally(() => this.set("loading", false));
   },
-  
+
   actions: {
     loadMore() {
       if (this.canLoadMore) {
         let currentPage = this.get("page");
         this.set("page", (currentPage += 1));
-        this.set("addingPage", true);
-        this.loadPlugins();
+        this.loadPlugins(true);
       }
     },
   }

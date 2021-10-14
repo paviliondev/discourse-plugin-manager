@@ -57,6 +57,9 @@ class ::PluginManager::Plugin
   def self.set(plugin_name, attrs)
     plugin = get(plugin_name)
 
+    from_file = attrs[:from_file] || plugin.from_file || false
+    test_url = attrs[:test_url] || plugin.test_url
+    local_test_url = from_file && "/c/#{plugin_name}"
     new_attrs = {
       url: attrs[:url] || plugin.url,
       installed_sha: attrs[:installed_sha] || plugin.installed_sha,
@@ -71,8 +74,8 @@ class ::PluginManager::Plugin
       status: attrs[:status].nil? ? plugin.status : attrs[:status].to_i,
       owner: attrs[:owner]&.instance_values || plugin.owner&.instance_values,
       support_url: attrs[:support_url] || plugin.support_url,
-      test_url: attrs[:test_url] || plugin.test_url,
-      from_file: attrs[:from_file] || plugin.from_file || false
+      test_url: test_url.present? ? test_url : local_test_url,
+      from_file: from_file
     }
 
     if host_name = ::PluginManager::RepositoryHost.get_name(new_attrs[:url])
@@ -220,7 +223,23 @@ class ::PluginManager::Plugin
       }
 
       ::PluginManager::Plugin.set(metadata.name, attrs)
-      ::PluginManager::Plugin.get(metadata.name)
+      plugin = ::PluginManager::Plugin.get(metadata.name)
+
+      if !Category.find_by(slug: plugin.name)
+        category =
+          begin
+            Category.new(
+              name: plugin.display_name,
+              slug: plugin.name,
+              description: plugin.about,
+              user: Discourse.system_user
+            )
+          rescue ArgumentError => e
+            raise Discourse::InvalidParameters, "Failed to create category"
+          end
+
+        category.save
+      end
     end
   end
 end

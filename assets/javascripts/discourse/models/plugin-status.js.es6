@@ -29,6 +29,11 @@ const PluginStatus = ManagerStatus.extend({
     return status ? dasherize(status) : '';
   },
 
+  @discourseComputed("owner")
+  ownerClass(owner) {
+    return owner ? "" : "no-owner";
+  },
+
   @discourseComputed("name")
   testLink(name) {
     return `/c/${name}`;

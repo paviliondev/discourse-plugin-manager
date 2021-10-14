@@ -62,7 +62,7 @@ $incompatible: rgb(218, 59, 42);
     z-index: 1;
     padding: 0 1em;
     width: 400px;
-    max-width: 90vw;
+    max-width: 85vw;
 
     .detail-label {
       display: block;
@@ -75,7 +75,6 @@ $incompatible: rgb(218, 59, 42);
       padding: .3em .6em;
       font-size: 1.1em;
       display: inline-block;
-      max-width: 300px;
 
       .d-icon {
         margin-right: .5em;
@@ -166,13 +165,29 @@ $incompatible: rgb(218, 59, 42);
       display: none;
     }
     .name {
-      width: 400px;
+      width: 350px;
     }
     .owner {
-      width: 220px;
+      width: 250px;
     }
     .status {
-      width: 200px;
+      width: 250px;
+    }
+    .actions {
+      display: flex;
+      align-items: center;
+
+      a {
+        margin-right: .5em;
+
+        &:last-of-type {
+          margin-right: .5em;
+        }
+      }
+    }
+
+    .plugin-status.no-owner td.owner {
+      padding: unset;
     }
 
     @media screen and (max-width: 970px) and (min-width: 768px) {
@@ -208,8 +223,10 @@ $incompatible: rgb(218, 59, 42);
         padding: 8px 0;
         min-width: 0;
 
-        td.name {
-          width: 100%;
+        .name,
+        .owner,
+        .status {
+          width: unset;
         }
       }
     }
@@ -219,6 +236,7 @@ $incompatible: rgb(218, 59, 42);
     display: inline-flex;
     align-items: center;
     max-height: 34px;
+    box-sizing: border-box;
     position: relative;
     cursor: pointer;
 

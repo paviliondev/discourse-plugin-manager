@@ -3,8 +3,9 @@ en:
     server_status:
       title: "Plugins"
       add_plugin: Add a plugin
-      documentation: Documentation
+      help: Help
       support: Support
+      test: Test
       commit: Commit
       discourse:
         branch: "Branch"
