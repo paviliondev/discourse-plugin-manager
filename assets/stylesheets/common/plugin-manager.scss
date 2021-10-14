@@ -165,6 +165,15 @@ $incompatible: rgb(218, 59, 42);
     .label {
       display: none;
     }
+    .name {
+      width: 400px;
+    }
+    .owner {
+      width: 220px;
+    }
+    .status {
+      width: 200px;
+    }
 
     @media screen and (max-width: 970px) and (min-width: 768px) {
       td,
@@ -176,6 +185,11 @@ $incompatible: rgb(218, 59, 42);
       }
       th.sortable {
         max-width: 100px;
+      }
+      .name,
+      .owner,
+      .status {
+        width: unset;
       }
     }
 

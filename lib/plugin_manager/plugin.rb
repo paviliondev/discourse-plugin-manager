@@ -127,9 +127,9 @@ class ::PluginManager::Plugin
     plugin
   end
 
-  def self.list(with_plugin_manager: false, page: 0, filter: nil)
+  def self.list(with_plugin_manager: false, page: 0, filter: nil, order: nil, asc: true)
     query = ::PluginStoreRow.where(plugin_name: ::PluginManager::NAMESPACE)
-    list_query(query, with_plugin_manager, page, filter)
+    list_query(query, with_plugin_manager, page, filter, order, asc)
   end
 
   def self.list_by(attr, value, with_plugin_manager: false)
@@ -142,15 +142,26 @@ class ::PluginManager::Plugin
     list_query(query, with_plugin_manager)
   end
 
-  def self.list_query(query, with_plugin_manager, page = nil, filter = nil)
+  def self.list_query(query, with_plugin_manager, page = nil, filter = nil, order = nil, asc = nil)
     query = query.where.not(key: "discourse-plugin-manager-server") unless with_plugin_manager
 
-    if filter
+    if filter.present?
       query = query.where("
-        value::json->>'name' ~ '#{filter}' OR
+        key ~ '#{filter}' OR
         value::json->>'about' ~ '#{filter}' OR
-        value::json->>'owner'->>'name' ~ '#{filter}'
+        (value::json->>'owner')::json->>'name' ~ '#{filter}' OR
+        (value::json->>'owner')::json->>'description' ~ '#{filter}'
       ")
+    end
+
+    if order.present?
+      direction = asc.present? && ActiveRecord::Type::Boolean.new.cast(asc) ? "ASC" : "DESC"
+      order_query = {
+        plugin_name: "key",
+        plugin_status: "value::json->>'status'",
+        owner_name: "(value::json->>'owner')::json->>'name'"
+      }[order.to_sym]
+      query = query.order("(#{order_query}) #{direction}")
     end
 
     if page

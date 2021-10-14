@@ -1,12 +1,12 @@
 {{input type="text" value=filter placeholder=(i18n 'server_status.plugin.filter')}}
 
 {{#if plugins}}
-  {{#load-more selector=".group-members tr" action=(action "loadMore")}}
+  {{#load-more selector="table.plugin-manifest-table tr" action=(action "loadMore")}}
     <table class="table plugin-manifest-table grid">
       <thead>
-        <th>{{i18n "server_status.plugin.title"}}</th>
-        <th>{{i18n "server_status.plugin.owner.label"}}</th>
-        <th>{{i18n "server_status.plugin.status"}}</th>
+        {{table-header-toggle field="plugin_name" labelKey="server_status.plugin.title" order=order asc=asc automatic=true}}
+        {{table-header-toggle field="owner_name" labelKey="server_status.plugin.owner.label" order=order asc=asc automatic=true}}
+        {{table-header-toggle field="plugin_status" labelKey="server_status.plugin.status" order=order asc=asc automatic=true}}
         <th>{{i18n "server_status.plugin.actions"}}</th>
       </thead>
       <tbody>

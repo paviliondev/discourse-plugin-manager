@@ -10,22 +10,24 @@
   </div>
 </div>
 
-<ul class="detail-metadata">
-  <li>
-    <label class="detail-label">{{i18n 'server_status.plugin.commit'}}</label>
-    <span class="detail-value">
-      <a href={{plugin.gitLink}} title={{i18n 'server_status.plugin.commit'}} target="_blank">
-        {{plugin.shortSha}}
-      </a>
-    </span>
-  </li>
-  {{#if plugin.test_backend_coverage}}
+{{#if hasMetadata}}
+  <ul class="detail-metadata">
     <li>
-      <label class="detail-label">{{i18n 'server_status.plugin.test_backend_coverage'}}</label>
-      <span class="detail-value">{{plugin.test_backend_coverage}}%</span>
+      <label class="detail-label">{{i18n 'server_status.plugin.commit'}}</label>
+      <span class="detail-value">
+        <a href={{plugin.gitLink}} title={{i18n 'server_status.plugin.commit'}} target="_blank">
+          {{plugin.shortSha}}
+        </a>
+      </span>
     </li>
-  {{/if}}
-</ul>
+    {{#if plugin.test_backend_coverage}}
+      <li>
+        <label class="detail-label">{{i18n 'server_status.plugin.test_backend_coverage'}}</label>
+        <span class="detail-value">{{plugin.test_backend_coverage}}%</span>
+      </li>
+    {{/if}}
+  </ul>
+{{/if}}
 
 {{#if hasLog}}
   <div class="detail-actions">

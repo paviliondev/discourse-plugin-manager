@@ -52,8 +52,11 @@ PluginStatus.reopenClass({
     return ajax('/plugin-manager/status');
   },
 
-  list() {
-    return ajax('/admin/plugin-manager/plugin').catch(popupAjaxError);
+  list(data) {
+    return ajax('/admin/plugin-manager/plugin', {
+      type: "GET",
+      data
+    }).catch(popupAjaxError);
   },
 
   save(plugin) {

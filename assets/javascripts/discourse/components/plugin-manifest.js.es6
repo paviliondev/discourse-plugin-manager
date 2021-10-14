@@ -8,35 +8,33 @@ import discourseDebounce from "discourse/lib/debounce";
 export default Component.extend({
   classNames: 'plugin-manifest',
   page: 0,
-  canLoadMore: true,
+  filter: null,
+  order: null,
+  asc: null,
 
-  @observes("filter")
-  loadPlugins: discourseDebounce(function () {
-    if (!this.canLoadMore) {
-      return;
-    }
-
+  @observes("filter", "order", "asc")
+  loadPlugins: discourseDebounce(function (append) {
     this.set("loading", true);
 
-    const page = this.page;
-    let params = { page };
-
-    const filter = this.filter;
-    if (filter) {
-      params.filter = filter;
-    }
+    const currentNames = this.plugins.map(p => p.name);
+    let params = {
+      page: this.page,
+      order: this.order,
+      asc: this.asc,
+      filter: this.filter
+    };
 
     PluginStatus.list(params)
       .then((result) => {
-        const plugins = result.plugins;
+        let plugins = result.plugins;
 
-        if (!plugins || plugins.length === 0) {
-          this.set("canLoadMore", false);
-        }
-        if (filter) {
+        if (this.addingPage) {
+          this.set('addingPage', false);
+          plugins = plugins.filter(p => !currentNames.includes(p.name));
+        } else {
           this.set("plugins", A());
         }
-        console.log(filter, plugins)
+
         this.get("plugins").pushObjects(
           plugins.map((plugin) => PluginStatus.create(plugin))
         );
@@ -48,6 +46,7 @@ export default Component.extend({
     loadMore() {
       let currentPage = this.get("page");
       this.set("page", (currentPage += 1));
+      this.set("addingPage", true);
       this.loadPlugins();
     },
   }

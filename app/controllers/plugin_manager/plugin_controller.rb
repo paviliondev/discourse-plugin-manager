@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 class PluginManager::PluginController < Admin::AdminController
   def index
-    plugins = PluginManager::Plugin.list(page: params[:page].to_i, filter: params[:filter])
+    plugins = PluginManager::Plugin.list(
+      page: params[:page].to_i,
+      filter: params[:filter],
+      order: params[:order],
+      asc: params[:asc]
+    )
     render_serialized(plugins, PluginManager::PluginSerializer, root: 'plugins')
   end
 
