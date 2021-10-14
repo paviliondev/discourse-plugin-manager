@@ -2,8 +2,6 @@ import Component from "@ember/component";
 import PluginStatus from "../models/plugin-status";
 import { A } from "@ember/array";
 import { observes } from "discourse-common/utils/decorators";
-import { INPUT_DELAY } from "discourse-common/config/environment";
-import discourseDebounce from "discourse/lib/debounce";
 
 export default Component.extend({
   classNames: 'plugin-manifest',
@@ -11,9 +9,18 @@ export default Component.extend({
   filter: null,
   order: null,
   asc: null,
+  canLoadMore: true,
 
   @observes("filter", "order", "asc")
-  loadPlugins: discourseDebounce(function (append) {
+  triggerLoadPlugins() {
+    this.setProperties({
+      page: 0,
+      canLoadMore: true
+    });
+    this.loadPlugins();
+  },
+
+  loadPlugins() {
     this.set("loading", true);
 
     const currentNames = this.plugins.map(p => p.name);
@@ -31,6 +38,11 @@ export default Component.extend({
         if (this.addingPage) {
           this.set('addingPage', false);
           plugins = plugins.filter(p => !currentNames.includes(p.name));
+
+          if (plugins.length === 0) {
+            this.set("canLoadMore", false);
+            return;
+          }
         } else {
           this.set("plugins", A());
         }
@@ -40,14 +52,16 @@ export default Component.extend({
         );
       })
       .finally(() => this.set("loading", false));
-  }, INPUT_DELAY),
+  },
   
   actions: {
     loadMore() {
-      let currentPage = this.get("page");
-      this.set("page", (currentPage += 1));
-      this.set("addingPage", true);
-      this.loadPlugins();
+      if (this.canLoadMore) {
+        let currentPage = this.get("page");
+        this.set("page", (currentPage += 1));
+        this.set("addingPage", true);
+        this.loadPlugins();
+      }
     },
   }
 })
