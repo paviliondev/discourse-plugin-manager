@@ -60,8 +60,10 @@ class ::PluginManager::Plugin
     from_file = attrs[:from_file] || plugin.from_file || false
     test_url = attrs[:test_url] || plugin.test_url
     local_test_url = from_file && "/c/#{plugin_name}"
+    url = (attrs[:url] || plugin.url).chomp(".git")
+
     new_attrs = {
-      url: attrs[:url] || plugin.url,
+      url: url,
       installed_sha: attrs[:installed_sha] || plugin.installed_sha,
       git_branch: attrs[:git_branch] || plugin.git_branch,
       authors: attrs[:authors] || plugin.authors,
@@ -78,7 +80,7 @@ class ::PluginManager::Plugin
       from_file: from_file
     }
 
-    if host_name = ::PluginManager::RepositoryHost.get_name(new_attrs[:url])
+    if host_name = ::PluginManager::RepositoryHost.get_name(url)
       respository_manager = ::PluginManager::RepositoryManager.new(host_name)
 
       if respository_manager.ready?
