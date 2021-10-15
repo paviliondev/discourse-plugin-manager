@@ -1,5 +1,5 @@
 import Component from "@ember/component";
-import PluginStatus from "../models/plugin-status";
+import PluginManager from "../models/plugin-manager";
 import { A } from "@ember/array";
 import { observes } from "discourse-common/utils/decorators";
 
@@ -31,7 +31,7 @@ export default Component.extend({
       filter: this.filter
     };
 
-    PluginStatus.list(params)
+    PluginManager.list(params)
       .then((result) => {
         let plugins = result.plugins;
 
@@ -47,7 +47,7 @@ export default Component.extend({
         }
 
         this.get("plugins").pushObjects(
-          plugins.map((plugin) => PluginStatus.create(plugin))
+          plugins.map((plugin) => PluginManager.create(plugin))
         );
       })
       .finally(() => this.set("loading", false));

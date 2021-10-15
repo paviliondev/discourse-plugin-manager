@@ -1,14 +1,14 @@
 import DiscourseRoute from "discourse/routes/discourse";
-import PluginStatus from "../models/plugin-status";
+import PluginManager from "../models/plugin-manager";
 import { A } from "@ember/array";
 
 export default DiscourseRoute.extend({
   model() {
-    return PluginStatus.list();
+    return PluginManager.list();
   },
 
   setupController(controller, model) {
-    const plugins = A(model.plugins.map((plugin) => PluginStatus.create(plugin)) || []);
+    const plugins = A(model.plugins.map((plugin) => PluginManager.create(plugin)) || []);
     controller.setProperties({ plugins });
   }
 });

@@ -1,6 +1,6 @@
 import ApplicationRoute from 'discourse/routes/application';
 import DiscourseStatus from "../models/discourse-status";
-import PluginStatus from "../models/plugin-status";
+import PluginManager from "../models/plugin-manager";
 import { withPluginApi } from "discourse/lib/plugin-api";
 
 export default {
@@ -8,10 +8,10 @@ export default {
   initialize() {
     ApplicationRoute.reopen({
       afterModel(model) {
-        return PluginStatus.status().then(result => {
+        return PluginManager.status().then(result => {
           this.controllerFor('application').setProperties({
             discourse: DiscourseStatus.create(result.discourse),
-            plugins: result.plugins.map((plugin) => PluginStatus.create(plugin))
+            plugins: result.plugins.map((plugin) => PluginManager.create(plugin))
           });
         })
       }

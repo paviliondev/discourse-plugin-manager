@@ -13,7 +13,7 @@ const statusIcons = {
   incompatible: "times-circle"
 }
 
-const PluginStatus = ManagerStatus.extend({
+const PluginManager = ManagerStatus.extend({
   @discourseComputed("status")
   statusIcon(status) {
     return status ? statusIcons[status] : '';
@@ -52,20 +52,20 @@ const PluginStatus = ManagerStatus.extend({
   }
 });
 
-PluginStatus.reopenClass({
+PluginManager.reopenClass({
   status() {
     return ajax('/plugin-manager/status');
   },
 
   list(data) {
-    return ajax('/admin/plugin-manager/plugin', {
+    return ajax('/plugin-manager/plugin', {
       type: "GET",
       data
     }).catch(popupAjaxError);
   },
 
   save(plugin) {
-    return ajax(`/admin/plugin-manager/plugin/${plugin.name}`, {
+    return ajax(`/plugin-manager/plugin/${plugin.name}`, {
       type: "PUT",
       data: {
         plugin
@@ -74,10 +74,10 @@ PluginStatus.reopenClass({
   },
 
   destroy(plugin) {
-    return ajax(`/admin/plugin-manager/plugin/${plugin.name}`, {
+    return ajax(`/plugin-manager/plugin/${plugin.name}`, {
       type: "DELETE",
     }).catch(popupAjaxError);
   },
 });
 
-export default PluginStatus;
+export default PluginManager;

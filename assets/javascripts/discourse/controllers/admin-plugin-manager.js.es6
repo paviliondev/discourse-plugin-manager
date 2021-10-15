@@ -1,11 +1,11 @@
 import Controller from "@ember/controller";
-import PluginStatus from "../models/plugin-status";
+import PluginManager from "../models/plugin-manager";
 import showModal from "discourse/lib/show-modal";
 
 export default Controller.extend({
   actions: {
     addPlugin(plugin) {
-      plugin = plugin || PluginStatus.create({ new: true });
+      plugin = plugin || PluginManager.create({ new: true });
       this.get("plugins").unshiftObject(plugin);
     },
 

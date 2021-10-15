@@ -1,6 +1,6 @@
 import Controller from "@ember/controller";
 import discourseComputed from "discourse-common/utils/decorators";
-import PluginStatus from "../models/plugin-status";
+import PluginManager from "../models/plugin-manager";
 import I18n from 'I18n';
 import { equal } from "@ember/object/computed";
 import ModalFunctionality from "discourse/mixins/modal-functionality";
@@ -54,7 +54,7 @@ export default Controller.extend(ModalFunctionality, {
 
     destroy() {
       this.set('destroying', true);
-      PluginStatus.destroy(this.model.name).then((result) => {
+      PluginManager.destroy(this.model.name).then((result) => {
         if (result.success) {
           this.afterDestroy(this.model);
         }
@@ -78,7 +78,7 @@ export default Controller.extend(ModalFunctionality, {
         status: plugin.status
       }
 
-      PluginStatus.save(attrs).then((result) => {
+      PluginManager.save(attrs).then((result) => {
         if (result.success) {
           this.afterSave(this.model);
         }

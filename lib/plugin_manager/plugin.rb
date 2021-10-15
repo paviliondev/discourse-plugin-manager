@@ -84,7 +84,8 @@ class ::PluginManager::Plugin
       respository_manager = ::PluginManager::RepositoryManager.new(host_name)
 
       if respository_manager.ready?
-        attrs[:owner] = respository_manager.get_owner(plugin_name)
+        owner = respository_manager.get_owner(plugin_name)
+        new_attrs[:owner] = owner.instance_values if owner.present?
       end
     end
 
