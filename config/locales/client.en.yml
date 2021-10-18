@@ -15,7 +15,7 @@ en:
         title: "Plugin"
         authors: "Authors"
         about: "About"
-        filter: "filter plugins"
+        filter: "filter"
         owner:
           label: Owner
           logo: "%{ownerName} logo"
