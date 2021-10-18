@@ -21,7 +21,7 @@ const PluginManager = ManagerStatus.extend({
 
   @discourseComputed("status")
   statusTitle(status) {
-    return status ? I18n.t(`server_status.plugin.${status}.title`) : '';
+    return status ? I18n.t(`server_status.plugin.status.${status}.title`) : '';
   },
 
   @discourseComputed("status")

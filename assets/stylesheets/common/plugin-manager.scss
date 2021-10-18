@@ -290,6 +290,10 @@ $incompatible: #ef1700;
     .owner-logo {
       margin-left: auto;
     }
+
+    .branch-label {
+      margin-left: .5em;
+    }
   }
 
   .owner-detail {
@@ -453,10 +457,9 @@ $incompatible: #ef1700;
   }
 }
 
-.discourse-branch {
+.branch-label {
   background-color: var(--primary-low);
   padding: .05em .3em;
-  margin-left: .35em;
 }
 
 .plugin-manager-title {

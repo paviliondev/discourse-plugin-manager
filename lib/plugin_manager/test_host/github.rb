@@ -4,7 +4,7 @@ class PluginManager::TestHost::Github < PluginManager::TestHost
     @config = '.github/workflows/plugin-tests.yml'
     @domain = 'api.github.com'
     @domain = "#{client_id}:#{client_secret}@#{@domain}" if basic_auth?
-    @branch = 'main'
+    @branch = @plugin.git_branch
   end
 
   def repo_path

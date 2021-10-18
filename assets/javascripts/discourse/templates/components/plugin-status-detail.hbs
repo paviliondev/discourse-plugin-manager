@@ -1,6 +1,10 @@
 <div class="detail-title">
   <h3 title={{detailDescription}}>
-    {{detailTitle}}<span class="discourse-branch">{{discourse.git_branch}}</span>
+    <span class="plugin-name">{{plugin.display_name}}</span>
+    <span class="plugin-branch branch-label">{{plugin.git_branch}}</span>
+    {{detailTitle}}
+    <span class="discourse-name">{{i18n "server_status.discourse.title"}}</span>
+    <span class="discourse-branch branch-label">{{discourse.git_branch}}</span>
   </h3>
 
   <div class="detail-links">

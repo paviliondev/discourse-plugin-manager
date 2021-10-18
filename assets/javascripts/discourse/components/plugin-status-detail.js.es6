@@ -7,14 +7,18 @@ export default Component.extend({
   hasLog: notEmpty("plugin.log"),
   hasMetadata: or("plugin.gitLink", "plugin.test_backend_coverage"),
 
-  @discourseComputed("plugin.status")
-  detailTitle(pluginStatus) {
-    return I18n.t(`server_status.plugin.${pluginStatus}.detail_title`);
+  @discourseComputed("plugin.status", "plugin.name", "plugin.git_branch", "discourse.git_branch")
+  detailDescription(pluginStatus, pluginName, pluginBranch, discourseBranch) {
+    return I18n.t(`server_status.plugin.status.${pluginStatus}.description`, {
+      plugin_name: pluginName,
+      plugin_branch: pluginBranch,
+      discourse_branch: discourseBranch
+    });
   },
 
   @discourseComputed("plugin.status")
-  detailDescription(pluginStatus) {
-    return I18n.t(`server_status.plugin.${pluginStatus}.description`);
+  detailTitle(pluginStatus) {
+    return I18n.t(`server_status.plugin.status.${pluginStatus}.detail_title`);
   },
 
   actions: {
