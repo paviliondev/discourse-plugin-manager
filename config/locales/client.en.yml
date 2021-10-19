@@ -2,7 +2,7 @@ en:
   js:
     server_status:
       title: "Plugins"
-      add_plugin: Add a plugin
+      add_plugin: Add a Plugin
       help: Help
       support: Support
       test: Test
