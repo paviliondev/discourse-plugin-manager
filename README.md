@@ -43,7 +43,5 @@ The servers running this plugin use ``crontab`` to automatically rebuild every 2
 0 00 * * * /usr/local/bin/rebuild_discourse >>/tmp/cron_debug_log.log 2>&1
 ```
 
-The contents of ``/usr/local/bin/rebuild_discourse`` is
-
-```
+A sample script for ``/usr/local/bin/rebuild_discourse`` is in ``bin/setup.sh``.
 
