@@ -13,6 +13,10 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
     "users/#{repo_user}"
   end
 
+  def branch_url
+    "#{@plugin.url}/tree/#{@plugin.git_branch}"
+  end
+
   def get_owner_from_response(response)
     owner = ::PluginManager::RepositoryOwner.new(
       name: response['name'] || response['login'],

@@ -14,6 +14,14 @@ const ManagerStatus = EmberObject.extend({
     if (installedSHA) {
       return installedSHA.substr(0, 10);
     }
+  },
+
+  @discourseComputed('branch_url', 'url', 'git_branch')
+  branchUrl(branchUrl, url, branch) {
+    if (branchUrl) {
+      return branchUrl;
+    }
+    return `${url}/tree/${branch}`;
   }
 });
 

@@ -1,6 +1,5 @@
 <div class="detail-title">
-  <h3>{{plugin.display_name}}</h3>
-  <span class="plugin-branch branch-label">{{plugin.git_branch}}</span>
+  <h3>{{plugin.display_name}} {{branch-label plugin}}</h3>
 
   {{#if plugin.owner}}
     {{owner-logo plugin.owner linked=true class="medium"}}

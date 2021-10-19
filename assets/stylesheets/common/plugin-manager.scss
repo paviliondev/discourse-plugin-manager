@@ -80,6 +80,17 @@ $incompatible: #ef1700;
         margin-right: .5em;
       }
     }
+    
+    &.plugin-status-detail {
+      .detail-title {
+        align-items: flex-start;
+
+        .detail-links {
+          margin-left: 1em;
+          padding-top: .2em;
+        }
+      }
+    }
   }
 
   .discourse-detail {
@@ -292,7 +303,7 @@ $incompatible: #ef1700;
     }
 
     .branch-label {
-      margin-left: .5em;
+      margin-left: .25em;
     }
   }
 
@@ -456,6 +467,8 @@ $incompatible: #ef1700;
     }
   }
 }
+
+
 
 .branch-label {
   background-color: var(--primary-low);

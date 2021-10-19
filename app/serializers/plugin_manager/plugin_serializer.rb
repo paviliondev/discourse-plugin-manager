@@ -8,6 +8,7 @@ class PluginManager::PluginSerializer < ::PluginManager::BasicPluginSerializer
              :contact_emails,
              :installed_sha,
              :git_branch,
+             :branch_url,
              :test_status,
              :test_backend_coverage,
              :log,

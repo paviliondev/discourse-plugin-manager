@@ -9,7 +9,7 @@
       <li>
         <label class="detail-label">{{i18n 'server_status.discourse.branch'}}</label>
         <span class="detail-value">
-          {{d-icon "code-branch"}}{{dash-if-empty discourse.git_branch}}
+          {{branch-label discourse}}
         </span>
       </li>
       <li>

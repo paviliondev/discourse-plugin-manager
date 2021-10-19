@@ -12,15 +12,18 @@ class ::PluginManager::Plugin
                 :installed_sha,
                 :git_branch,
                 :status,
+                :repository_host,
                 :test_host,
                 :test_status,
                 :test_backend_coverage,
                 :instance,
                 :status_changed_at,
-                :owner,
                 :support_url,
                 :test_url,
                 :from_file
+
+  attr_reader   :owner,
+                :host
 
   def initialize(plugin_name, attrs)
     @name = plugin_name
@@ -33,10 +36,12 @@ class ::PluginManager::Plugin
     @git_branch = attrs[:git_branch]
     @status = attrs[:status].to_i
     @status_changed_at = attrs[:status_changed_at]
+    @repository_host = attrs[:repository_host] if attrs[:repository_host].present?
     @test_host = attrs[:test_host] if attrs[:test_host].present?
     @test_status = attrs[:test_status].to_i if attrs[:test_status].present?
     @test_backend_coverage = attrs[:test_backend_coverage].to_f if attrs[:test_backend_coverage].present?
     @owner = PluginManager::RepositoryOwner.new(attrs[:owner]) if attrs[:owner].present?
+    @host = PluginManager::RepositoryHost.get(attrs[:repository_host]) if attrs[:repository_host].present?
     @support_url = attrs[:support_url]
     @test_url = attrs[:test_url]
     @from_file = attrs[:from_file]
@@ -52,6 +57,14 @@ class ::PluginManager::Plugin
 
   def display_name
     name.titleize
+  end
+
+  def branch_url
+    @branch_url ||= begin
+      return nil unless @host.present?
+      @host.plugin = self
+      @host.branch_url
+    end
   end
 
   def self.set(plugin_name, attrs)
@@ -81,6 +94,7 @@ class ::PluginManager::Plugin
     }
 
     if host_name = ::PluginManager::RepositoryHost.get_name(url)
+      new_attrs[:repository_host] = host_name
       respository_manager = ::PluginManager::RepositoryManager.new(host_name)
 
       if respository_manager.ready?
