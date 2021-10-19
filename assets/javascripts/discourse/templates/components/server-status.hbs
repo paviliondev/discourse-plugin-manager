@@ -1,31 +1,24 @@
 <div class="top">
-  <div class="left">    
-    {{discourse-status
-      status=discourseStatus
-      pluginCounts=pluginCounts
-      updateTopic=updateTopic}}
+  <div class="left">
+    <div class="title">
+      {{d-icon "plug"}}
+      <span>{{i18n 'server_status.title'}}</span>
+    </div>
+    {{discourse-status discourse=discourse}}
   </div>
-  
+
   <div class="buttons">
-    <a href="https://thepavilion.io/w/bug-report" class="btn btn-default" target="_blank">
-      {{d-icon "bug"}}
-      <span class="d-button-label">
-        {{i18n "server_status.bug_report"}}
-      </span>
+    <a href="https://thepavilion.io/c/knowledge" class="btn btn-default" target="_blank">
+      {{d-icon "question-circle"}}
+      <span class="d-button-label">{{i18n "server_status.help"}}</span>
+    </a>
+    <a href="mailto:angus@thepavilion.io?subject=Add a Plugin" class="btn btn-default" target="_blank">
+      {{d-icon "plus"}}
+      <span class="d-button-label">{{i18n "server_status.add_plugin"}}</span>
     </a>
   </div>
 </div>
 
-<div class="bottom {{bottomClass}}">
-  {{plugin-statuses
-    type="plugins"
-    plugins=plugins
-    discourseStatus=discourseStatus}}
-  
-  {{#if incompatiblePlugins}}
-    {{plugin-statuses
-      type="incompatible_plugins"
-      plugins=incompatiblePlugins
-      discourseStatus=discourseStatus}}
-  {{/if}}
+<div class="bottom">
+  {{plugin-manifest plugins=plugins discourse=discourse}}
 </div>

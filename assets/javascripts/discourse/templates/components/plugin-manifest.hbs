@@ -1,0 +1,23 @@
+{{input type="text" value=filter placeholder=(i18n 'server_status.plugin.filter')}}
+
+{{#if plugins}}
+  {{#load-more selector="table.plugin-manifest-table tr" action=(action "loadMore")}}
+    <table class="table plugin-manifest-table grid">
+      <thead>
+        {{table-header-toggle field="plugin_name" labelKey="server_status.plugin.title" order=order asc=asc automatic=true}}
+        {{table-header-toggle field="owner_name" labelKey="server_status.plugin.owner.label" order=order asc=asc automatic=true}}
+        {{table-header-toggle field="plugin_status" labelKey="server_status.plugin.status.label" order=order asc=asc automatic=true}}
+        <th>{{i18n "server_status.plugin.actions"}}</th>
+      </thead>
+      <tbody>
+        {{#each plugins as |plugin|}}
+          {{plugin-status plugin=plugin discourse=discourse}}
+        {{/each}}
+      </tbody>
+    </table>
+  {{/load-more}}
+
+  {{conditional-loading-spinner condition=loading}}
+{{else}}
+  <p>{{i18n "search.no_results"}}</p>
+{{/if}}

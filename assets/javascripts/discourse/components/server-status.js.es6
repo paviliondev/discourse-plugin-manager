@@ -1,58 +1,29 @@
 import Component from '@ember/component';
 import { getOwner } from 'discourse-common/lib/get-owner';
-import { default as discourseComputed } from 'discourse-common/utils/decorators';
+import discourseComputed from 'discourse-common/utils/decorators';
+import { bind, scheduleOnce } from "@ember/runloop";
 
 export default Component.extend({
-  classNameBindings: [':server-status', 'inUpdatePeriod', 'visible'],
-  maximized: false,
-  
+  classNameBindings: [':server-status', 'visible'],
+
   init() {
     this._super(...arguments);
-    const container = getOwner(this)
+
+    const container = getOwner(this);
     const controller = container.lookup('controller:application');
     const router = container.lookup("router:main");
+    const plugins = controller.get('plugins');
+    const discourse = controller.get('discourse');
 
-    let props = {
+    this.setProperties({
       router,
-      discourseStatus: controller.get('discourseStatus'),
-      plugins: controller.get('plugins'),
-      incompatiblePlugins: controller.get('incompatiblePlugins'),
-      pluginCounts: controller.get('pluginCounts')
-    }
-    
-    let dateUtilities;
-    try {
-      dateUtilities = requirejs('discourse/plugins/discourse-events/discourse/lib/date-utilities');
-    } catch(error) {
-      console.warn("Events plugin missing");
-    }
-    
-    const updateTopic = controller.get('updateTopic');
-    if (updateTopic && updateTopic.event && dateUtilities) {
-      const { start, end, allDay, multiDay } = dateUtilities.setupEvent(updateTopic.event);
-      const { startIsSame, endIsSame, isBetween, daysLeft } = dateUtilities.eventCalculations(
-        moment(),
-        start,
-        end,
-      )
-      props.updateTopic = updateTopic;
-      props.inUpdatePeriod = startIsSame || endIsSame || isBetween;
-    }
-
-    this.setProperties(props);
+      discourse,
+      plugins
+    });
   },
-  
+
   @discourseComputed('router.currentPath')
   visible(currentPath) {
     return currentPath && currentPath.indexOf('admin') === -1;
-  },
-  
-  click() {
-    this.toggleProperty('maximized');
-  },
-  
-  @discourseComputed('maximized')
-  bottomClass(maximized) {
-    return maximized ? 'maximized' : '';
   }
 });

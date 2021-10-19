@@ -1,40 +1,48 @@
 # frozen_string_literal: true
 
 class ::PluginGuard::Handler
-  attr_reader :plugin_guard
-  
-  def initialize(plugin_guard)
-    @plugin_guard = plugin_guard
+  attr_reader :plugin,
+              :plugin_dir
+
+  def initialize(plugin_name, plugin_dir)
+    @plugin = ::PluginManager::Plugin.get(plugin_name)
+    @plugin_dir = plugin_dir.to_s
   end
-  
-  def perform(message, backtrace, type)
-    log(message, backtrace, type)
-    
-    if type === 'error'
-      clean_up_assets
-      move_to_incompatible_folder
-    end
+
+  def perform(message, backtrace, precompiled_assets)
+    manifest = PluginManager::Manifest
+    clean_up_assets(precompiled_assets)
+    move_to(manifest::INCOMPATIBLE_FOLDER)
+    log(message, backtrace) if manifest.working?(@plugin.status) && message.present?
   end
-  
-  def move_to_incompatible_folder
-    FileUtils.mv(@plugin_guard.path, 'plugins_incompatible', force: true)
+
+  def move_to(dir)
+    plugin_dir = @plugin_dir.dup
+    move_to_dir = plugin_dir.sub(/\/#{PluginManager::Manifest::FOLDER}\//, "/#{dir}/")
+    FileUtils.rm_rf(move_to_dir)
+    FileUtils.mv(@plugin_dir, move_to_dir, force: true)
   end
-  
-  def clean_up_assets
+
+  def clean_up_assets(precompiled_assets)
     Discourse.plugins.reject! do |plugin|
-      plugin.name == @plugin_guard.metadata.name
+      plugin.name == @plugin.name
     end
     Rails.configuration.assets.paths.reject! do |path|
-      path.include?(@plugin_guard.path.to_s)
+      path.include?(@plugin_dir)
     end
     Rails.configuration.assets.precompile.reject! do |file|
-      @plugin_guard.precompiled_assets.include?(file) || (
-        file.is_a?(String) && file.include?(@plugin_guard.metadata.name)
+      precompiled_assets.include?(file) || (
+        file.is_a?(String) && file.include?(@plugin.name)
       )
     end
   end
 
-  def log(message, backtrace, type)
-    PluginGuard::Logs.new(@plugin_guard).add(message, backtrace, type)
+  def log(message, backtrace)
+    PluginGuard::Log.add(
+      plugin_name: @plugin.name,
+      message: message,
+      backtrace: backtrace,
+      type: 'error'
+    )
   end
 end

@@ -1,0 +1,53 @@
+<td class="name">
+  <div class="name-container">
+    <button class="btn btn-icon-text" {{action "togglePluginDetail"}}>
+      <span classs="d-button-label">{{plugin.display_name}}</span>
+    </button>
+
+    {{#if showPluginDetail}}
+      {{plugin-detail plugin=plugin}}
+    {{/if}}
+  </div>
+</td>
+
+<td class="owner">
+  <div class="owner-container">
+    {{#if plugin.owner}}
+      <button class="btn-owner-logo" {{action "toggleOwnerDetail"}}>
+        {{owner-logo plugin.owner label=true}}
+      </button>
+
+      {{#if showOwnerDetail}}
+        {{owner-detail owner=plugin.owner}}
+      {{/if}}
+    {{/if}}
+  </div>
+</td>
+
+<td class="status">
+  <div class="status-container">
+    <div role="button" {{action "toggleStatusDetail"}} class="status-badge with-text {{plugin.statusClass}}">
+      {{d-icon plugin.statusIcon}}
+      <span>{{plugin.statusTitle}}</span>
+    </div>
+
+    {{#if showStatusDetail}}
+      {{plugin-status-detail plugin=plugin discourse=discourse}}
+    {{/if}}
+  </div>
+</td>
+
+<td class="actions">
+  {{#if supportLink}}
+    <a href={{supportLink}} class="btn btn-default" target="_blank">
+      {{d-icon "far-life-ring"}}
+      <span class="d-button-label">{{i18n "server_status.support"}}</span>
+    </a>
+  {{/if}}
+  {{#if plugin.test_url}}
+    <a href={{plugin.test_url}} class="btn btn-default">
+      {{d-icon "desktop"}}
+      <span class="d-button-label">{{i18n "server_status.test"}}</span>
+    </a>
+  {{/if}}
+</td>

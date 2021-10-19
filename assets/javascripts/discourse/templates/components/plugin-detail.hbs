@@ -1,0 +1,36 @@
+<div class="detail-title">
+  <h3>{{plugin.display_name}} {{branch-label plugin}}</h3>
+
+  {{#if plugin.owner}}
+    {{owner-logo plugin.owner linked=true class="medium"}}
+  {{/if}}
+</div>
+
+<ul class="detail-metadata">
+  <li class="full-width">
+    <label class="detail-label">{{i18n 'server_status.plugin.about'}}</label>
+    <span class="detail-value">
+      {{plugin.about}}
+    </span>
+  </li>
+  {{#if plugin.authorList}}
+    <li>
+      <label class="detail-label">{{i18n 'server_status.plugin.authors'}}</label>
+      <span class="detail-value">
+        {{#each plugin.authorList as |author|}}
+          <span>{{author}}</span>
+        {{/each}}
+      </span>
+    </li>
+  {{/if}}
+  {{#if plugin.hasContactEmails}}
+    <li>
+      <label class="detail-label">{{i18n 'server_status.plugin.contact_emails'}}</label>
+      {{#each plugin.contactEmails as |email|}}
+        <span class="detail-value">
+          <a href="mailto:{{email}}" target="_blank">{{email}}</a>
+        </span>
+      {{/each}}
+    </li>
+  {{/if}}
+</ul>
