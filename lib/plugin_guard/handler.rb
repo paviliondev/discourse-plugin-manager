@@ -24,17 +24,14 @@ class ::PluginGuard::Handler
   end
 
   def clean_up_assets(precompiled_assets)
-    Discourse.plugins.reject! do |plugin|
-      plugin.name == @plugin.name
-    end
-    Rails.configuration.assets.paths.reject! do |path|
-      path.include?(@plugin_dir)
-    end
+    Discourse.plugins.reject! { |plugin| plugin.name == @plugin.name }
+    Rails.configuration.assets.paths.reject! { |path| path.include?(@plugin_dir) }
     Rails.configuration.assets.precompile.reject! do |file|
       precompiled_assets.include?(file) || (
         file.is_a?(String) && file.include?(@plugin.name)
       )
     end
+    I18n.load_path.reject! { |file| file.include?(@plugin.name) }
   end
 
   def log(message, backtrace)
