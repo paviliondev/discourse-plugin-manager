@@ -18,6 +18,8 @@ class ::PluginGuard::Handler
 
   def move_to(dir)
     plugin_dir = @plugin_dir.dup
+    return unless File.exists?(plugin_dir)
+
     move_to_dir = plugin_dir.sub(/\/#{PluginManager::Manifest::FOLDER}\//, "/#{dir}/")
     FileUtils.rm_rf(move_to_dir)
     FileUtils.mv(@plugin_dir, move_to_dir, force: true)
