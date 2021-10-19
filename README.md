@@ -1,23 +1,29 @@
 ## Discourse Plugin Manager Server
 
-A plugin to protect a site from broken plugins.
+Discourse plugin management server running on ``stable.plugins.discourse.pavilion.tech`` and ``plugins.discourse.pavilion.tech``.
 
-This plugin requires files to be in place prior to any other Discourse code being run. This is achieved locally via bash scripts and in production via a web template.
+This customisation requires files be placed and overridden in the Discourse installation itself.  This is necessary because this customisation overrides some of the plugin management systems within Discourse.
 
 ### Development
 
-These are useful because this plugin requires changes to the discourse install directly.  This would normally break plugin git code management workflows, so these scripts have been added:
+Setup two environment variables
 
-* run `dev_setup.sh` in the Discourse dev root to put required files into Discourse directory
-* run `dev_transfer.sh` to move altered files back to the plugin directory so that you can check changes into git
-* run `dev_clean.sh` to remove all changes to the Discourse instance to rid it of the plugins alterations.
+```
+PLUGIN_MANAGER_ROOT: the root of paviliondev/discourse-plugin-manager-server
+DISCOURSE_ROOT: the root of discourse/discourse
+```
 
-Note: they use a couple of ENV variables:
+Use a development workflow that looks like this
 
-* $CODE_ROOT: the root of your code directory one level above each plugin
-* $DISCOURSE_ROOT: the root of your development Discourse install
+1. Run ``bin/setup.sh`` from your Discourse root to create the necessary folders and symlink the necessary files.
 
-**Be careful to run these in a logical order, don't clean up before transferring your changes back to the plugin folder!**
+2. Perform development as normal
+
+3. When you've finished:
+
+   - if you've added or removed files or folders in ``lib`` make sure ``bin/setup.sh`` is updated accordingly; and
+   
+   - clean your ``discourse/discourse`` working tree.
 
 ### Deployment
 
@@ -27,6 +33,17 @@ Deploying updates to production is a two step process:
 
    Why is this necessary? The pups template relies on the latest files being in place in the shared folder so it can copy them across before the other plugin code is pulled from GitHub.com
 
-2. Rebuild the app as normal (i.e. from ``/var/discourse``)
+2. Rebuild the app as normal (running ``/launcher rebuild app`` from ``/var/discourse``)
 
+### Scheduled rebuilds
+
+The servers running this plugin use ``crontab`` to automatically rebuild every 24 hours. The ``cron`` command is
+
+```
+0 00 * * * /usr/local/bin/rebuild_discourse >>/tmp/cron_debug_log.log 2>&1
+```
+
+The contents of ``/usr/local/bin/rebuild_discourse`` is
+
+```
 
