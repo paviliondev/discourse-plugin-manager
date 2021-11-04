@@ -1,5 +1,5 @@
 class PluginManager::DiscourseSerializer < ApplicationSerializer
-  attributes :git_url,
+  attributes :url,
              :installed_version,
              :installed_sha,
              :git_branch

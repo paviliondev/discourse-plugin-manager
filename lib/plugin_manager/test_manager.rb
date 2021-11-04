@@ -95,9 +95,13 @@ class ::PluginManager::TestManager
   end
 
   def request(endpoint, opts={})
-    response = Excon.get("https://#{@host.domain}/#{endpoint}")
+    begin
+      response = Excon.get("https://#{@host.domain}/#{endpoint}")
+    rescue Excon::Error
+      response = nil
+    end
 
-    if response.status == 200
+    if response && response.status == 200
       JSON.parse(response.body)
     else
       nil
