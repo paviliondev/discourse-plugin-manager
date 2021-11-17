@@ -17,3 +17,5 @@ en:
     test:
       error: "The tests are failing."
       error_test: "The '%{test_name}' test is failing."
+    plugin:
+      test_url: "[Test it out](%{test_url})."

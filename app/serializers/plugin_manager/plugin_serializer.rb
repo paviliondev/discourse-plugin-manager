@@ -15,7 +15,8 @@ class PluginManager::PluginSerializer < ::PluginManager::BasicPluginSerializer
              :owner,
              :support_url,
              :test_url,
-             :from_file
+             :from_file,
+             :category_id
 
   def log
     log = ::PluginGuard::Log.list(object.name).first

@@ -34,6 +34,7 @@ after_initialize do
     load File.expand_path(path, __FILE__)
   end
 
+  PluginManager::Plugin.add_extra_metadata
   PluginManager::Manifest.update_plugin_status
   PluginManager::Manifest.update_test_status
 end

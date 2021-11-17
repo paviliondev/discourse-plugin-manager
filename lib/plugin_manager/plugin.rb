@@ -20,7 +20,8 @@ class ::PluginManager::Plugin
                 :status_changed_at,
                 :support_url,
                 :test_url,
-                :from_file
+                :from_file,
+                :category_id
 
   attr_reader   :owner,
                 :host
@@ -45,6 +46,7 @@ class ::PluginManager::Plugin
     @support_url = attrs[:support_url]
     @test_url = attrs[:test_url]
     @from_file = attrs[:from_file]
+    @category_id = attrs[:category_id]
 
     if @from_file
       @instance = Discourse.plugins.select { |p| p.metadata.name == plugin_name }.first
@@ -72,7 +74,6 @@ class ::PluginManager::Plugin
 
     from_file = attrs[:from_file] || plugin.from_file || false
     test_url = attrs[:test_url] || plugin.test_url
-    local_test_url = from_file && "/c/#{plugin_name}"
     url = (attrs[:url] || plugin.url).chomp(".git")
 
     new_attrs = {
@@ -90,7 +91,8 @@ class ::PluginManager::Plugin
       owner: attrs[:owner]&.instance_values || plugin.owner&.instance_values,
       support_url: attrs[:support_url] || plugin.support_url,
       test_url: test_url.present? ? test_url : local_test_url,
-      from_file: from_file
+      from_file: from_file,
+      category_id: attrs[:category_id] || plugin.category_id
     }
 
     if host_name = ::PluginManager::RepositoryHost.get_name(url)
@@ -224,6 +226,12 @@ class ::PluginManager::Plugin
         test_host = PluginManager::TestHost.detect
       end
 
+      if metadata.respond_to?("#{branch.underscore}_test_url")
+        test_url = metadata.send("#{branch.underscore}_test_url")
+      else
+        test_url = nil
+      end
+
       attrs = {
         url: url,
         contact_emails: metadata.contact_emails,
@@ -236,27 +244,71 @@ class ::PluginManager::Plugin
           PluginManager::Manifest.status[:incompatible] :
           PluginManager::Manifest.status[:compatible],
         from_file: true,
-        test_host: test_host
+        test_host: test_host,
+        test_url: test_url
       }
 
       ::PluginManager::Plugin.set(metadata.name, attrs)
       plugin = ::PluginManager::Plugin.get(metadata.name)
+      category = find_plugin_category(plugin)
 
-      if !Category.find_by(slug: plugin.name)
+      if category
+        category.description = build_category_description(plugin)
+        category.save
+
+        if plugin.category_id != category.id
+          attrs[:category_id] = category.id
+          ::PluginManager::Plugin.set(metadata.name, attrs)
+        end
+      else
         category =
           begin
             Category.new(
               name: plugin.display_name,
               slug: plugin.name,
-              description: plugin.about,
+              description: build_category_description(plugin),
               user: Discourse.system_user
             )
           rescue ArgumentError => e
             raise Discourse::InvalidParameters, "Failed to create category"
           end
-
         category.save
+
+        attrs[:category_id] = category.id
+        ::PluginManager::Plugin.set(metadata.name, attrs)
       end
     end
+  end
+
+  def self.find_plugin_category(plugin)
+    if plugin.category_id
+      Category.find_by_id(id: plugin.category_id)
+    elsif
+      Category.find_by(slug: plugin.name)
+    else
+      nil
+    end
+  end
+
+  def self.extra_metadata
+    [
+      :tests_passed_test_url,
+      :stable_test_url
+    ]
+  end
+
+  def self.add_extra_metadata
+    extra_metadata.each do |field|
+      if ::Plugin::Metadata::FIELDS.exclude?(field)
+        ::Plugin::Metadata::FIELDS << field 
+        ::Plugin::Metadata.attr_accessor field  
+      end
+    end
+  end
+
+  def self.build_category_description(plugin)
+    description = plugin.about
+    description += " #{I18n.t("plugin_manager.plugin.test_url", test_url: plugin.test_url)}" if plugin.test_url
+    description
   end
 end
