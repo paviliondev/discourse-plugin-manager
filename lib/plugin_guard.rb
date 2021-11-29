@@ -17,7 +17,7 @@ class ::PluginGuard
     @metadata = ::Plugin::Metadata.parse(file)
     plugin_name = @metadata.name
     return false if ::Plugin::Metadata::OFFICIAL_PLUGINS.include?(plugin_name)
-    
+
     @directory = directory
     Dir.chdir(directory) do
       @sha = Discourse.try_git('git rev-parse HEAD', nil)

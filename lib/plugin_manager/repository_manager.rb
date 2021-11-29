@@ -18,6 +18,7 @@ class ::PluginManager::RepositoryManager
 
   def get_owner(plugin_name)
     @plugin = ::PluginManager::Plugin.get(plugin_name)
+
     return nil unless @plugin && @plugin.url
     @host.plugin = @plugin
 

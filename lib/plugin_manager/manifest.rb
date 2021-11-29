@@ -1,7 +1,4 @@
 class ::PluginManager::Manifest
-  FOLDER = "plugins"
-  INCOMPATIBLE_FOLDER = "plugins_incompatible"
-
   def self.status
     @status ||= Enum.new(
       unknown: 0,
@@ -51,8 +48,8 @@ class ::PluginManager::Manifest
   end
 
   def set(status)
-    folder = status == self.class.status[:incompatible] ? INCOMPATIBLE_FOLDER : FOLDER 
-    path = "#{Rails.root}/#{folder}"
+    folder = status == self.class.status[:incompatible] ? PluginManager.incompatible_dir : PluginManager.compatible_dir 
+    path = "#{root_dir}/#{folder}"
     return unless File.directory?(path)
 
     Dir.each_child(path) do |folder|

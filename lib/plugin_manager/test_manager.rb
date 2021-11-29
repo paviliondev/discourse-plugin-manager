@@ -78,7 +78,7 @@ class ::PluginManager::TestManager
   protected
 
   def get_test_backend_coverage
-    file_path = "#{Rails.root}/plugins/#{@plugin.name}/#{COVERAGE_FILE}"
+    file_path = "#{PluginManager.root_dir}/#{PluginManager.compatible_dir}/#{@plugin.name}/#{COVERAGE_FILE}"
     return nil if !File.exist?(file_path)
     coverage = JSON.parse(File.read(file_path))
     coverage["result"]["line"]

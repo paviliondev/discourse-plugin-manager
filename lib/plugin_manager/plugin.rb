@@ -73,7 +73,6 @@ class ::PluginManager::Plugin
     plugin = get(plugin_name)
 
     from_file = attrs[:from_file] || plugin.from_file || false
-    test_url = attrs[:test_url] || plugin.test_url
     url = (attrs[:url] || plugin.url).chomp(".git")
 
     new_attrs = {
@@ -90,7 +89,7 @@ class ::PluginManager::Plugin
       status: attrs[:status].nil? ? plugin.status : attrs[:status].to_i,
       owner: attrs[:owner]&.instance_values || plugin.owner&.instance_values,
       support_url: attrs[:support_url] || plugin.support_url,
-      test_url: test_url.present? ? test_url : local_test_url,
+      test_url: attrs[:test_url] || plugin.test_url,
       from_file: from_file,
       category_id: attrs[:category_id] || plugin.category_id
     }
@@ -145,7 +144,7 @@ class ::PluginManager::Plugin
 
   def self.get_or_create(plugin_name)
     plugin = get(plugin_name)
-    plugin = set_from_file("#{Rails.root}/plugins/#{plugin_name}") if !plugin.present?
+    plugin = set_from_file("#{PluginManager.root_dir}/#{PluginManager.compatible_dir}/#{plugin_name}") if !plugin.present?
     plugin
   end
 
@@ -219,11 +218,18 @@ class ::PluginManager::Plugin
       test_host = nil
       url = nil
 
-      Dir.chdir(path) do
-        sha = `git rev-parse HEAD`.strip
-        branch = `git rev-parse --abbrev-ref HEAD`.strip
-        url = `git config --get remote.origin.url`.strip
-        test_host = PluginManager::TestHost.detect
+      if Rails.env.test?
+        url = metadata.url
+        branch = 'main'
+        sha = '123456'
+        test_host = 'github'
+      else
+        Dir.chdir(path) do
+          sha = `git rev-parse HEAD`.strip
+          branch = `git rev-parse --abbrev-ref HEAD`.strip
+          url = `git config --get remote.origin.url`.strip
+          test_host = PluginManager::TestHost.detect
+        end
       end
 
       if metadata.respond_to?("#{branch.underscore}_test_url")
@@ -240,7 +246,7 @@ class ::PluginManager::Plugin
         version: metadata.version,
         installed_sha: sha,
         git_branch: branch,
-        status: path.include?(PluginManager::Manifest::INCOMPATIBLE_FOLDER) ?
+        status: path.include?(PluginManager.incompatible_dir) ?
           PluginManager::Manifest.status[:incompatible] :
           PluginManager::Manifest.status[:compatible],
         from_file: true,

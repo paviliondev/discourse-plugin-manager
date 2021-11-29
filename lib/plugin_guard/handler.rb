@@ -10,18 +10,17 @@ class ::PluginGuard::Handler
   end
 
   def perform(message, backtrace, precompiled_assets)
-    manifest = PluginManager::Manifest
     clean_up_assets(precompiled_assets)
-    move_to(manifest::INCOMPATIBLE_FOLDER)
-    log(message, backtrace) if manifest.working?(@plugin.status) && message.present?
+    move_to(PluginManager.incompatible_dir)
+    log(message, backtrace) if PluginManager::Manifest.working?(@plugin.status) && message.present?
   end
+
+  protected
 
   def move_to(dir)
     plugin_dir = @plugin_dir.dup
     return unless File.exists?(plugin_dir)
-
-    move_to_dir = plugin_dir.sub(/\/#{PluginManager::Manifest::FOLDER}\//, "/#{dir}/")
-    FileUtils.rm_rf(move_to_dir)
+    move_to_dir = plugin_dir.reverse.sub(PluginManager.compatible_dir.reverse, dir.reverse).reverse
     FileUtils.mv(@plugin_dir, move_to_dir, force: true)
   end
 
