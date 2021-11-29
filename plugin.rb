@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # name: discourse-plugin-manager-server
 # about: Serverside functionality for Pavilion's Plugin Manager
 # version: 0.1.1

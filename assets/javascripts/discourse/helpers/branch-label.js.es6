@@ -10,6 +10,6 @@ registerUnbound("branch-label", (obj) => {
   if (obj.branchUrl) {
     html += `</a>`;
   }
-  html += '</span>'
+  html += "</span>";
   return htmlSafe(html);
 });

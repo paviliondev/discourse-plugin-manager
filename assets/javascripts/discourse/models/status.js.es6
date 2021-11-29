@@ -16,13 +16,13 @@ const ManagerStatus = EmberObject.extend({
     }
   },
 
-  @discourseComputed('branch_url', 'url', 'git_branch')
+  @discourseComputed("branch_url", "url", "git_branch")
   branchUrl(branchUrl, url, branch) {
     if (branchUrl) {
       return branchUrl;
     }
     return `${url}/tree/${branch}`;
-  }
+  },
 });
 
 export default ManagerStatus;

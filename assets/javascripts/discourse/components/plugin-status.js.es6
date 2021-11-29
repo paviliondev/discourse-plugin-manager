@@ -4,8 +4,13 @@ import { createPopper } from "@popperjs/core";
 import discourseComputed from "discourse-common/utils/decorators";
 
 export default Component.extend({
-  tagName: 'tr',
-  classNameBindings: [":plugin-status", "plugin.statusClass", "plugin.name", "plugin.ownerClass"],
+  tagName: "tr",
+  classNameBindings: [
+    ":plugin-status",
+    "plugin.statusClass",
+    "plugin.name",
+    "plugin.ownerClass",
+  ],
   showPluginDetail: false,
   showStatusDetail: false,
 
@@ -18,63 +23,74 @@ export default Component.extend({
   },
 
   documentClick(event) {
-    if (this._state === "destroying") { return; }
-
-    if (!event.target.closest(`.plugin-status.${this.plugin.name} .status-container`)) {
-      this.set('showStatusDetail', false);
+    if (this._state === "destroying") {
+      return;
     }
 
-    if (!event.target.closest(`.plugin-status.${this.plugin.name} .name-container`)) {
-      this.set('showPluginDetail', false);
+    if (
+      !event.target.closest(
+        `.plugin-status.${this.plugin.name} .status-container`
+      )
+    ) {
+      this.set("showStatusDetail", false);
     }
 
-    if (!event.target.closest(`.plugin-status.${this.plugin.name} .owner-container`)) {
-      this.set('showOwnerDetail', false);
+    if (
+      !event.target.closest(
+        `.plugin-status.${this.plugin.name} .name-container`
+      )
+    ) {
+      this.set("showPluginDetail", false);
+    }
+
+    if (
+      !event.target.closest(
+        `.plugin-status.${this.plugin.name} .owner-container`
+      )
+    ) {
+      this.set("showOwnerDetail", false);
     }
   },
 
   createPluginDetailModal() {
-    let container = this.element.querySelector('.name-container');
-    let modal = this.element.querySelector('.plugin-detail');
+    let container = this.element.querySelector(".name-container");
+    let modal = this.element.querySelector(".plugin-detail");
     this.createModal(container, modal);
   },
 
   createStatusDetailModal() {
-    let container = this.element.querySelector('.status-container');
-    let modal = this.element.querySelector('.plugin-status-detail');
+    let container = this.element.querySelector(".status-container");
+    let modal = this.element.querySelector(".plugin-status-detail");
     this.createModal(container, modal);
   },
 
   createOwnerDetailModal() {
-    let container = this.element.querySelector('.owner-container');
-    let modal = this.element.querySelector('.owner-detail');
+    let container = this.element.querySelector(".owner-container");
+    let modal = this.element.querySelector(".owner-detail");
     this.createModal(container, modal);
   },
 
   createModal(container, modal) {
-    this._popper = createPopper(
-      container,
-      modal, {
-        strategy: "absolute",
-        placement: "bottom-start",
-        modifiers: [
-          {
-            name: "preventOverflow",
+    this._popper = createPopper(container, modal, {
+      strategy: "absolute",
+      placement: "bottom-start",
+      modifiers: [
+        {
+          name: "preventOverflow",
+        },
+        {
+          name: "offset",
+          options: {
+            offset: [0, 5],
           },
-          {
-            name: "offset",
-            options: {
-              offset: [0, 5],
-            },
-          },
-        ],
-      }
-    );
+        },
+      ],
+    });
   },
 
-  @discourseComputed('plugin.contactEmails', 'plugin.owner')
+  @discourseComputed("plugin.contactEmails", "plugin.owner")
   supportLink(contactEmails, owner) {
-    if (owner && owner.name && owner.name.toLowerCase() === 'pavilion') {
+    if (owner && owner.name && owner.name.toLowerCase() === "pavilion") {
       return `https://thepavilion.io`;
     }
     return `mailto:${contactEmails[0]}`;
@@ -82,7 +98,7 @@ export default Component.extend({
 
   actions: {
     togglePluginDetail() {
-      this.toggleProperty('showPluginDetail');
+      this.toggleProperty("showPluginDetail");
 
       if (this.showPluginDetail) {
         scheduleOnce("afterRender", this, this.createPluginDetailModal);
@@ -91,7 +107,7 @@ export default Component.extend({
 
     toggleStatusDetail() {
       if (!event.target.closest(`.plugin-status.${this.plugin.name} .log`)) {
-        this.toggleProperty('showStatusDetail');
+        this.toggleProperty("showStatusDetail");
 
         if (this.showStatusDetail) {
           scheduleOnce("afterRender", this, this.createStatusDetailModal);
@@ -100,11 +116,11 @@ export default Component.extend({
     },
 
     toggleOwnerDetail() {
-      this.toggleProperty('showOwnerDetail');
+      this.toggleProperty("showOwnerDetail");
 
       if (this.showOwnerDetail) {
         scheduleOnce("afterRender", this, this.createOwnerDetailModal);
       }
-    }
-  }
-})
+    },
+  },
+});

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class PluginManager::Notifier
 
   attr_reader :plugin,
@@ -24,7 +25,7 @@ class PluginManager::Notifier
     Jobs.enqueue(:send_plugin_incompatible_notification,
       plugin: @plugin.name,
       site: SiteSetting.title,
-      contact_emails:  contact_emails,
+      contact_emails: contact_emails,
       title: email_and_post_title,
       raw: email_body
     )
@@ -39,12 +40,12 @@ class PluginManager::Notifier
       archetype: "regular"
     }
     response = Excon.post("#{post_settings[:base_url]}/posts",
-      :headers => {
+      headers: {
         "Content-Type" => "application/json",
         "Api-Username" => "#{post_settings[:api_user]}",
         "Api-Key" => "#{post_settings[:api_token]}"
       },
-      :body => body.to_json
+      body: body.to_json
     )
 
     if response.status == 200
@@ -122,7 +123,7 @@ class PluginManager::Notifier
       EOF
     end
   end
-  
+
   protected
 
   def post_settings
@@ -144,7 +145,7 @@ class PluginManager::Notifier
   end
 
   def contact_emails
-    @plugin.contact_emails.present? ? 
+    @plugin.contact_emails.present? ?
     @plugin.contact_emails.split(",").map(&:strip).join(",") :
     ''
   end

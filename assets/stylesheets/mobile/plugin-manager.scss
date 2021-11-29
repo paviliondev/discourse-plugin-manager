@@ -4,7 +4,7 @@
     align-items: flex-start;
 
     .title {
-      padding: .5em;
+      padding: 0.5em;
     }
 
     .logo {
@@ -20,7 +20,8 @@
   .discourse-status {
     padding-bottom: 0;
 
-    > div, > a {
+    > div,
+    > a {
       margin-bottom: 1em;
     }
   }

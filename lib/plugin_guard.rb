@@ -2,7 +2,7 @@
 
 class ::PluginGuard
   NAMESPACE ||= 'plugin-guard'
-  
+
   attr_reader :file,
               :metadata,
               :sha,
@@ -42,7 +42,7 @@ class ::PluginGuard
           block_start = true
           in_block = true
         end
-        
+
         if in_block && line.include?(".js")
           result += line.scan(/[\w|\-|\_]*\.js.*$/)
         else

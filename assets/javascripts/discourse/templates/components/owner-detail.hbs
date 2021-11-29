@@ -2,7 +2,7 @@
   {{owner-logo owner label=true linked=true class="medium"}}
 
   <div class="detail-links">
-    <a href={{owner.url}} class="detail-link" target="_blank" title={{typeTitle}}>
+    <a href={{owner.url}} class="detail-link" target="_blank" rel="noopener noreferrer" title={{typeTitle}}>
       {{d-icon "fab-github"}}
     </a>
   </div>
@@ -12,7 +12,7 @@
   <ul class="detail-metadata">
     {{#if owner.description}}
       <li>
-        <label class="detail-label">{{i18n 'server_status.plugin.owner.description'}}</label>
+        <label class="detail-label">{{i18n "server_status.plugin.owner.description"}}</label>
         <span class="detail-value">{{owner.description}}</span>
       </li>
     {{/if}}

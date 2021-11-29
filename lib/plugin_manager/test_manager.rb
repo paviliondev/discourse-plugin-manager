@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class ::PluginManager::TestManager
   COVERAGE_FILE ||= "coverage/.last_run.json"
 
@@ -94,7 +95,7 @@ class ::PluginManager::TestManager
     end
   end
 
-  def request(endpoint, opts={})
+  def request(endpoint, opts = {})
     begin
       response = Excon.get("https://#{@host.domain}/#{endpoint}")
     rescue Excon::Error

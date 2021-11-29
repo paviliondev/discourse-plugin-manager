@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class PluginManager::BasicPluginSerializer < ::ApplicationSerializer
   attributes :name,
              :status,

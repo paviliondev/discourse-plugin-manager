@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class ::PluginGuard::Error < StandardError
   PLUGIN_DIR ||= Rails.root + 'plugins'
 

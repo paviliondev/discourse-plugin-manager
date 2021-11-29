@@ -1,32 +1,33 @@
 import discourseComputed from "discourse-common/utils/decorators";
 import ManagerStatus from "./status";
 import { dasherize } from "@ember/string";
-import { ajax } from 'discourse/lib/ajax';
-import { popupAjaxError } from 'discourse/lib/ajax-error';
+import { ajax } from "discourse/lib/ajax";
+import { popupAjaxError } from "discourse/lib/ajax-error";
 import { notEmpty } from "@ember/object/computed";
+import I18n from "I18n";
 
 const statusIcons = {
   unknown: "far-question-circle",
   recommended: "check-circle",
   compatible: "far-check-circle",
   tests_failing: "far-times-circle",
-  incompatible: "times-circle"
-}
+  incompatible: "times-circle",
+};
 
 const PluginManager = ManagerStatus.extend({
   @discourseComputed("status")
   statusIcon(status) {
-    return status ? statusIcons[status] : '';
+    return status ? statusIcons[status] : "";
   },
 
   @discourseComputed("status")
   statusTitle(status) {
-    return status ? I18n.t(`server_status.plugin.status.${status}.title`) : '';
+    return status ? I18n.t(`server_status.plugin.status.${status}.title`) : "";
   },
 
   @discourseComputed("status")
   statusClass(status) {
-    return status ? dasherize(status) : '';
+    return status ? dasherize(status) : "";
   },
 
   @discourseComputed("owner")
@@ -39,28 +40,28 @@ const PluginManager = ManagerStatus.extend({
     return `/c/${name}`;
   },
 
-  hasContactEmails: notEmpty('contactEmails'),
+  hasContactEmails: notEmpty("contactEmails"),
 
-  @discourseComputed('contact_emails')
+  @discourseComputed("contact_emails")
   contactEmails(emails) {
-    return emails ? emails.split(',') : [];
+    return emails ? emails.split(",") : [];
   },
 
-  @discourseComputed('authors')
+  @discourseComputed("authors")
   authorList(authors) {
-    return authors ? authors.split(',') : [];
-  }
+    return authors ? authors.split(",") : [];
+  },
 });
 
 PluginManager.reopenClass({
   status() {
-    return ajax('/plugin-manager/status');
+    return ajax("/plugin-manager/status");
   },
 
   list(data) {
-    return ajax('/plugin-manager/plugin', {
+    return ajax("/plugin-manager/plugin", {
       type: "GET",
-      data
+      data,
     }).catch(popupAjaxError);
   },
 
@@ -68,7 +69,7 @@ PluginManager.reopenClass({
     return ajax(`/plugin-manager/plugin/${plugin.name}`, {
       type: "PUT",
       data: {
-        plugin
+        plugin,
       },
     }).catch(popupAjaxError);
   },

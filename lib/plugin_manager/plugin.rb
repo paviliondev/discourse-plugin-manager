@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class ::PluginManager::Plugin
   PAGE_LIMIT = 30
 
@@ -306,8 +307,8 @@ class ::PluginManager::Plugin
   def self.add_extra_metadata
     extra_metadata.each do |field|
       if ::Plugin::Metadata::FIELDS.exclude?(field)
-        ::Plugin::Metadata::FIELDS << field 
-        ::Plugin::Metadata.attr_accessor field  
+        ::Plugin::Metadata::FIELDS << field
+        ::Plugin::Metadata.attr_accessor field
       end
     end
   end

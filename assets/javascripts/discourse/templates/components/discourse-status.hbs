@@ -1,4 +1,4 @@
-<button class="btn btn-icon-text" {{action "toggleDiscourseStatus"}}>
+<button class="btn btn-icon-text" {{action "toggleDiscourseStatus"}} type="button">
   {{d-icon "code-branch"}}
   <span classs="d-button-label">{{discourse.git_branch}}</span>
 </button>
@@ -7,17 +7,17 @@
   <div class="discourse-detail plugin-manager-detail">
     <ul class="detail-metadata">
       <li>
-        <label class="detail-label">{{i18n 'server_status.discourse.branch'}}</label>
+        <label class="detail-label">{{i18n "server_status.discourse.branch"}}</label>
         <span class="detail-value">
           {{branch-label discourse}}
         </span>
       </li>
       <li>
-        <label class="detail-label">{{i18n 'server_status.discourse.version'}}</label>
+        <label class="detail-label">{{i18n "server_status.discourse.version"}}</label>
         <span class="detail-value">{{dash-if-empty discourse.installed_version}}</span>
       </li>
       <li>
-        <label class="detail-label">{{i18n 'server_status.discourse.commit'}}</label>
+        <label class="detail-label">{{i18n "server_status.discourse.commit"}}</label>
         <span class="detail-value">
           <a href={{discourse.gitLink}} rel="noopener noreferrer" target="_blank">
             {{discourse.shortSha}}

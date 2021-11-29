@@ -27,19 +27,18 @@
               action="editPlugin"
               actionParam=plugin}}
 
-              {{#if plugin.new}}
-                {{d-button
-                  action="removePlugin"
-                  actionParam=plugin
-                  label="admin.plugin_manager.plugin.remove"
-                  title="admin.plugin_manager.plugin.remove"
-                  icon="times"
-                  class="destroy"}}
-              {{/if}}
+            {{#if plugin.new}}
+              {{d-button
+                action="removePlugin"
+                actionParam=plugin
+                label="admin.plugin_manager.plugin.remove"
+                title="admin.plugin_manager.plugin.remove"
+                icon="times"
+                class="destroy"}}
+            {{/if}}
           </td>
         </tr>
       {{/each}}
     </tbody>
   </table>
 </div>
-

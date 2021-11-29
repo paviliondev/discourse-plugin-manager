@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ::PluginGuard::PluginInstanceExtension
   def notify_after_initialize
     color_schemes.each do |c|

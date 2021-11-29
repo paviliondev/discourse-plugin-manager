@@ -7,5 +7,3 @@
 # url: https://github.com/paviliondev/discourse-incompatible-plugin.git
 
 ClassDoesNotExist
-
-

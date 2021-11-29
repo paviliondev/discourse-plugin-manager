@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class PluginManager::PluginSerializer < ::PluginManager::BasicPluginSerializer
   attributes :display_name,
              :url,

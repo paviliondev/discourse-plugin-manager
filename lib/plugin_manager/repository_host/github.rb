@@ -1,4 +1,5 @@
-class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost  
+# frozen_string_literal: true
+class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
   def initialize
     @name = 'github'
     @domain = 'api.github.com'

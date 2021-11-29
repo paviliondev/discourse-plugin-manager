@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class ::PluginManager::Manifest
   def self.status
     @status ||= Enum.new(
@@ -48,7 +49,7 @@ class ::PluginManager::Manifest
   end
 
   def set(status)
-    folder = status == self.class.status[:incompatible] ? PluginManager.incompatible_dir : PluginManager.compatible_dir 
+    folder = status == self.class.status[:incompatible] ? PluginManager.incompatible_dir : PluginManager.compatible_dir
     path = "#{root_dir}/#{folder}"
     return unless File.directory?(path)
 

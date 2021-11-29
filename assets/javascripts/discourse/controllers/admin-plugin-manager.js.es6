@@ -16,17 +16,17 @@ export default Controller.extend({
     editPlugin(plugin) {
       let originalPlugin = plugin;
       let modalController = showModal("plugin-manager-plugin-editor", {
-        model: plugin
+        model: plugin,
       });
       modalController.setProperties({
-        afterSave: (plugin) => {
-          this.send('removePlugin', originalPlugin);
-          this.send('addPlugin', plugin);
+        afterSave: (addPlugin) => {
+          this.send("removePlugin", originalPlugin);
+          this.send("addPlugin", addPlugin);
         },
-        afterDestroy: (plugin) => {
-          this.send('removePlugin', plugin);
-        }
-      })
-    }
-  }
+        afterDestroy: (removePlugin) => {
+          this.send("removePlugin", removePlugin);
+        },
+      });
+    },
+  },
 });

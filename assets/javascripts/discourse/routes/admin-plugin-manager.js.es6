@@ -8,7 +8,9 @@ export default DiscourseRoute.extend({
   },
 
   setupController(controller, model) {
-    const plugins = A(model.plugins.map((plugin) => PluginManager.create(plugin)) || []);
+    const plugins = A(
+      model.plugins.map((plugin) => PluginManager.create(plugin)) || []
+    );
     controller.setProperties({ plugins });
-  }
+  },
 });

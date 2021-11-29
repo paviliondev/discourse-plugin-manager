@@ -1,4 +1,5 @@
-class PluginManager::TestHost::Github < PluginManager::TestHost  
+# frozen_string_literal: true
+class PluginManager::TestHost::Github < PluginManager::TestHost
   def initialize
     @name = 'github'
     @config = '.github/workflows/plugin-tests.yml'

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class ::PluginManager::RepositoryHost
   attr_reader :name,
               :domain

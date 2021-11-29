@@ -3,7 +3,7 @@ import { createPopper } from "@popperjs/core";
 import { bind, scheduleOnce } from "@ember/runloop";
 
 export default Component.extend({
-  classNames: ['discourse-status'],
+  classNames: ["discourse-status"],
   showDiscourseDetail: false,
 
   didInsertElement() {
@@ -15,44 +15,43 @@ export default Component.extend({
   },
 
   documentClick(event) {
-    if (this._state === "destroying") { return; }
+    if (this._state === "destroying") {
+      return;
+    }
 
     if (!event.target.closest(`.discourse-status`)) {
-      this.set('showDiscourseDetail', false);
+      this.set("showDiscourseDetail", false);
     }
   },
 
   createDiscourseModal() {
     let container = this.element;
-    let modal = this.element.querySelector('.discourse-detail');
+    let modal = this.element.querySelector(".discourse-detail");
 
-    this._popper = createPopper(
-      container,
-      modal, {
-        strategy: "absolute",
-        placement: "bottom-start",
-        modifiers: [
-          {
-            name: "preventOverflow",
+    this._popper = createPopper(container, modal, {
+      strategy: "absolute",
+      placement: "bottom-start",
+      modifiers: [
+        {
+          name: "preventOverflow",
+        },
+        {
+          name: "offset",
+          options: {
+            offset: [0, 5],
           },
-          {
-            name: "offset",
-            options: {
-              offset: [0, 5],
-            },
-          },
-        ],
-      }
-    );
+        },
+      ],
+    });
   },
 
   actions: {
     toggleDiscourseStatus() {
-      this.toggleProperty('showDiscourseDetail');
+      this.toggleProperty("showDiscourseDetail");
 
       if (this.showDiscourseDetail) {
         scheduleOnce("afterRender", this, this.createDiscourseModal);
       }
-    }
-  }
+    },
+  },
 });

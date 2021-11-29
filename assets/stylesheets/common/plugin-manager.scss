@@ -43,8 +43,8 @@ $incompatible: #ef1700;
       .d-icon {
         background-color: $primary-low;
         border-radius: 50%;
-        padding: .5em;
-        margin-right: .75em;
+        padding: 0.5em;
+        margin-right: 0.75em;
       }
     }
 
@@ -58,7 +58,7 @@ $incompatible: #ef1700;
     border-top: 1px solid var(--primary-low);
     background-color: var(--secondary);
     color: var(--primary);
-    box-shadow: shadow('dropdown');
+    box-shadow: shadow("dropdown");
     z-index: 1;
     padding: 0 1em;
     width: 400px;
@@ -67,27 +67,27 @@ $incompatible: #ef1700;
     .detail-label {
       display: block;
       font-size: 0.8em;
-      margin-bottom: .25em;
+      margin-bottom: 0.25em;
     }
 
     .detail-value {
       background-color: $primary-low;
-      padding: .3em .6em;
+      padding: 0.3em 0.6em;
       font-size: 1.1em;
       display: inline-block;
 
       .d-icon {
-        margin-right: .5em;
+        margin-right: 0.5em;
       }
     }
-    
+
     &.plugin-status-detail {
       .detail-title {
         align-items: flex-start;
 
         .detail-links {
           margin-left: 1em;
-          padding-top: .2em;
+          padding-top: 0.2em;
         }
       }
     }
@@ -128,7 +128,7 @@ $incompatible: #ef1700;
 
     .update-topic {
       display: inline-flex;
-      
+
       > span:first-of-type {
         margin-right: 8px;
       }
@@ -147,7 +147,7 @@ $incompatible: #ef1700;
   .bottom {
     border-bottom: 1px solid $primary-low;
     display: grid;
-    grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     grid-gap: 1em;
     padding: 1em;
   }
@@ -189,10 +189,10 @@ $incompatible: #ef1700;
       align-items: center;
 
       a {
-        margin-right: .5em;
+        margin-right: 0.5em;
 
         &:last-of-type {
-          margin-right: .5em;
+          margin-right: 0.5em;
         }
       }
     }
@@ -268,10 +268,10 @@ $incompatible: #ef1700;
     }
 
     &.with-text {
-      padding: .45em .85em;
+      padding: 0.45em 0.85em;
 
       .d-icon {
-        margin-right: .75em;
+        margin-right: 0.75em;
       }
 
       &.unknown {
@@ -303,7 +303,7 @@ $incompatible: #ef1700;
     }
 
     .branch-label {
-      margin-left: .25em;
+      margin-left: 0.25em;
     }
   }
 
@@ -372,7 +372,7 @@ $incompatible: #ef1700;
   .btn-owner-logo {
     border: 1px solid rgba($primary, 0.2);
     background: transparent;
-    padding: .45em .85em;
+    padding: 0.45em 0.85em;
   }
 
   .owner-logo {
@@ -406,7 +406,7 @@ $incompatible: #ef1700;
     }
 
     &.has-label .owner-logo-img {
-      margin-right: .75em;
+      margin-right: 0.75em;
     }
   }
 
@@ -424,21 +424,21 @@ $incompatible: #ef1700;
   }
 
   .show-log {
-    margin: .5em 0;
+    margin: 0.5em 0;
     color: var(--primary);
 
     .d-icon {
-      font-size: .8em;
+      font-size: 0.8em;
     }
   }
 
   .action-url {
     color: var(--primary);
-    margin-right: .5em;
+    margin-right: 0.5em;
 
     .d-icon {
-      font-size: .8em;
-      margin-right: .25em;
+      font-size: 0.8em;
+      margin-right: 0.25em;
     }
   }
 
@@ -449,10 +449,10 @@ $incompatible: #ef1700;
     background-color: var(--primary);
     color: var(--secondary);
     margin-top: 1em;
-    padding: .5em;
+    padding: 0.5em;
 
     .log-attr {
-      margin: .25em 0;
+      margin: 0.25em 0;
 
       &:last-of-type {
         margin-bottom: 0;
@@ -461,18 +461,16 @@ $incompatible: #ef1700;
 
     label {
       display: inline-block;
-      padding: .15em;
-      margin: 0 .25em 0 0;
+      padding: 0.15em;
+      margin: 0 0.25em 0 0;
       text-decoration: underline;
     }
   }
 }
 
-
-
 .branch-label {
   background-color: var(--primary-low);
-  padding: .05em .3em;
+  padding: 0.05em 0.3em;
 }
 
 .plugin-manager-title {
@@ -488,7 +486,7 @@ $incompatible: #ef1700;
 
 .plugin-manager-plugins {
   display: grid;
-  grid-template-columns: repeat( auto-fit, minmax(calc(50% - 2em), 1fr) );
+  grid-template-columns: repeat(auto-fit, minmax(calc(50% - 2em), 1fr));
   grid-gap: 1em;
 }
 
@@ -512,7 +510,7 @@ $incompatible: #ef1700;
 
   .actions {
     display: flex;
-    margin-top: .5em;
+    margin-top: 0.5em;
     padding-top: 1em;
     border-top: 1px solid var(--primary-low);
 

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class ::PluginManager::RepositoryOwner
   include ActiveModel::Serialization
 

@@ -1,6 +1,6 @@
 <td class="name">
   <div class="name-container">
-    <button class="btn btn-icon-text" {{action "togglePluginDetail"}}>
+    <button class="btn btn-icon-text" {{action "togglePluginDetail"}} type="button">
       <span classs="d-button-label">{{plugin.display_name}}</span>
     </button>
 
@@ -13,7 +13,7 @@
 <td class="owner">
   <div class="owner-container">
     {{#if plugin.owner}}
-      <button class="btn-owner-logo" {{action "toggleOwnerDetail"}}>
+      <button class="btn-owner-logo" {{action "toggleOwnerDetail"}} type="button">
         {{owner-logo plugin.owner label=true}}
       </button>
 
@@ -39,7 +39,7 @@
 
 <td class="actions">
   {{#if supportLink}}
-    <a href={{supportLink}} class="btn btn-default" target="_blank">
+    <a href={{supportLink}} class="btn btn-default" target="_blank" rel="noopener noreferrer">
       {{d-icon "far-life-ring"}}
       <span class="d-button-label">{{i18n "server_status.support"}}</span>
     </a>

@@ -4,7 +4,7 @@ import { A } from "@ember/array";
 import { observes } from "discourse-common/utils/decorators";
 
 export default Component.extend({
-  classNames: 'plugin-manifest',
+  classNames: "plugin-manifest",
   page: 0,
   filter: null,
   order: null,
@@ -15,7 +15,7 @@ export default Component.extend({
   triggerLoadPlugins() {
     this.setProperties({
       page: 0,
-      canLoadMore: true
+      canLoadMore: true,
     });
     this.loadPlugins(false);
   },
@@ -23,12 +23,12 @@ export default Component.extend({
   loadPlugins(addingPage) {
     this.set("loading", true);
 
-    const currentNames = this.plugins.map(p => p.name);
+    const currentNames = this.plugins.map((p) => p.name);
     let params = {
       page: this.page,
       order: this.order,
       asc: this.asc,
-      filter: this.filter
+      filter: this.filter,
     };
 
     PluginManager.list(params)
@@ -36,7 +36,7 @@ export default Component.extend({
         let plugins = result.plugins;
 
         if (addingPage) {
-          plugins = plugins.filter(p => !currentNames.includes(p.name));
+          plugins = plugins.filter((p) => !currentNames.includes(p.name));
 
           if (plugins.length === 0) {
             this.set("canLoadMore", false);
@@ -61,5 +61,5 @@ export default Component.extend({
         this.loadPlugins(true);
       }
     },
-  }
-})
+  },
+});

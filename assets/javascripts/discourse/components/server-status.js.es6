@@ -1,29 +1,28 @@
-import Component from '@ember/component';
-import { getOwner } from 'discourse-common/lib/get-owner';
-import discourseComputed from 'discourse-common/utils/decorators';
-import { bind, scheduleOnce } from "@ember/runloop";
+import Component from "@ember/component";
+import { getOwner } from "discourse-common/lib/get-owner";
+import discourseComputed from "discourse-common/utils/decorators";
 
 export default Component.extend({
-  classNameBindings: [':server-status', 'visible'],
+  classNameBindings: [":server-status", "visible"],
 
   init() {
     this._super(...arguments);
 
     const container = getOwner(this);
-    const controller = container.lookup('controller:application');
+    const controller = container.lookup("controller:application");
     const router = container.lookup("router:main");
-    const plugins = controller.get('plugins');
-    const discourse = controller.get('discourse');
+    const plugins = controller.get("plugins");
+    const discourse = controller.get("discourse");
 
     this.setProperties({
       router,
       discourse,
-      plugins
+      plugins,
     });
   },
 
-  @discourseComputed('router.currentPath')
+  @discourseComputed("router.currentPath")
   visible(currentPath) {
-    return currentPath && currentPath.indexOf('admin') === -1;
-  }
+    return currentPath && currentPath.indexOf("admin") === -1;
+  },
 });

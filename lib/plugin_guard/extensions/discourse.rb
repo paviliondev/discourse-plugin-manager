@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module PluginGuard::DiscourseExtension
   def activate_plugins!
     @plugins = []
@@ -22,5 +23,5 @@ module PluginGuard::DiscourseExtension
     end
 
     DiscourseEvent.trigger(:after_plugin_activation)
-  end 
+  end
 end

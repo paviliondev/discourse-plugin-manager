@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class ::PluginManager::RepositoryManager
   COVERAGE_FILE ||= "coverage/.last_run.json"
 
@@ -30,7 +31,7 @@ class ::PluginManager::RepositoryManager
 
   protected
 
-  def request(endpoint, opts={})
+  def request(endpoint, opts = {})
     response = Excon.get("https://#{@host.domain}/#{endpoint}")
 
     if response.status == 200
