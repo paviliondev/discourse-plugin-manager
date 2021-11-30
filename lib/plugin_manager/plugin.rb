@@ -214,9 +214,9 @@ class ::PluginManager::Plugin
     metadata = ::Plugin::Metadata.parse(file)
 
     if metadata.present? && ::PluginManager::Manifest.excluded.exclude?(metadata.name)
-      sha = Open3.capture3('git rev-parse HEAD', chdir: path)
-      branch = Open3.capture3('git rev-parse --abbrev-ref HEAD', chdir: path)
-      url = Open3.capture3('git config --get remote.origin.url', chdir: path)
+      sha = PluginManager.run_shell_cmd('git rev-parse HEAD', chdir: path)
+      branch = PluginManager.run_shell_cmd('git rev-parse --abbrev-ref HEAD', chdir: path)
+      url = PluginManager.run_shell_cmd('git config --get remote.origin.url', chdir: path)
       test_host = PluginManager::TestHost.detect
 
       if metadata.respond_to?("#{branch.underscore}_test_url")

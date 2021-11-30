@@ -18,4 +18,9 @@ module PluginManager
   def self.incompatible_dir
     'plugins_incompatible'
   end
+
+  def self.run_shell_cmd(cmd, opts = {})
+    stdout, stderr_str, status = Open3.capture3(cmd, opts)
+    stderr_str.present? ? nil : stdout.strip
+  end
 end

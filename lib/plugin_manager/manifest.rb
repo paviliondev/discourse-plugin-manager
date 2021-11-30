@@ -50,7 +50,7 @@ class ::PluginManager::Manifest
 
   def set(status)
     folder = status == self.class.status[:incompatible] ? PluginManager.incompatible_dir : PluginManager.compatible_dir
-    path = "#{root_dir}/#{folder}"
+    path = "#{PluginManager.root_dir}/#{folder}"
     return unless File.directory?(path)
 
     Dir.each_child(path) do |dir|
