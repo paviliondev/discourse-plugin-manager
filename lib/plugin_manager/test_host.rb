@@ -31,7 +31,7 @@ class ::PluginManager::TestHost
   end
 
   def self.detect
-    host = self.list.find { |host| File.file?(host.config) }
+    host = self.list.find { |h| File.file?(h.config) }
     host ? host.name : nil
   end
 end

@@ -19,11 +19,8 @@ class ::PluginGuard
     return false if ::Plugin::Metadata::OFFICIAL_PLUGINS.include?(plugin_name)
 
     @directory = directory
-    Dir.chdir(directory) do
-      @sha = Discourse.try_git('git rev-parse HEAD', nil)
-      @branch = Discourse.try_git("git branch | sed -n '/\* /s///p'", 'tests-passed')
-    end
-
+    @sha = Open3.capture3('git rev-parse HEAD', chdir: directory)
+    @branch = Open3.capture3("git rev-parse --abbrev-ref HEAD", chdir: directory)
     @handler = ::PluginGuard::Handler.new(plugin_name, directory)
   end
 

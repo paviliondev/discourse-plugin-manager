@@ -26,8 +26,8 @@ task 'assets:precompile:before' do
 
   path = "#{Rails.root}/plugins"
 
-  Dir.each_child(path) do |folder|
-    if guard = PluginGuard.new("#{path}/#{folder}")
+  Dir.each_child(path) do |dir|
+    if guard = PluginGuard.new("#{path}/#{dir}")
       begin
         guard.precompiled_assets.each do |filename|
           pre_path = "#{guard.directory}/assets/javascripts/#{filename}"

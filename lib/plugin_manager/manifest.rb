@@ -53,8 +53,8 @@ class ::PluginManager::Manifest
     path = "#{root_dir}/#{folder}"
     return unless File.directory?(path)
 
-    Dir.each_child(path) do |folder|
-      plugin_path = "#{path}/#{folder}"
+    Dir.each_child(path) do |dir|
+      plugin_path = "#{path}/#{dir}"
       PluginManager::Plugin.set_from_file(plugin_path)
     end
   end

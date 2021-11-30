@@ -211,27 +211,13 @@ class ::PluginManager::Plugin
     rescue
       return nil
     end
-
     metadata = ::Plugin::Metadata.parse(file)
-    if metadata.present? && ::PluginManager::Manifest.excluded.exclude?(metadata.name)
-      sha = nil
-      branch = nil
-      test_host = nil
-      url = nil
 
-      if Rails.env.test?
-        url = metadata.url
-        branch = 'main'
-        sha = '123456'
-        test_host = 'github'
-      else
-        Dir.chdir(path) do
-          sha = `git rev-parse HEAD`.strip
-          branch = `git rev-parse --abbrev-ref HEAD`.strip
-          url = `git config --get remote.origin.url`.strip
-          test_host = PluginManager::TestHost.detect
-        end
-      end
+    if metadata.present? && ::PluginManager::Manifest.excluded.exclude?(metadata.name)
+      sha = Open3.capture3('git rev-parse HEAD', chdir: path)
+      branch = Open3.capture3('git rev-parse --abbrev-ref HEAD', chdir: path)
+      url = Open3.capture3('git config --get remote.origin.url', chdir: path)
+      test_host = PluginManager::TestHost.detect
 
       if metadata.respond_to?("#{branch.underscore}_test_url")
         test_url = metadata.send("#{branch.underscore}_test_url")

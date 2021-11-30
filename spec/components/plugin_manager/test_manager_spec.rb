@@ -10,7 +10,7 @@ describe PluginManager::TestManager do
     stub_github_user_request
     stub_github_test_request(test_response_body)
     PluginManager.stubs(:root_dir).returns(fixture_dir)
-    PluginManager::Plugin.set_from_file(plugin_dir(compatible_plugin))
+    setup_test_plugin(compatible_plugin)
   end
 
   it "updates plugin tests" do
