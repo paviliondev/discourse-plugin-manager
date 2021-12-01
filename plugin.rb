@@ -66,7 +66,7 @@ after_initialize do
   PluginManager::Plugin.add_extra_metadata
 
   unless Rails.env.test?
-    PluginManager::Manifest.update_plugin_status
-    PluginManager::Manifest.update_test_status
+    #PluginManager::Manifest.update_plugin_status
+    #PluginManager::Manifest.update_test_status
   end
 end
