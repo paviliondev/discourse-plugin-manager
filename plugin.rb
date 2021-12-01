@@ -47,6 +47,7 @@ after_initialize do
   end
 
   %w(
+    ../lib/plugin_manager.rb
     ../mailers/plugin_mailer.rb
     ../app/jobs/scheduled/fetch_plugin_tests_status.rb
     ../app/jobs/regular/send_plugin_incompatible_notification.rb
