@@ -62,10 +62,10 @@ after_initialize do
     load File.expand_path(path, __FILE__)
   end
 
-  PluginManager::Plugin.add_extra_metadata
+  #PluginManager::Plugin.add_extra_metadata
 
   unless Rails.env.test?
-    PluginManager::Manifest.update_plugin_status
-    PluginManager::Manifest.update_test_status
+    #PluginManager::Manifest.update_plugin_status
+    #PluginManager::Manifest.update_test_status
   end
 end
