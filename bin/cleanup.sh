@@ -1,4 +1,4 @@
 #!/bin/sh
   
 cd /var/discourse
-yes | ./launcher rebuild app
+yes | ./launcher cleanup

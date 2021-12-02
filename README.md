@@ -37,11 +37,14 @@ Deploying updates to production is a two step process:
 
 ### Scheduled rebuilds
 
-The servers running this plugin use ``crontab`` to automatically rebuild every 24 hours. The ``cron`` command is
+The servers running this plugin use ``crontab`` to automatically rebuild every 24 hours, and automatically cleanup every week. 
+
+The ``cron`` commands are
 
 ```
 0 00 * * * /usr/local/bin/rebuild_discourse >>/tmp/cron_debug_log.log 2>&1
+0 00 * * 7 /usr/local/bin/cleanup_discourse >>/tmp/cron_debug_log.log 2>&1
 ```
 
-A sample script for ``/usr/local/bin/rebuild_discourse`` is in ``bin/rebuild.sh``.
+The scripts for ``rebuild_discourse`` and ``cleanup_discourse`` are is ``bin/rebuild.sh`` and ``bin/cleanup.sh``.
 
