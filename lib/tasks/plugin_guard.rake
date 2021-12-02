@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require_relative '../plugin_guard'
 
 PATH_WHITELIST ||= [
   'message-bus'
