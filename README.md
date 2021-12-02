@@ -46,5 +46,5 @@ The ``cron`` commands are
 0 00 * * 7 /usr/local/bin/cleanup_discourse >>/tmp/cron_debug_log.log 2>&1
 ```
 
-The scripts for ``rebuild_discourse`` and ``cleanup_discourse`` are is ``bin/rebuild.sh`` and ``bin/cleanup.sh``.
+The templates for ``rebuild_discourse`` and ``cleanup_discourse`` are ``bin/rebuild.sh`` and ``bin/cleanup.sh``.
 
