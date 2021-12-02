@@ -125,7 +125,7 @@ class ::PluginManager::Plugin
     status_changed = old_status != new_status
     new_attrs[:status_changed_at] = status_changed ? Time.now : plugin.status_changed_at
 
-    saved = ::PluginStore.set(::PluginManager::NAMESPACE, plugin_name, new_attrs)
+    saved = ::PluginManagerStore.set(::PluginManager::NAMESPACE, plugin_name, new_attrs)
 
     if saved && status_changed
       PluginManager::Manifest.handle_status_change(plugin_name, old_status, new_status)
@@ -135,7 +135,7 @@ class ::PluginManager::Plugin
   end
 
   def self.get(plugin_name)
-    raw = ::PluginStore.get(::PluginManager::NAMESPACE, plugin_name) || {}
+    raw = ::PluginManagerStore.get(::PluginManager::NAMESPACE, plugin_name) || {}
     new(plugin_name, raw)
   end
 

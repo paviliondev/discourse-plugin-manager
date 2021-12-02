@@ -35,7 +35,7 @@ class ::PluginGuard::Log
 
   def save
     @updated_at = Time.now.iso8601
-    PluginStore.set(PluginGuard::NAMESPACE, key, self.instance_values)
+    ::PluginManagerStore.set(PluginGuard::NAMESPACE, key, self.instance_values)
   end
 
   def digest
@@ -77,7 +77,7 @@ class ::PluginGuard::Log
   end
 
   def self.get(key)
-    raw = PluginStore.get(PluginGuard::NAMESPACE, key)
+    raw = ::PluginManagerStore.get(PluginGuard::NAMESPACE, key)
     raw ? new(raw) : nil
   end
 

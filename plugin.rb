@@ -18,6 +18,8 @@ register_svg_icon "far-life-ring"
 register_svg_icon "far-question-circle"
 
 after_initialize do
+  PluginManagerStore.commit_cache
+
   if Rails.env.test?
     %w(
       ../lib/plugin_guard.rb
@@ -62,10 +64,10 @@ after_initialize do
     load File.expand_path(path, __FILE__)
   end
 
-  #PluginManager::Plugin.add_extra_metadata
+  PluginManager::Plugin.add_extra_metadata
 
   unless Rails.env.test?
-    #PluginManager::Manifest.update_plugin_status
-    #PluginManager::Manifest.update_test_status
+    PluginManager::Manifest.update_plugin_status
+    PluginManager::Manifest.update_test_status
   end
 end

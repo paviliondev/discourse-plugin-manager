@@ -5,6 +5,8 @@ mkdir -p ${DISCOURSE_ROOT}/lib/plugin_manager/test_host
 mkdir -p ${DISCOURSE_ROOT}/lib/plugin_manager/repository_host
 mkdir -p ${DISCOURSE_ROOT}/plugins_incompatible
 
+ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_manager_store.rb ${DISCOURSE_ROOT}/lib/plugin_manager_store.rb
+
 ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_guard.rb ${DISCOURSE_ROOT}/lib/plugin_guard.rb
 ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_guard/extensions/discourse.rb ${DISCOURSE_ROOT}/lib/plugin_guard/extensions/discourse.rb
 ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_guard/extensions/plugin_instance.rb ${DISCOURSE_ROOT}/lib/plugin_guard/extensions/plugin_instance.rb

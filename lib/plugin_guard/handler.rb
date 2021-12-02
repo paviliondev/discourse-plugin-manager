@@ -12,7 +12,7 @@ class ::PluginGuard::Handler
   def perform(message, backtrace, precompiled_assets)
     clean_up_assets(precompiled_assets)
     move_to(PluginManager.incompatible_dir)
-    log(message, backtrace) if PluginManager::Manifest.working?(@plugin.status) && message.present?
+    log(message, backtrace) if message.present?
   end
 
   protected
