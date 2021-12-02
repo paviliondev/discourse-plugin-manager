@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
+require "./app/models/plugin_store_row.rb" unless defined?(PluginStoreRow)
+require "./app/models/plugin_store.rb" unless defined?(PluginStore)
+require "./lib/enum.rb" unless defined?(Enum)
 require_relative "plugin_guard"
+require_relative "plugin_guard/extensions/discourse.rb"
+require_relative "plugin_guard/extensions/plugin_instance.rb"
 require_relative "plugin_manager"
 
 @extensions_applied = false
@@ -11,14 +16,8 @@ def plugin_initialization_guard(&block)
   @activating_plugins = source_line.include?("activate_plugins")
 
   if @activating_plugins && !@extensions_applied
-    require './app/models/plugin_store_row.rb'
-    require './app/models/plugin_store.rb'
-    require './lib/enum.rb'
-    Dir["./lib/plugin_guard/**/*.rb"].each { |file| require file }
-    Dir["./lib/plugin_manager/**/*.rb"].each { |file| require file }
     Discourse.singleton_class.prepend PluginGuard::DiscourseExtension
     Plugin::Instance.prepend PluginGuard::PluginInstanceExtension
-
     @extensions_applied = true
   end
 

@@ -63,3 +63,7 @@ class ::PluginGuard
     )
   end
 end
+
+require_relative 'plugin_guard/error.rb'
+require_relative 'plugin_guard/handler.rb'
+require_relative 'plugin_guard/log.rb'

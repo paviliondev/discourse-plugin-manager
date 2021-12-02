@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 class ::PluginGuard::Error < StandardError
-  PLUGIN_DIR ||= Rails.root + 'plugins'
-
   attr_reader :error
 
   def initialize(error)
@@ -24,7 +22,7 @@ class ::PluginGuard::Error < StandardError
       Pathname.new(location.absolute_path)
         .ascend
         .lazy
-        .find { |path| path.parent == PLUGIN_DIR }
+        .find { |path| path.parent == (Rails.root + 'plugins') }
     end.next
   end
 end
