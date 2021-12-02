@@ -21,7 +21,7 @@ Use a development workflow that looks like this
 
 3. When you've finished:
 
-   - if you've added or removed files or folders in ``lib`` make sure ``bin/setup.sh`` is updated accordingly; and
+   - if you've added or removed files or folders in ``lib`` make sure ``bin/setup.sh`` and ``templates/plugin_guard.template.yml`` are updated accordingly; and
    
    - clean your ``discourse/discourse`` working tree.
 
