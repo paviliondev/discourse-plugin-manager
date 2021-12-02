@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "./app/models/plugin_store_row.rb" unless defined?(PluginStoreRow)
-require "./app/models/plugin_store.rb" unless defined?(PluginStore)
-require "./lib/enum.rb" unless defined?(Enum)
+#require "./app/models/plugin_store_row.rb" unless defined?(PluginStoreRow)
+#require "./app/models/plugin_store.rb" unless defined?(PluginStore)
+#require "./lib/enum.rb" unless defined?(Enum)
 require_relative "plugin_guard"
 require_relative "plugin_guard/extensions/discourse.rb"
 require_relative "plugin_guard/extensions/plugin_instance.rb"
