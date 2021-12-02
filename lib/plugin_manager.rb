@@ -1,11 +1,6 @@
 # frozen_string_literal: true
-module PluginManager
+class ::PluginManager
   NAMESPACE ||= 'plugin-manager'
-
-  class Engine < ::Rails::Engine
-    engine_name PluginManager::NAMESPACE
-    isolate_namespace PluginManager
-  end
 
   def self.root_dir
     Rails.root

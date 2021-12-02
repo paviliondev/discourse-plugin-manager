@@ -16,8 +16,8 @@ def plugin_initialization_guard(&block)
   @activating_plugins = source_line.include?("activate_plugins")
 
   if @activating_plugins && !@extensions_applied
-    #Discourse.singleton_class.prepend PluginGuard::DiscourseExtension
-    #Plugin::Instance.prepend PluginGuard::PluginInstanceExtension
+    Discourse.singleton_class.prepend PluginGuard::DiscourseExtension
+    Plugin::Instance.prepend PluginGuard::PluginInstanceExtension
     @extensions_applied = true
   end
 
