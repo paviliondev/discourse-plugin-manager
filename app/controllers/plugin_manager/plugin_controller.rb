@@ -34,7 +34,7 @@ class PluginManager::PluginController < ::ApplicationController
     if name && url
       cookies["#{name}-url"] = nil
     else
-      raise Discourse::InvalidParameters.new(:plugin_name) 
+      raise Discourse::InvalidParameters.new(:plugin_name)
     end
 
     attrs = params.require(:plugin).permit(

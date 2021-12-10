@@ -1,7 +1,7 @@
 import Controller from "@ember/controller";
 import discourseComputed, { bind } from "discourse-common/utils/decorators";
 import PluginManager from "../models/plugin-manager";
-import { equal, alias, empty, not, and, or } from "@ember/object/computed";
+import { alias, empty, equal, not, or } from "@ember/object/computed";
 import ModalFunctionality from "discourse/mixins/modal-functionality";
 import { schedule } from "@ember/runloop";
 
@@ -20,7 +20,7 @@ export default Controller.extend(ModalFunctionality, {
   urlDisabled: not("canRetrieve"),
   retrieveDisabled: empty("model.url"),
 
-  @discourseComputed('retrieved', 'retrieving')
+  @discourseComputed("retrieved", "retrieving")
   addPluginDisabled(retrieved, retrieving) {
     return !retrieved || retrieving;
   },
@@ -62,13 +62,13 @@ export default Controller.extend(ModalFunctionality, {
       this.set("retrieving", true);
       const data = {
         url: this.model.url,
-        branch: this.model.git_branch
-      }
+        branch: this.model.git_branch,
+      };
       PluginManager.retrieve(data).then((result) => {
         if (result.success) {
           this.setProperties({
             model: PluginManager.create(result.plugin),
-            retrieved: true
+            retrieved: true,
           });
         } else {
           this.flash(result.error, "error");
@@ -90,8 +90,8 @@ export default Controller.extend(ModalFunctionality, {
         version: model.version,
         contact_emails: model.contact_emails,
         test_host: model.test_host,
-        status: model.status
-      }
+        status: model.status,
+      };
       PluginManager.save(attrs).then((result) => {
         if (result.success) {
           this.afterSave(PluginManager.create(result.plugin));

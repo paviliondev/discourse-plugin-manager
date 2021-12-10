@@ -19,7 +19,7 @@ export default Controller.extend({
       let controller = showModal("plugin-manager-plugin-editor", { model });
 
       controller.setProperties({
-        afterSave: (addedPlugin) => (this.addPlugin(addedPlugin))
+        afterSave: (addedPlugin) => this.addPlugin(addedPlugin),
       });
       controller.setupEvents();
     },
@@ -36,14 +36,16 @@ export default Controller.extend({
 
     editPlugin(plugin) {
       let originalPlugin = plugin;
-      let controller = showModal("plugin-manager-plugin-editor", { model: plugin });
+      let controller = showModal("plugin-manager-plugin-editor", {
+        model: plugin,
+      });
 
       controller.setProperties({
         afterSave: (savedPlugin) => {
           this.removePlugin(originalPlugin.name);
           this.addPlugin(savedPlugin);
         },
-        afterDestroy: (removedPlugin) => (this.removePlugin(removedPlugin))
+        afterDestroy: (removedPlugin) => this.removePlugin(removedPlugin),
       });
       controller.setupEvents();
     },
