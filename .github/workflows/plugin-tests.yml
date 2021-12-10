@@ -79,7 +79,7 @@ jobs:
         run: |
           echo "DISCOURSE_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "PLUGIN_MANAGER_ROOT=${{ github.workspace }}/plugins/discourse-plugin-manager-server" >> $GITHUB_ENV
-          plugins/discourse-plugin-manager-server/bin/setup.sh
+          plugins/discourse-plugin-manager-server/bin/ci.sh
 
       - name: Setup Git
         run: |
