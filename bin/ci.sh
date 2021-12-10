@@ -1,4 +1,4 @@
-mkdir -p ${env.env.DISCOURSE_ROOT}/lib/plugin_guard
+mkdir -p ${env.DISCOURSE_ROOT}/lib/plugin_guard
 mkdir -p ${env.DISCOURSE_ROOT}/lib/plugin_guard/extensions
 mkdir -p ${env.DISCOURSE_ROOT}/lib/plugin_manager
 mkdir -p ${env.DISCOURSE_ROOT}/lib/plugin_manager/test_host
