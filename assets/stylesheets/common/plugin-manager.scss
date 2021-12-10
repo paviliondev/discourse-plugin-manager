@@ -473,6 +473,20 @@ $incompatible: #ef1700;
   padding: 0.05em 0.3em;
 }
 
+.btn-plugin,
+a.btn-plugin {
+  border: 1px solid rgba($primary, 0.2);
+  background: transparent;
+  padding: 0.45em 0.85em;
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+
+  .d-icon {
+    margin-right: .5em;
+  }
+}
+
 .plugin-manager-title {
   display: flex;
   justify-content: space-between;
@@ -491,17 +505,59 @@ $incompatible: #ef1700;
 }
 
 .plugin-controls {
-  width: 300px;
+  width: 200px;
 }
 
 .plugin-manager-plugin {
   padding: 1em;
   border: 1px solid var(--primary-low);
 
+  label {
+    width: 100%;
+    font-size: .9em;
+    color: var(--primary-medium);
+  }
+
+  .urls {
+    display: flex;
+    flex-direction: column;
+
+    .url {
+      display: flex;
+      flex-flow: wrap;
+      margin-bottom: 1em;
+
+      input {
+        width: 500px;
+        margin-bottom: 0;
+      }
+
+      button {
+        margin-left: .5em;
+      }
+
+      input[disabled] {
+        background-color: var(--primary-low);
+      }
+    }
+  }
+
+  .plugin {
+    border-top: 1px solid var(--primary);
+    padding: 1em 0;
+    margin: 1em 0 0 0;
+  }
+
+  .status {
+    background: var(--primary-very-low);
+    padding: 1em;
+  }
+
   .attributes {
     display: grid;
     grid-gap: 1em;
     grid-template-columns: repeat(2, 1fr);
+    margin-top: 1em;
 
     .select-kit.multi-select {
       max-width: 100%;

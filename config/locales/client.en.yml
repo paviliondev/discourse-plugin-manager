@@ -5,7 +5,7 @@ en:
       add_plugin: Add a Plugin
       help: Help
       support: Support
-      test: Test
+      try: Try
       commit: Commit
       discourse:
         title: Discourse
@@ -29,7 +29,6 @@ en:
         commit: "Plugin Commit"
         test_backend_coverage: "Test Coverage"
         contact_emails: "Contacts"
-        
         actions: "Actions"
         test_link:
           label: Test
@@ -70,20 +69,22 @@ en:
         nav_label: "Plugin Manager"
         title: "Plugins"
         plugin:
-          edit: Edit Plugin
-          add: Add Plugin
+          edit: Edit
+          add: Add
+          retrieve: Retrieve
           save: Save
           delete: Delete
           remove: Remove
           title: "Plugin"
           name: "Name"
           url: "URL"
+          branch: Branch
           authors: "Authors"
           about: "About"
           version: "Version"
           contact_emails: "Contact Emails"
           test_host: "Test Host"
           support_url: "Support URL"
-          test_url: "Test URL"
+          try_url: "Try URL"
           status: "Status"
           controls: "Controls"

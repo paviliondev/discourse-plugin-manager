@@ -10,8 +10,12 @@ class PluginManager::TestHost::Github < PluginManager::TestHost
     @repo_path ||= URI(@plugin.url).path
   end
 
-  def get_status_path
+  def status_path
     "repos#{repo_path}/actions/runs?branch=#{@branch}&status=completed&per_page=1&page=1"
+  end
+
+  def config_path
+    "repos#{repo_path}/contents/#{@config}"
   end
 
   def get_status_from_response(response)

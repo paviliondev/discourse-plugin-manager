@@ -20,7 +20,7 @@ class ::PluginManager::Plugin
                 :instance,
                 :status_changed_at,
                 :support_url,
-                :test_url,
+                :try_url,
                 :from_file,
                 :category_id
 
@@ -45,7 +45,7 @@ class ::PluginManager::Plugin
     @owner = PluginManager::RepositoryOwner.new(attrs[:owner]) if attrs[:owner].present?
     @host = PluginManager::RepositoryHost.get(attrs[:repository_host]) if attrs[:repository_host].present?
     @support_url = attrs[:support_url]
-    @test_url = attrs[:test_url]
+    @try_url = attrs[:try_url]
     @from_file = attrs[:from_file]
     @category_id = attrs[:category_id]
 
@@ -65,7 +65,8 @@ class ::PluginManager::Plugin
   def branch_url
     @branch_url ||= begin
       return nil unless @host.present?
-      @host.plugin = self
+      @host.url = url
+      @host.branch = git_branch
       @host.branch_url
     end
   end
@@ -90,18 +91,17 @@ class ::PluginManager::Plugin
       status: attrs[:status].nil? ? plugin.status : attrs[:status].to_i,
       owner: attrs[:owner]&.instance_values || plugin.owner&.instance_values,
       support_url: attrs[:support_url] || plugin.support_url,
-      test_url: attrs[:test_url] || plugin.test_url,
+      try_url: attrs[:try_url] || plugin.try_url,
       from_file: from_file,
       category_id: attrs[:category_id] || plugin.category_id
     }
 
-    if host_name = ::PluginManager::RepositoryHost.get_name(url)
-      new_attrs[:repository_host] = host_name
-      respository_manager = ::PluginManager::RepositoryManager.new(host_name)
+    repo_manager = ::PluginManager::RepositoryManager.new(url, new_attrs[:git_branch])
+    if repo_manager.ready?
+      new_attrs[:repository_host] = repo_manager.host.name
 
-      if respository_manager.ready?
-        owner = respository_manager.get_owner(plugin_name)
-        new_attrs[:owner] = owner.instance_values if owner.present?
+      if owner = repo_manager.get_owner
+        new_attrs[:owner] = owner.instance_values
       end
     end
 
@@ -141,6 +141,10 @@ class ::PluginManager::Plugin
 
   def self.remove(plugin_name)
     ::PluginStore.remove(::PluginManager::NAMESPACE, plugin_name)
+  end
+
+  def self.exists?(plugin_name)
+    ::PluginStoreRow.exists?(plugin_name: ::PluginManager::NAMESPACE, key: plugin_name)
   end
 
   def self.get_or_create(plugin_name)
@@ -205,6 +209,36 @@ class ::PluginManager::Plugin
     new(name, attrs.with_indifferent_access)
   end
 
+  def self.get_from_url(url, branch)
+    manager = PluginManager::RepositoryManager.new(url, branch)
+    result = OpenStruct.new(attrs: {}, error: '', success: false)
+
+    if manager.ready? && file = manager.get_plugin_file
+      metadata = ::Plugin::Metadata.parse(file)
+
+      if exists?(metadata.name)
+        result.error = I18n.t("plugin_manager.plugin.error.plugin_already_exists")
+      else
+        result.plugin = {
+          url: url,
+          name: metadata.name,
+          contact_emails: metadata.contact_emails,
+          authors: metadata.authors,
+          about: metadata.about,
+          version: metadata.version,
+          git_branch: branch,
+          test_host: PluginManager::TestHost.detect_remote(url),
+          status: PluginManager::Manifest.status[:unknown]
+        }
+        result.success = true
+      end
+    else
+      result.error = I18n.t("plugin_manager.plugin.error.failed_to_retrieve_plugin")
+    end
+
+    result
+  end
+
   def self.set_from_file(path)
     begin
       file = File.read("#{path}/plugin.rb")
@@ -217,13 +251,11 @@ class ::PluginManager::Plugin
       sha = PluginManager.run_shell_cmd('git rev-parse HEAD', chdir: path)
       branch = PluginManager.run_shell_cmd('git rev-parse --abbrev-ref HEAD', chdir: path)
       url = PluginManager.run_shell_cmd('git config --get remote.origin.url', chdir: path)
-      test_host = PluginManager::TestHost.detect
-
-      if metadata.respond_to?("#{branch.underscore}_test_url")
-        test_url = metadata.send("#{branch.underscore}_test_url")
-      else
-        test_url = nil
-      end
+      test_host = PluginManager::TestHost.detect_local(path)
+      try_url = get_try_url(metadata, branch)
+      status = path.include?(PluginManager.incompatible_dir) ?
+        PluginManager::Manifest.status[:incompatible] :
+        PluginManager::Manifest.status[:compatible]
 
       attrs = {
         url: url,
@@ -233,12 +265,10 @@ class ::PluginManager::Plugin
         version: metadata.version,
         installed_sha: sha,
         git_branch: branch,
-        status: path.include?(PluginManager.incompatible_dir) ?
-          PluginManager::Manifest.status[:incompatible] :
-          PluginManager::Manifest.status[:compatible],
+        status: status,
         from_file: true,
         test_host: test_host,
-        test_url: test_url
+        try_url: try_url
       }
 
       ::PluginManager::Plugin.set(metadata.name, attrs)
@@ -285,8 +315,8 @@ class ::PluginManager::Plugin
 
   def self.extra_metadata
     [
-      :tests_passed_test_url,
-      :stable_test_url
+      :tests_passed_try_url,
+      :stable_try_url
     ]
   end
 
@@ -301,7 +331,11 @@ class ::PluginManager::Plugin
 
   def self.build_category_description(plugin)
     description = plugin.about
-    description += " #{I18n.t("plugin_manager.plugin.test_url", test_url: plugin.test_url)}" if plugin.test_url
+    description += " #{I18n.t("plugin_manager.plugin.try_url", try_url: plugin.try_url)}" if plugin.try_url
     description
+  end
+
+  def self.get_try_url(metadata, branch)
+    metadata.respond_to?("#{branch.underscore}_try_url") && metadata.send("#{branch.underscore}_try_url")
   end
 end

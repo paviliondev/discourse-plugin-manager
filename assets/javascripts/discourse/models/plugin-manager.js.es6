@@ -3,7 +3,7 @@ import ManagerStatus from "./status";
 import { dasherize } from "@ember/string";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
-import { notEmpty } from "@ember/object/computed";
+import { notEmpty, not, alias } from "@ember/object/computed";
 import I18n from "I18n";
 
 const statusIcons = {
@@ -15,6 +15,9 @@ const statusIcons = {
 };
 
 const PluginManager = ManagerStatus.extend({
+  remote: not('from_file'),
+  local: alias('from_file'),
+
   @discourseComputed("status")
   statusIcon(status) {
     return status ? statusIcons[status] : "";
@@ -65,6 +68,13 @@ PluginManager.reopenClass({
     }).catch(popupAjaxError);
   },
 
+  retrieve(data) {
+    return ajax("/plugin-manager/plugin/retrieve", {
+      type: "GET",
+      data
+    }).catch(popupAjaxError);
+  },
+
   save(plugin) {
     return ajax(`/plugin-manager/plugin/${plugin.name}`, {
       type: "PUT",
@@ -74,8 +84,8 @@ PluginManager.reopenClass({
     }).catch(popupAjaxError);
   },
 
-  destroy(plugin) {
-    return ajax(`/plugin-manager/plugin/${plugin.name}`, {
+  destroy(pluginName) {
+    return ajax(`/plugin-manager/plugin/${pluginName}`, {
       type: "DELETE",
     }).catch(popupAjaxError);
   },

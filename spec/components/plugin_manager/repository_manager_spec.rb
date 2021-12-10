@@ -10,8 +10,9 @@ describe PluginManager::RepositoryManager do
   end
 
   it "gets plugin owner" do
-    manager = PluginManager::RepositoryManager.new("github")
-    owner = manager.get_owner(compatible_plugin)
+    plugin = PluginManager::Plugin.get(compatible_plugin)
+    manager = PluginManager::RepositoryManager.new(plugin.url)
+    owner = manager.get_owner
     expect(owner.name).to eq("Pavilion")
   end
 end

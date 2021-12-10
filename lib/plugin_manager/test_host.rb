@@ -16,7 +16,7 @@ class ::PluginManager::TestHost
     PluginManager::TestManager.status[:failing]
   end
 
-  def get_status_path(plugin)
+  def status_path(plugin)
     nil
   end
 
@@ -30,8 +30,21 @@ class ::PluginManager::TestHost
     ]
   end
 
-  def self.detect
-    host = self.list.find { |h| File.file?(h.config) }
+  def self.detect_local(path)
+    host = self.list.find { |h| File.file?("#{path}/#{h.config}") }
     host ? host.name : nil
+  end
+
+  def self.detect_remote(url)
+    name = get_name(url)
+    host = list.find { |h| h.name == name }
+    host ? host.name : nil
+  end
+
+  def self.get_name(url)
+    url = "http://#{url}" if URI.parse(url).scheme.nil?
+    host = URI.parse(url).host.downcase
+    host = host[4..-1] if host.start_with?('www.')
+    host.split('.').first
   end
 end

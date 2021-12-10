@@ -5,28 +5,28 @@ class ::PluginManager::RepositoryManager
   attr_reader :host,
               :domain
 
-  attr_accessor :plugin
-
-  def initialize(host_name)
+  def initialize(url, branch = nil)
+    host_name = PluginManager::RepositoryHost.get_name(url)
     @host = PluginManager::RepositoryHost.get(host_name)
-    return unless @host
-    @domain = host.domain
+
+    if @host
+      @host.url = url
+      @host.branch = branch
+    end
   end
 
   def ready?
-    domain.present?
+    @host&.domain.present?
   end
 
-  def get_owner(plugin_name)
-    @plugin = ::PluginManager::Plugin.get(plugin_name)
+  def get_owner
+    response = request(@host.owner_path)
+    response ? @host.get_owner_from_response(response) : nil
+  end
 
-    return nil unless @plugin && @plugin.url
-    @host.plugin = @plugin
-
-    response = request(@host.get_owner_path)
-    return nil unless response
-
-    @host.get_owner_from_response(response)
+  def get_plugin_file
+    response = request(@host.plugin_file_path)
+    response ? @host.get_file_from_response(response) : nil
   end
 
   protected

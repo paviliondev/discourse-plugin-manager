@@ -3,7 +3,8 @@ class ::PluginManager::RepositoryHost
   attr_reader :name,
               :domain
 
-  attr_accessor :plugin
+  attr_accessor :url,
+                :branch
 
   def self.get(name)
     list.find { |host| host.name == name }

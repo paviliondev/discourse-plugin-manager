@@ -1,81 +1,83 @@
 {{#d-modal-body title=modalTitle class="plugin-manager-plugin"}}
-  <div class="attributes">
-    <div class="plugin-attr">
-      <label>{{i18n "admin.plugin_manager.plugin.name"}}</label>
-      {{input type="text" value=model.name disabled=model.from_file}}
-    </div>
-
-    <div class="plugin-attr">
+  <div class="urls">
+    <div class="url">
       <label>{{i18n "admin.plugin_manager.plugin.url"}}</label>
-      {{input type="text" value=model.url disabled=model.from_file}}
+      {{input type="text" value=model.url disabled=urlDisabled class="plugin-url"}}
+
+      {{#if canRetrieve}}
+        {{d-button
+          icon="download"
+          label="admin.plugin_manager.plugin.retrieve"
+          title="admin.plugin_manager.plugin.retrieve"
+          action="retrieve"
+          disabled=retrieveDisabled
+          class="save"}}
+      {{/if}}
     </div>
 
-    <div class="plugin-attr">
-      <label>{{i18n "admin.plugin_manager.plugin.authors"}}</label>
-      {{multi-select
-        value=model.authorList
-        onChange=(action "updateNames")
-        options=(hash
-          disabled=model.from_file
-          allowAny=true
-        )
-      }}
+    <div class="url">
+      <label>{{i18n "admin.plugin_manager.plugin.branch"}}</label>
+      {{input type="text" value=model.git_branch placeholder="main" disabled=urlDisabled}}
     </div>
 
-    <div class="plugin-attr">
-      <label>{{i18n "admin.plugin_manager.plugin.about"}}</label>
-      {{textarea value=model.about disabled=model.from_file}}
-    </div>
-
-    <div class="plugin-attr">
-      <label>{{i18n "admin.plugin_manager.plugin.version"}}</label>
-      {{input type="text" value=model.version disabled=model.from_file}}
-    </div>
-
-    <div class="plugin-attr">
-      <label>{{i18n "admin.plugin_manager.plugin.contact_emails"}}</label>
-      {{multi-select
-        value=model.contactEmails
-        onChange=(action "updateContactEmails")
-        options=(hash
-          disabled=model.from_file
-          allowAny=true
-        )
-      }}
-    </div>
-
-    <div class="plugin-attr">
-      <label>{{i18n "admin.plugin_manager.plugin.test_host"}}</label>
-      {{combo-box
-        content=testHosts
-        value=model.test_host
-        options=(hash
-          disabled=model.from_file
-        )
-      }}
-    </div>
-
-    <div class="plugin-attr">
-      <label>{{i18n "admin.plugin_manager.plugin.status"}}</label>
-      {{combo-box
-        content=pluginStatuses
-        value=model.status
-        options=(hash
-          disabled=readOnlyStatus
-        )
-      }}
-    </div>
-
-    <div class="plugin-attr">
+    <div class="url">
       <label>{{i18n "admin.plugin_manager.plugin.support_url"}}</label>
       {{input type="text" value=model.support_url}}
     </div>
 
-    <div class="plugin-attr">
-      <label>{{i18n "admin.plugin_manager.plugin.test_url"}}</label>
-      {{input type="text" value=model.test_url}}
+    <div class="url">
+      <label>{{i18n "admin.plugin_manager.plugin.try_url"}}</label>
+      {{input type="text" value=model.try_url}}
     </div>
   </div>
+
+  {{#if showPlugin}}
+    <div class="plugin">
+      {{#if retrieving}}
+        {{loading-spinner}}
+      {{else}}
+        <h3>{{model.display_name}}</h3>
+        <div class="status">
+          <label>{{i18n "server_status.plugin.status.label"}}</label>
+          {{combo-box
+            content=pluginStatuses
+            value=model.status
+            options=(hash
+              disabled=readOnlyStatus
+            )
+          }}
+        </div>
+        <div class="attributes">
+          <div class="plugin-attr">
+            <label>{{i18n "admin.plugin_manager.plugin.authors"}}</label>
+            {{model.authorList}}
+          </div>
+
+          <div class="plugin-attr">
+            <label>{{i18n "admin.plugin_manager.plugin.about"}}</label>
+            {{model.about}}
+          </div>
+
+          <div class="plugin-attr">
+            <label>{{i18n "admin.plugin_manager.plugin.version"}}</label>
+            {{model.version}}
+          </div>
+
+          <div class="plugin-attr">
+            <label>{{i18n "admin.plugin_manager.plugin.test_host"}}</label>
+            {{model.test_host}}
+          </div>
+
+          {{#if hasContactEmails}}
+            <div class="plugin-attr">
+              <label>{{i18n "admin.plugin_manager.plugin.contact_emails"}}</label>
+              {{model.contactEmails}}
+            </div>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
 {{/d-modal-body}}
 
 <div class="modal-footer">
@@ -86,16 +88,6 @@
     action="save"
     disabled=loading
     class="save"}}
-
-  {{#if canDelete}}
-    {{d-button
-      action="delete"
-      label="admin.plugin_manager.plugin.delete"
-      title="admin.plugin_manager.plugin.delete"
-      icon="trash-alt"
-      class="destroy"
-      disabled=loading}}
-  {{/if}}
 
   {{conditional-loading-spinner
     size="small"

@@ -1,24 +1,28 @@
 import Controller from "@ember/controller";
-import discourseComputed from "discourse-common/utils/decorators";
+import discourseComputed, { bind } from "discourse-common/utils/decorators";
 import PluginManager from "../models/plugin-manager";
-import { equal } from "@ember/object/computed";
+import { equal, alias, empty, not, and, or } from "@ember/object/computed";
 import ModalFunctionality from "discourse/mixins/modal-functionality";
+import { schedule } from "@ember/runloop";
 
 const pluginStatuses = {
-  compatible: 0,
-  incompatible: 1,
-};
-
-const testHosts = {
-  github: "Github",
+  unknown: 0,
+  compatible: 1,
+  incompatible: 2,
 };
 
 export default Controller.extend(ModalFunctionality, {
   readOnlyStatus: equal("model.status", "tests_failing"),
+  showPlugin: or("model.name", "retrieving"),
+  canAdd: false,
+  isNew: alias("model.new"),
+  canRetrieve: alias("isNew"),
+  urlDisabled: not("canRetrieve"),
+  retrieveDisabled: empty("model.url"),
 
-  @discourseComputed("model.new")
-  modalTitle(newPlugin) {
-    return `admin.plugin_manager.plugin.${newPlugin ? "add" : "edit"}`;
+  @discourseComputed('retrieved', 'retrieving')
+  addPluginDisabled(retrieved, retrieving) {
+    return !retrieved || retrieving;
   },
 
   @discourseComputed
@@ -29,59 +33,71 @@ export default Controller.extend(ModalFunctionality, {
     }));
   },
 
-  @discourseComputed
-  testHosts() {
-    return Object.keys(testHosts).map((host) => ({
-      id: host,
-      name: testHosts[host],
-    }));
+  @discourseComputed("isNew")
+  modalTitle(isNew) {
+    return `admin.plugin_manager.plugin.${isNew ? "add" : "edit"}`;
   },
 
-  @discourseComputed("model.new", "model.from_file")
-  canDelete(newPlugin, fromFile) {
-    return !newPlugin && !fromFile;
+  setupEvents() {
+    schedule("afterRender", () => {
+      const element = document.querySelector(".plugin-url");
+      element.addEventListener("keydown", this.keyDown);
+    });
+  },
+
+  onClose() {
+    const element = document.querySelector(".plugin-url");
+    element.removeEventListener("keydown", this.keyDown);
+  },
+
+  @bind
+  keyDown(event) {
+    if (event.key === "Enter" && this.canRetrieve && !this.retrieveDisabled) {
+      this.send("retrieve");
+    }
   },
 
   actions: {
-    updateContactEmails(emails) {
-      this.set("model.contactEmails", emails);
-    },
-
-    updateNames(names) {
-      this.set("model.names", names);
-    },
-
-    destroy() {
-      this.set("destroying", true);
-      PluginManager.destroy(this.model.name).then((result) => {
+    retrieve() {
+      this.set("retrieving", true);
+      const data = {
+        url: this.model.url,
+        branch: this.model.git_branch
+      }
+      PluginManager.retrieve(data).then((result) => {
         if (result.success) {
-          this.afterDestroy(this.model);
+          this.setProperties({
+            model: PluginManager.create(result.plugin),
+            retrieved: true
+          });
+        } else {
+          this.flash(result.error, "error");
         }
-        this.set("destroying", false);
+        this.set("retrieving", false);
       });
     },
 
     save() {
       this.set("saving", true);
-      const plugin = this.model;
+      const model = this.model;
       const attrs = {
-        name: plugin.name,
-        url: plugin.url,
-        authors: plugin.authors,
-        about: plugin.about,
-        version: plugin.version,
-        contact_emails: plugin.contact_emails,
-        test_host: plugin.test_host,
-        support_url: plugin.support_url,
-        test_url: plugin.test_url,
-        status: plugin.status,
-      };
-
+        url: model.url,
+        support_url: model.support_url,
+        try_url: model.try_url,
+        name: model.name,
+        authors: model.authors,
+        about: model.about,
+        version: model.version,
+        contact_emails: model.contact_emails,
+        test_host: model.test_host,
+        status: model.status
+      }
       PluginManager.save(attrs).then((result) => {
         if (result.success) {
-          this.afterSave(this.model);
+          this.afterSave(PluginManager.create(result.plugin));
         }
         this.set("saving", false);
+        this.send("closeModal");
       });
     },
   },

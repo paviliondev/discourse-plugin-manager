@@ -18,4 +18,7 @@ en:
       error: "The tests are failing."
       error_test: "The '%{test_name}' test is failing."
     plugin:
-      test_url: "[Test it out](%{test_url})."
+      try_url: "[Try it out](%{try_url})."
+      error:
+        plugin_already_exists: Plugin already in the manifest
+        failed_to_retrieve_plugin: Failed to retrieve plugin

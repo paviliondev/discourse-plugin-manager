@@ -7,15 +7,26 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
   end
 
   def repo_user
-    @repo_user ||= URI(@plugin.url).path.split('/').reject(&:empty?).first
+    @repo_user ||= URI(@url).path.split('/').reject(&:empty?).first
   end
 
-  def get_owner_path
+  def repo_name
+    @repo_name ||= begin
+      name = URI(@url).path.split('/').reject(&:empty?).second
+      name ? name.split('.').first : nil
+    end
+  end
+
+  def owner_path
     "users/#{repo_user}"
   end
 
+  def plugin_file_path
+    "repos/#{repo_user}/#{repo_name}/contents/plugin.rb"
+  end
+
   def branch_url
-    "#{@plugin.url}/tree/#{@plugin.git_branch}"
+    "#{@url}/tree/#{@branch}"
   end
 
   def get_owner_from_response(response)
@@ -35,6 +46,16 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
     end
 
     owner
+  end
+
+  def get_file_from_response(response)
+    encoding = response['encoding']
+
+    if encoding == 'base64'
+      Base64.decode64(response['content'])
+    else
+      nil
+    end
   end
 
   def basic_auth?

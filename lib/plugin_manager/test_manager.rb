@@ -5,8 +5,6 @@ class ::PluginManager::TestManager
   attr_reader :host,
               :domain
 
-  attr_accessor :plugin
-
   def initialize(host_name)
     @host = PluginManager::TestHost.get(host_name)
     return unless @host
@@ -34,11 +32,11 @@ class ::PluginManager::TestManager
     test_backend_coverage = get_test_backend_coverage
     plugin_attrs = {}
 
-    if test_backend_coverage.present? && plugin.test_backend_coverage != test_backend_coverage
+    if test_backend_coverage.present? && @plugin.test_backend_coverage != test_backend_coverage
       plugin_attrs[:test_backend_coverage] = test_backend_coverage
     end
 
-    if test_status.present? && plugin.test_status != test_status
+    if test_status.present? && @plugin.test_status != test_status
       plugin_attrs[:test_status] = test_status
     end
 
@@ -86,7 +84,7 @@ class ::PluginManager::TestManager
   end
 
   def get_test_status
-    status_path = @host.get_status_path
+    status_path = @host.status_path
 
     if status_path && response = request(status_path)
       @host.get_status_from_response(response)

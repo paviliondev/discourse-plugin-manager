@@ -40,7 +40,7 @@ end
 def setup_test_plugin(name)
   dir = plugin_dir(name)
   stub_plugin_git_cmds(dir)
-  PluginManager::TestHost.expects(:detect).returns("github")
+  PluginManager::TestHost.expects(:detect_local).returns("github")
   PluginManager::Plugin.set_from_file(dir)
 end
 

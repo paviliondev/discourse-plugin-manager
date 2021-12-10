@@ -15,7 +15,7 @@ class PluginManager::PluginSerializer < ::PluginManager::BasicPluginSerializer
              :log,
              :owner,
              :support_url,
-             :test_url,
+             :try_url,
              :from_file,
              :category_id
 

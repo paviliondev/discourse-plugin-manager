@@ -3,30 +3,49 @@ import PluginManager from "../models/plugin-manager";
 import showModal from "discourse/lib/show-modal";
 
 export default Controller.extend({
+  removePlugin(pluginName) {
+    const plugins = this.get("plugins");
+    const removePlugin = plugins.findBy("name", pluginName);
+    plugins.removeObject(removePlugin);
+  },
+
+  addPlugin(plugin) {
+    this.get("plugins").unshiftObject(plugin);
+  },
+
   actions: {
     addPlugin(plugin) {
-      plugin = plugin || PluginManager.create({ new: true });
-      this.get("plugins").unshiftObject(plugin);
+      let model = plugin || PluginManager.create({ new: true });
+      let controller = showModal("plugin-manager-plugin-editor", { model });
+
+      controller.setProperties({
+        afterSave: (addedPlugin) => (this.addPlugin(addedPlugin))
+      });
+      controller.setupEvents();
     },
 
     removePlugin(plugin) {
-      this.get("plugins").removeObject(plugin);
+      this.set("destroying", true);
+      PluginManager.destroy(plugin.name).then((result) => {
+        if (result.success) {
+          this.removePlugin(result.plugin_name);
+        }
+        this.set("destroying", false);
+      });
     },
 
     editPlugin(plugin) {
       let originalPlugin = plugin;
-      let modalController = showModal("plugin-manager-plugin-editor", {
-        model: plugin,
-      });
-      modalController.setProperties({
-        afterSave: (addPlugin) => {
-          this.send("removePlugin", originalPlugin);
-          this.send("addPlugin", addPlugin);
+      let controller = showModal("plugin-manager-plugin-editor", { model: plugin });
+
+      controller.setProperties({
+        afterSave: (savedPlugin) => {
+          this.removePlugin(originalPlugin.name);
+          this.addPlugin(savedPlugin);
         },
-        afterDestroy: (removePlugin) => {
-          this.send("removePlugin", removePlugin);
-        },
+        afterDestroy: (removedPlugin) => (this.removePlugin(removedPlugin))
       });
+      controller.setupEvents();
     },
   },
 });

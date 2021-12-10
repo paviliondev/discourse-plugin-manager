@@ -12,38 +12,47 @@ class PluginManager::PluginController < ::ApplicationController
     render_serialized(plugins, PluginManager::PluginSerializer, root: 'plugins')
   end
 
-  def update
-    name = params[:plugin_name].dasherize
-    plugin = ::PluginManager::Plugin.get(name)
+  def retrieve
+    params.require(:url)
+    url = params[:url]
+    branch = params[:branch] || 'main'
+    result = PluginManager::Plugin.get_from_url(url, branch)
 
-    if plugin.from_file
-      attrs = params.require(:plugin).permit(
-        :support_url,
-        :test_url
-      )
+    if result.success
+      cookies["#{result.plugin[:name]}-url"] = url
+      render json: success_json.merge(plugin: result.plugin)
     else
-      attrs = params.require(:plugin)
-        .permit(
-          :url,
-          :authors,
-          :about,
-          :version,
-          :contact_emails,
-          :test_host,
-          :support_url,
-          :test_url,
-          :status
-        )
+      render json: failed_json.merge(error: result.error)
+    end
+  end
 
-      if attrs[:status].to_i === PluginManager::Manifest.status[:tests_failing]
-        attrs[:status] = nil
-      end
+  def save
+    name = params[:plugin_name].dasherize
+    plugin = PluginManager::Plugin.get(name)
+    url = plugin.url || cookies["#{name}-url"]
+
+    if name && url
+      cookies["#{name}-url"] = nil
+    else
+      raise Discourse::InvalidParameters.new(:plugin_name) 
     end
 
+    attrs = params.require(:plugin).permit(
+      :support_url,
+      :try_url,
+      :authors,
+      :about,
+      :version,
+      :contact_emails,
+      :test_host,
+      :status
+    )
+    attrs[:url] = url
+
     if PluginManager::Plugin.set(name, attrs)
-      render json: success_json.merge(
-        plugin: PluginManager::Plugin.get(name)
-      )
+      plugin = PluginManager::Plugin.get(name)
+      serialized_plugin = PluginManager::PluginSerializer.new(plugin, root: false).as_json
+      render json: success_json.merge(plugin: serialized_plugin)
     else
       render json: failed_json
     end
@@ -53,7 +62,7 @@ class PluginManager::PluginController < ::ApplicationController
     name = params[:plugin_name].dasherize
 
     if PluginManager::Plugin.remove(name)
-      render json: success_json
+      render json: success_json.merge(plugin_name: name)
     else
       render json: failed_json
     end

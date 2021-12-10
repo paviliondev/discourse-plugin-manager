@@ -21,6 +21,8 @@ export default {
 
     withPluginApi("0.8.13", (api) => {
       api.modifyClass("route:discovery-categories", {
+        modifyClass: "plugin-manager-server",
+
         renderTemplate() {
           this.render("discovery/categories", { outlet: "list-container" });
         },
