@@ -77,8 +77,8 @@ jobs:
 
       - name: Setup plugin manager server
         run: |
-          echo "DISCOURSE_ROOT=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-          echo "PLUGIN_MANAGER_ROOT=$GITHUB_WORKSPACE/plugins/discourse-plugin-manager-server" >> $GITHUB_ENV
+          echo "DISCOURSE_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
+          echo "PLUGIN_MANAGER_ROOT=${{ github.workspace }}/plugins/discourse-plugin-manager-server" >> $GITHUB_ENV
           plugins/discourse-plugin-manager-server/bin/setup.sh
 
       - name: Setup Git
