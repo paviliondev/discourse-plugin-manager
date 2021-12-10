@@ -77,10 +77,34 @@ jobs:
 
       - name: Setup plugin manager server
         run: |
-          echo "DISCOURSE_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
-          echo "PLUGIN_MANAGER_ROOT=${{ github.workspace }}/plugins/discourse-plugin-manager-server" >> $GITHUB_ENV
-          chmod +x plugins/discourse-plugin-manager-server/bin/ci.sh
-          plugins/discourse-plugin-manager-server/bin/ci.sh
+          mkdir -p ${{ github.workspace }}/lib/plugin_guard
+          mkdir -p ${{ github.workspace }}/lib/plugin_guard/extensions
+          mkdir -p ${{ github.workspace }}/lib/plugin_manager
+          mkdir -p ${{ github.workspace }}/lib/plugin_manager/test_host
+          mkdir -p ${{ github.workspace }}/lib/plugin_manager/repository_host
+          mkdir -p ${{ github.workspace }}/plugins_incompatible
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager_store.rb ${{ github.workspace }}/lib/plugin_manager_store.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_guard.rb ${{ github.workspace }}/lib/plugin_guard.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_guard/extensions/discourse.rb ${{ github.workspace }}/lib/plugin_guard/extensions/discourse.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_guard/extensions/plugin_instance.rb ${{ github.workspace }}/lib/plugin_guard/extensions/plugin_instance.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_guard/error.rb ${{ github.workspace }}/lib/plugin_guard/error.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_guard/handler.rb ${{ github.workspace }}/lib/plugin_guard/handler.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_guard/log.rb ${{ github.workspace }}/lib/plugin_guard/log.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager.rb ${{ github.workspace }}/lib/plugin_manager.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager/discourse.rb ${{ github.workspace }}/lib/plugin_manager/discourse.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager/manifest.rb ${{ github.workspace }}/lib/plugin_manager/manifest.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager/notifier.rb ${{ github.workspace }}/lib/plugin_manager/notifier.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager/plugin.rb ${{ github.workspace }}/lib/plugin_manager/plugin.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager/test_host.rb ${{ github.workspace }}/lib/plugin_manager/test_host.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager/test_host/github.rb ${{ github.workspace }}/lib/plugin_manager/test_host/github.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager/test_manager.rb ${{ github.workspace }}/lib/plugin_manager/test_manager.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager/update.rb ${{ github.workspace }}/lib/plugin_manager/update.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager/repository_owner.rb ${{ github.workspace }}/lib/plugin_manager/repository_owner.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager/repository_host.rb ${{ github.workspace }}/lib/plugin_manager/repository_host.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager/repository_host/github.rb ${{ github.workspace }}/lib/plugin_manager/repository_host/github.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_manager/repository_manager.rb ${{ github.workspace }}/lib/plugin_manager/repository_manager.rb
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/tasks/plugin_guard.rake ${{ github.workspace }}/lib/tasks/plugin_guard.rake
+          ln -sf ${{ github.workspace }}/plugins/discourse-plugin-manager-server/lib/plugin_initialization_guard.rb ${{ github.workspace }}/lib/plugin_initialization_guard.rb
 
       - name: Setup Git
         run: |
