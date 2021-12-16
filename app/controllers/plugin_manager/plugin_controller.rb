@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class PluginManager::PluginController < ::ApplicationController
-  before_action :ensure_admin, only: [:update, :delete]
+  before_action :ensure_admin, only: [:save, :delete]
 
   def index
     plugins = PluginManager::Plugin.list(
