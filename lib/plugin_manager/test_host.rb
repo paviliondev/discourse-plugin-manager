@@ -12,12 +12,20 @@ class ::PluginManager::TestHost
   attr_accessor :plugin,
                 :branch
 
-  def get_status_from_response
-    PluginManager::TestManager.status[:failing]
+  ## overide in child
+  def status_path
+    ## path of test staus endpoint
   end
 
-  def status_path(plugin)
-    nil
+  ## overide in child
+  def config_path
+    ## path of test config
+  end
+
+  ## overide in child
+  def get_status_from_response(response)
+    ## retrieve test status from raw response
+    PluginManager::TestManager.status[:failing]
   end
 
   def self.get(host_name)

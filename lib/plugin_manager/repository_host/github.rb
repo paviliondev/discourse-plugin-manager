@@ -6,17 +6,6 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
     @domain = "#{client_id}:#{client_secret}@#{@domain}" if basic_auth?
   end
 
-  def repo_user
-    @repo_user ||= URI(@url).path.split('/').reject(&:empty?).first
-  end
-
-  def repo_name
-    @repo_name ||= begin
-      name = URI(@url).path.split('/').reject(&:empty?).second
-      name ? name.split('.').first : nil
-    end
-  end
-
   def owner_path
     "users/#{repo_user}"
   end
@@ -60,6 +49,17 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
 
   def get_sha_from_response(response)
     response['sha']
+  end
+
+  def repo_user
+    @repo_user ||= URI(@url).path.split('/').reject(&:empty?).first
+  end
+
+  def repo_name
+    @repo_name ||= begin
+      name = URI(@url).path.split('/').reject(&:empty?).second
+      name ? name.split('.').first : nil
+    end
   end
 
   def basic_auth?

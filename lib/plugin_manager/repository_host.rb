@@ -6,13 +6,29 @@ class ::PluginManager::RepositoryHost
   attr_accessor :url,
                 :branch
 
+  ## overide in child
+  def owner_path
+    ## path to owner
+  end
+
+  ## overide in child
+  def plugin_file_path
+    ## path to plugin file
+  end
+
+  ## overide in child
   def get_owner_from_response(response = {})
+    ## retrieve owner from raw response
   end
 
+  ## overide in child
   def get_file_from_response(response = {})
+    ## retrieve plugin.rb file contents from raw response
   end
 
+  ## overide in child
   def get_sha_from_response(response = {})
+    ## retrieve plugin file sha from raw response
   end
 
   def self.get(name)
