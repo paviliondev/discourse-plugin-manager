@@ -59,10 +59,20 @@ class ::PluginManager::Manifest
     end
   end
 
-  def self.update_plugin_status
+  def self.update_local_plugins
     manifest = self.new
     manifest.set(self.status[:compatible])
     manifest.set(self.status[:incompatible])
+  end
+
+  def self.update_remote_plugins
+    ::PluginManager::Plugin.list_by('from_file', false).each do |plugin|
+      result = PluginManager::Plugin.retrieve_from_url(plugin.url, plugin.git_branch)
+
+      if result.success
+        PluginManager::Plugin.set(plugin.name, result.plugin)
+      end
+    end
   end
 
   def self.update_test_status
@@ -97,12 +107,5 @@ class ::PluginManager::Manifest
 
   def self.recommended?(status)
     status == ::PluginManager::Manifest.status[:recommended]
-  end
-
-  def self.handle_status_change(plugin_name, old_status, new_status)
-    if working?(old_status) && not_working?(new_status)
-      notifier = ::PluginManager::Notifier.new(plugin_name)
-      notifier.send
-    end
   end
 end

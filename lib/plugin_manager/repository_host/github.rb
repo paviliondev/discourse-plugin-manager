@@ -22,7 +22,7 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
   end
 
   def plugin_file_path
-    "repos/#{repo_user}/#{repo_name}/contents/plugin.rb"
+    "repos/#{repo_user}/#{repo_name}/contents/plugin.rb?ref=#{@branch}"
   end
 
   def branch_url
@@ -56,6 +56,10 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
     else
       nil
     end
+  end
+
+  def get_sha_from_response(response)
+    response['sha']
   end
 
   def basic_auth?

@@ -12,8 +12,12 @@ en:
 
   plugin_manager:
     notifier:
-      incompatible:
-        title: "%{plugin_name} is incompatible with the latest Discourse"
+      broken:
+        title: "%{plugin_name} does not work on the latest Discourse"
+        body: "%{plugin_name} either has a bug, or is incompatible with the Discourse commit linked below."
+      fixed:
+        title: "%{plugin_name} is working again on the latest Discourse"
+        body: "%{plugin_name} has recovered from the issue linked below."
     test:
       error: "The tests are failing."
       error_test: "The '%{test_name}' test is failing."

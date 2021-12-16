@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class PluginManager::LogSerializer < ::ApplicationSerializer
-  attributes :type,
+  attributes :status,
              :message,
              :backtrace,
              :issue_url,

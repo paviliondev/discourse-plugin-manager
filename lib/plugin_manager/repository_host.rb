@@ -6,6 +6,15 @@ class ::PluginManager::RepositoryHost
   attr_accessor :url,
                 :branch
 
+  def get_owner_from_response(response = {})
+  end
+
+  def get_file_from_response(response = {})
+  end
+
+  def get_sha_from_response(response = {})
+  end
+
   def self.get(name)
     list.find { |host| host.name == name }
   end

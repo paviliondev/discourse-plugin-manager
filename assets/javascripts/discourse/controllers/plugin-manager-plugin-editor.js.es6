@@ -59,6 +59,8 @@ export default Controller.extend(ModalFunctionality, {
 
   actions: {
     retrieve() {
+      this.clearFlash();
+
       this.set("retrieving", true);
       const data = {
         url: this.model.url,

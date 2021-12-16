@@ -1,0 +1,18 @@
+{
+  "name": "plugin.rb",
+  "path": "plugin.rb",
+  "sha": "bf43de2510073492df9319d9e4effd07dc604c6a",
+  "size": 8516,
+  "url": "https://api.github.com/repos/paviliondev/discourse-compatible-plugin/contents/plugin.rb?ref=main",
+  "html_url": "https://github.com/paviliondev/discourse-compatible-plugin/blob/main/plugin.rb",
+  "git_url": "https://api.github.com/repos/paviliondev/discourse-compatible-plugin/git/blobs/bf43de2510073492df9319d9e4effd07dc604c6a",
+  "download_url": "https://raw.githubusercontent.com/paviliondev/discourse-compatible-plugin/main/plugin.rb",
+  "type": "file",
+  "content": "IyBmcm96ZW5fc3RyaW5nX2xpdGVyYWw6IHRydWUKCiMgbmFtZTogY29tcGF0\naWJsZV9wbHVnaW4KIyBhYm91dDogQ29tcGF0YmlsZSBwbHVnaW4gZml4dHVy\nZQojIHZlcnNpb246IDAuMS4xCiMgYXV0aG9yczogQW5ndXMgTWNMZW9kCiMg\nY29udGFjdF9lbWFpbHM6IGFuZ3VzQHRlc3QuY29tCiMgdXJsOiBodHRwczov\nL2dpdGh1Yi5jb20vcGF2aWxpb25kZXYvZGlzY291cnNlLWNvbXBhdGlibGUt\ncGx1Z2luLmdpdAoKbW9kdWxlIENvbXBhdGlibGVQbHVnaW4KICBOQU1FU1BB\nQ0UgfHw9ICdjb21wYXRpYmxlLXBsdWdpbicKCiAgY2xhc3MgRW5naW5lIDwg\nOjpSYWlsczo6RW5naW5lCiAgICBlbmdpbmVfbmFtZSBDb21wYXRpYmxlUGx1\nZ2luOjpOQU1FU1BBQ0UKICAgIGlzb2xhdGVfbmFtZXNwYWNlIENvbXBhdGli\nbGVQbHVnaW4KICBlbmQKZW5kCg==\n",
+  "encoding": "base64",
+  "_links": {
+    "self": "https://api.github.com/repos/paviliondev/discourse-compatible-plugin/contents/plugin.rb?ref=main",
+    "git": "https://api.github.com/repos/paviliondev/discourse-compatible-plugin/git/blobs/bf43de2510073492df9319d9e4effd07dc604c6a",
+    "html": "https://github.com/paviliondev/discourse-compatible-plugin/blob/main/plugin.rb"
+  }
+}

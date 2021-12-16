@@ -41,6 +41,7 @@ after_initialize do
       ../lib/plugin_manager/repository_host.rb
       ../lib/plugin_manager/repository_host/github.rb
       ../lib/plugin_manager/repository_manager.rb
+      ../lib/plugin_manager/status_handler.rb
     ).each do |path|
       load File.expand_path(path, __FILE__)
     end
@@ -51,7 +52,7 @@ after_initialize do
   %w(
     ../mailers/plugin_mailer.rb
     ../app/jobs/scheduled/fetch_plugin_tests_status.rb
-    ../app/jobs/regular/send_plugin_incompatible_notification.rb
+    ../app/jobs/regular/send_plugin_notification.rb
     ../app/controllers/plugin_manager/plugin_controller.rb
     ../app/controllers/plugin_manager/status_controller.rb
     ../app/serializers/plugin_manager/discourse_serializer.rb
@@ -67,7 +68,7 @@ after_initialize do
   PluginManager::Plugin.add_extra_metadata
 
   unless Rails.env.test?
-    PluginManager::Manifest.update_plugin_status
+    PluginManager::Manifest.update_local_plugins
     PluginManager::Manifest.update_test_status
   end
 end

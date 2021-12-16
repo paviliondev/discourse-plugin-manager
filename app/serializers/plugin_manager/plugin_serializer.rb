@@ -7,7 +7,7 @@ class PluginManager::PluginSerializer < ::PluginManager::BasicPluginSerializer
              :version,
              :owner,
              :contact_emails,
-             :installed_sha,
+             :sha,
              :git_branch,
              :branch_url,
              :test_status,

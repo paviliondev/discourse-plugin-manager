@@ -3,7 +3,7 @@
 class ::PluginGuard::Log
   include ActiveModel::Serialization
 
-  attr_reader :type,
+  attr_reader :status,
               :message,
               :backtrace,
               :discourse_sha,
@@ -15,11 +15,13 @@ class ::PluginGuard::Log
 
   attr_accessor :created_at,
                 :updated_at,
-                :issue_url
+                :resolved_at,
+                :issue_url,
+                :issue_id
 
   def initialize(attrs)
     attrs = attrs.with_indifferent_access
-    @type = attrs[:type]
+    @status = attrs[:status]
     @message = attrs[:message]
     @backtrace = attrs[:backtrace]
     @discourse_sha = attrs[:discourse_sha]
@@ -29,36 +31,33 @@ class ::PluginGuard::Log
     @plugin_branch = attrs[:plugin_branch]
     @test_url = attrs[:test_url]
     @issue_url = attrs[:issue_url]
+    @issue_id = attrs[:issue_id]
     @created_at = attrs[:created_at]
     @updated_at = attrs[:updated_at]
+    @resolved_at = attrs[:resolved_at]
   end
 
   def save
     @updated_at = Time.now.iso8601
-    ::PluginManagerStore.set(PluginGuard::NAMESPACE, key, self.instance_values)
+    ::PluginManagerStore.set(
+      PluginGuard::NAMESPACE,
+      self.class.key(plugin_name, status, plugin_sha, discourse_sha),
+      self.instance_values
+    )
   end
 
-  def digest
-    Digest::SHA256.hexdigest("#{type.dasherize}-#{plugin_sha}-#{discourse_sha}-#{message}")
-  end
-
-  def key
-    "#{plugin_name}-log-#{digest}"
-  end
-
-  def self.add(plugin_name: nil, plugin_sha: nil, plugin_branch: nil, message: nil, backtrace: nil, test_url: nil, issue_url: nil, type: nil)
+  def self.add(plugin_name: nil, plugin_sha: nil, plugin_branch: nil, message: nil, backtrace: nil, test_url: nil, issue_url: nil, status: nil)
     plugin = ::PluginManager::Plugin.get_or_create(plugin_name)
     attrs = {
       plugin_name: plugin_name,
-      plugin_sha: plugin_sha || (plugin && plugin.installed_sha || ""),
+      plugin_sha: plugin_sha || (plugin && plugin.sha || ""),
       plugin_branch: plugin_branch || (plugin && plugin.git_branch || ""),
       discourse_sha: Discourse.git_version,
       discourse_branch: Discourse.git_branch,
       message: message,
-      type: type
+      status: status
     }
-
-    log = get(new(attrs).key)
+    log = get(key(attrs[:plugin_name], attrs[:status], attrs[:plugin_sha], attrs[:discourse_sha]))
 
     if log
       log.backtrace = backtrace if backtrace.present?
@@ -86,5 +85,13 @@ class ::PluginGuard::Log
     query = query.where("key LIKE '#{plugin_name}-log-%'") if plugin_name
     query.order("value::json->>'updated_at' DESC")
       .map { |record| new(JSON.parse(record.value)) }
+  end
+
+  def self.digest(status, plugin_sha, discourse_sha)
+    Digest::SHA256.hexdigest("#{status}-#{plugin_sha}-#{discourse_sha}")
+  end
+
+  def self.key(plugin_name, status, plugin_sha, discourse_sha)
+    "#{plugin_name.dasherize}-log-#{digest(status, plugin_sha, discourse_sha)}"
   end
 end

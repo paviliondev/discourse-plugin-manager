@@ -10,7 +10,7 @@ class ::PluginManager::Plugin
                 :about,
                 :version,
                 :contact_emails,
-                :installed_sha,
+                :sha,
                 :git_branch,
                 :status,
                 :repository_host,
@@ -34,7 +34,7 @@ class ::PluginManager::Plugin
     @about = attrs[:about]
     @version = attrs[:version]
     @contact_emails = attrs[:contact_emails]
-    @installed_sha = attrs[:installed_sha]
+    @sha = attrs[:sha]
     @git_branch = attrs[:git_branch]
     @status = attrs[:status].to_i
     @status_changed_at = attrs[:status_changed_at]
@@ -55,7 +55,7 @@ class ::PluginManager::Plugin
   end
 
   def present?
-    installed_sha.present?
+    sha.present?
   end
 
   def display_name
@@ -79,7 +79,7 @@ class ::PluginManager::Plugin
 
     new_attrs = {
       url: url,
-      installed_sha: attrs[:installed_sha] || plugin.installed_sha,
+      sha: attrs[:sha] || plugin.sha,
       git_branch: attrs[:git_branch] || plugin.git_branch,
       authors: attrs[:authors] || plugin.authors,
       about: attrs[:about] || plugin.about,
@@ -127,8 +127,9 @@ class ::PluginManager::Plugin
 
     saved = ::PluginManagerStore.set(::PluginManager::NAMESPACE, plugin_name, new_attrs)
 
-    if saved && status_changed
-      PluginManager::Manifest.handle_status_change(plugin_name, old_status, new_status)
+    if saved
+      status_handler = ::PluginManager::StatusHandler.new(plugin_name)
+      status_handler.perform(old_status, new_status)
     end
 
     saved
@@ -155,7 +156,7 @@ class ::PluginManager::Plugin
 
   def self.list(with_plugin_manager: false, page: 0, filter: nil, order: nil, asc: true)
     query = ::PluginStoreRow.where(plugin_name: ::PluginManager::NAMESPACE)
-    list_query(query, with_plugin_manager, page, filter, order, asc)
+    list_query(query, with_plugin_manager, page: page, filter: filter, order: order, asc: asc)
   end
 
   def self.list_by(attr, value, with_plugin_manager: false)
@@ -168,7 +169,7 @@ class ::PluginManager::Plugin
     list_query(query, with_plugin_manager)
   end
 
-  def self.list_query(query, with_plugin_manager, page = nil, filter = nil, order = nil, asc = nil)
+  def self.list_query(query, with_plugin_manager, page: nil, filter: nil, order: nil, asc: nil)
     query = query.where.not(key: "discourse-plugin-manager-server") unless with_plugin_manager
 
     if filter.present?
@@ -209,33 +210,36 @@ class ::PluginManager::Plugin
     new(name, attrs.with_indifferent_access)
   end
 
-  def self.get_from_url(url, branch)
+  def self.retrieve_from_url(url, branch)
     manager = PluginManager::RepositoryManager.new(url, branch)
-    result = OpenStruct.new(attrs: {}, error: '', success: false)
+    result = OpenStruct.new(plugin: {}, error: '', success: false)
 
-    if manager.ready? && file = manager.get_plugin_file
-      metadata = ::Plugin::Metadata.parse(file)
-
-      if exists?(metadata.name)
-        result.error = I18n.t("plugin_manager.plugin.error.plugin_already_exists")
-      else
-        result.plugin = {
-          url: url,
-          name: metadata.name,
-          contact_emails: metadata.contact_emails,
-          authors: metadata.authors,
-          about: metadata.about,
-          version: metadata.version,
-          git_branch: branch,
-          test_host: PluginManager::TestHost.detect_remote(url),
-          status: PluginManager::Manifest.status[:unknown]
-        }
-        result.success = true
-      end
-    else
+    if !manager.ready?
       result.error = I18n.t("plugin_manager.plugin.error.failed_to_retrieve_plugin")
+      return result
     end
 
+    plugin_data = manager.get_plugin_data
+    if !plugin_data || !plugin_data.file || !plugin_data.sha
+      result.error = I18n.t("plugin_manager.plugin.error.failed_to_retrieve_plugin")
+      return result
+    end
+
+    metadata = ::Plugin::Metadata.parse(plugin_data.file)
+    if exists?(metadata.name)
+      result.error = I18n.t("plugin_manager.plugin.error.plugin_already_exists")
+      return result
+    end
+
+    result.plugin = {
+      sha: plugin_data.sha,
+      name: metadata.name,
+      contact_emails: metadata.contact_emails,
+      authors: metadata.authors,
+      about: metadata.about,
+      version: metadata.version
+    }
+    result.success = true
     result
   end
 
@@ -248,9 +252,9 @@ class ::PluginManager::Plugin
     metadata = ::Plugin::Metadata.parse(file)
 
     if metadata.present? && ::PluginManager::Manifest.excluded.exclude?(metadata.name)
-      sha = PluginManager.run_shell_cmd('git rev-parse HEAD', chdir: path)
-      branch = PluginManager.run_shell_cmd('git rev-parse --abbrev-ref HEAD', chdir: path)
-      url = PluginManager.run_shell_cmd('git config --get remote.origin.url', chdir: path)
+      sha = get_sha(path)
+      branch = get_branch(path)
+      url = get_url(path)
       test_host = PluginManager::TestHost.detect_local(path)
       try_url = get_try_url(metadata, branch)
       status = path.include?(PluginManager.incompatible_dir) ?
@@ -263,7 +267,7 @@ class ::PluginManager::Plugin
         authors: metadata.authors,
         about: metadata.about,
         version: metadata.version,
-        installed_sha: sha,
+        sha: sha,
         git_branch: branch,
         status: status,
         from_file: true,
@@ -337,5 +341,17 @@ class ::PluginManager::Plugin
 
   def self.get_try_url(metadata, branch)
     metadata.respond_to?("#{branch.underscore}_try_url") && metadata.send("#{branch.underscore}_try_url")
+  end
+
+  def self.get_sha(path)
+    PluginManager.run_shell_cmd('git rev-parse HEAD', chdir: path)
+  end
+
+  def self.get_branch(path)
+    PluginManager.run_shell_cmd('git rev-parse --abbrev-ref HEAD', chdir: path)
+  end
+
+  def self.get_url(path)
+    PluginManager.run_shell_cmd('git config --get remote.origin.url', chdir: path)
   end
 end

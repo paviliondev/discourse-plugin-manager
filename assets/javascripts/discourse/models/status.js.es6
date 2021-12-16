@@ -2,17 +2,17 @@ import discourseComputed from "discourse-common/utils/decorators";
 import EmberObject from "@ember/object";
 
 const ManagerStatus = EmberObject.extend({
-  @discourseComputed("url", "installed_sha")
-  gitLink(url, installedSHA) {
-    if (url && installedSHA) {
-      return `${url}/commits/${installedSHA}`;
+  @discourseComputed("url", "sha")
+  gitLink(url, sha) {
+    if (url && sha) {
+      return `${url}/commits/${sha}`;
     }
   },
 
-  @discourseComputed("installed_sha")
-  shortSha(installedSHA) {
-    if (installedSHA) {
-      return installedSHA.substr(0, 10);
+  @discourseComputed("sha")
+  shortSha(sha) {
+    if (sha) {
+      return sha.substr(0, 10);
     }
   },
 

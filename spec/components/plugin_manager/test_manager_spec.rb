@@ -4,7 +4,7 @@ require_relative '../../plugin_helper'
 describe PluginManager::TestManager do
   let(:compatible_plugin) { "compatible_plugin" }
   let(:incompatible_plugin) { "incompatible_plugin" }
-  let(:test_response_body) { File.read("#{fixture_dir}/github/discourse-compatible-plugin.json") }
+  let(:test_response_body) { File.read("#{fixture_dir}/github/runs.json") }
 
   before do
     stub_github_user_request

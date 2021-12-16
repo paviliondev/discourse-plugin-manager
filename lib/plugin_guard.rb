@@ -19,8 +19,8 @@ class ::PluginGuard
     return false if ::Plugin::Metadata::OFFICIAL_PLUGINS.include?(plugin_name)
 
     @directory = directory
-    @sha = PluginManager.run_shell_cmd('git rev-parse HEAD', chdir: directory)
-    @branch = PluginManager.run_shell_cmd('git rev-parse --abbrev-ref HEAD', chdir: directory)
+    @sha = PluginManager::Plugin.get_sha(directory)
+    @branch = PluginManager::Plugin.get_branch(directory)
     @handler = ::PluginGuard::Handler.new(plugin_name, directory)
   end
 
@@ -59,7 +59,9 @@ class ::PluginGuard
     @handler.perform(
       message,
       backtrace,
-      precompiled_assets
+      precompiled_assets,
+      sha,
+      branch
     )
   end
 end

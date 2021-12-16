@@ -9,10 +9,10 @@ class ::PluginGuard::Handler
     @plugin_dir = plugin_dir.to_s
   end
 
-  def perform(message, backtrace, precompiled_assets)
+  def perform(message, backtrace, precompiled_assets, sha, branch)
     clean_up_assets(precompiled_assets)
     move_to(PluginManager.incompatible_dir)
-    log(message, backtrace) if message.present?
+    log(message, backtrace, sha, branch) if message.present?
   end
 
   protected
@@ -35,12 +35,14 @@ class ::PluginGuard::Handler
     I18n.load_path.reject! { |file| file.include?(@plugin.name) }
   end
 
-  def log(message, backtrace)
+  def log(message, backtrace, sha, branch)
     PluginGuard::Log.add(
       plugin_name: @plugin.name,
+      plugin_sha: sha,
+      plugin_branch: branch,
       message: message,
       backtrace: backtrace,
-      type: 'error'
+      status: PluginManager::Manifest.status[:incompatible]
     )
   end
 end

@@ -79,6 +79,7 @@ en:
           name: "Name"
           url: "URL"
           branch: Branch
+          sha: SHA
           authors: "Authors"
           about: "About"
           version: "Version"

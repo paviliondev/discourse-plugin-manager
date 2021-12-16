@@ -1,44 +1,49 @@
 # frozen_string_literal: true
 class PluginManager::Notifier
 
-  attr_reader :plugin,
-              :log
+  attr_reader :plugin
+  attr_accessor :log
 
   def initialize(plugin_name)
     @plugin = ::PluginManager::Plugin.get(plugin_name)
-    @log = ::PluginGuard::Log.list(@plugin.name).first
   end
 
-  def send
-    return unless @plugin && @log
-
-    if send_post?
-      send_post
-    elsif send_email?
-      send_email
-    else
-      false
-    end
+  def perform(type, log_key)
+    return unless @plugin
+    @log = PluginGuard::Log.get(log_key)
+    return unless @log
+    send(type)
   end
 
-  def send_email
-    Jobs.enqueue(:send_plugin_incompatible_notification,
+  def send(type)
+    send_post(type) if send_post?
+    send_email(type) if send_email?
+  end
+
+  def send_email(type)
+    Jobs.enqueue(:send_plugin_notification,
       plugin: @plugin.name,
       site: SiteSetting.title,
       contact_emails: contact_emails,
-      title: email_and_post_title,
-      raw: email_body
+      title: self.class.title(type, @plugin.display_name),
+      raw: self.class.email_body(type, @log, @plugin.display_name)
     )
   end
 
-  def send_post
+  def send_post(type)
     body = {
-      title: email_and_post_title,
-      raw: post_markdown,
-      tags: post_tags,
-      category: post_category,
+      title: self.class.title(type, @plugin.display_name),
+      raw: self.class.post_markdown(type, @log, @plugin.display_name),
       archetype: "regular"
     }
+
+    if type === :broken
+      body[:tags] = post_tags
+      body[:category] = post_category
+    elsif type === :fixed
+      body[:topic_id] = @log.issue_id
+    end
+
     response = Excon.post("#{post_settings[:base_url]}/posts",
       headers: {
         "Content-Type" => "application/json",
@@ -58,6 +63,7 @@ class PluginManager::Notifier
       end
 
       if result && result['topic_id']
+        @log.issue_id = result['topic_id']
         @log.issue_url = post_settings[:base_url] + "/t/" + result['topic_id'].to_s
         @log.save
 
@@ -65,61 +71,56 @@ class PluginManager::Notifier
       end
     end
 
-    if send_email?
-      send_email
-    else
-      false
-    end
+    false
   end
 
-  def email_and_post_title
-    I18n.t('plugin_manager.notifier.incompatible.title', plugin_name: @plugin.display_name)
+  def self.title(type, plugin_name)
+    I18n.t("plugin_manager.notifier.#{type}.title", plugin_name: plugin_name)
   end
 
-  def email_body
+  def self.email_body(type, log, plugin_name)
     <<~EOF
-      #{@plugin.display_name} encountered an error.
+      #{I18n.t("plugin_manager.notifier.#{type}.body", plugin_name: plugin_name)}
 
-      Time: #{@log.updated_at}
-      Message: #{@log.message}
-      Discourse Commit: #{@log.discourse_sha}
-      Discourse Branch: #{@log.discourse_branch}
-      Plugin Commit: #{@log.plugin_sha}
-      Plugin Branch: #{@log.plugin_branch}
-      #{extra}
+      Time: #{log.updated_at}
+      Message: #{log.message}
+      Discourse Commit: #{log.discourse_sha}
+      Discourse Branch: #{log.discourse_branch}
+      Plugin Commit: #{log.plugin_sha}
+      Plugin Branch: #{log.plugin_branch}
+      #{post_markdown_details(log)}
     EOF
   end
 
-  def post_markdown
+  def self.post_markdown(type, log, plugin_name)
     <<~EOF
-      #{@plugin.display_name} encountered an error.
+      #{I18n.t("plugin_manager.notifier.#{type}.body", plugin_name: plugin_name)}
 
-      Plugin: #{@plugin.name}
-      Time: #{@log.updated_at}
-      Message: ``#{@log.message}``
+      Time: #{log.updated_at}
+      Message: ``#{log.message}``
 
       ### Discourse
-      Commit: #{@log.discourse_sha}
-      Branch: #{@log.discourse_branch}
+      Commit: #{log.discourse_sha}
+      Branch: #{log.discourse_branch}
 
       ### Plugin
-      Commit: #{@log.plugin_sha}
-      Branch: #{@log.plugin_branch}
+      Commit: #{log.plugin_sha}
+      Branch: #{log.plugin_branch}
 
       ### Details
-      #{extra}
+      #{post_markdown_details(log)}
     EOF
   end
 
-  def extra
-    extra = ""
-    extra += "Test url: #{@log.test_url}" if @log.test_url
-    extra += "Issue url: #{@log.issue_url}" if @log.issue_url
+  def self.post_markdown_details(log)
+    result = ""
+    result += "Test url: #{log.test_url}" if log.test_url
+    result += "Issue url: #{log.issue_url}" if log.issue_url
 
-    if @log.backtrace
-      extra += <<~EOF
+    if log.backtrace
+      result += <<~EOF
         Backtrace:
-        #{@log.backtrace}
+        #{log.backtrace}
       EOF
     end
   end
@@ -151,7 +152,7 @@ class PluginManager::Notifier
   end
 
   def send_email?
-    contact_emails.present?
+    contact_emails.present? && !send_post?
   end
 
   def send_post?

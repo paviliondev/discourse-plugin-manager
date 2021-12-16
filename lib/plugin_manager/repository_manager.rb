@@ -24,9 +24,14 @@ class ::PluginManager::RepositoryManager
     response ? @host.get_owner_from_response(response) : nil
   end
 
-  def get_plugin_file
+  def get_plugin_data
     response = request(@host.plugin_file_path)
-    response ? @host.get_file_from_response(response) : nil
+    return if !response
+
+    OpenStruct.new(
+      file: @host.get_file_from_response(response),
+      sha: @host.get_sha_from_response(response)
+    )
   end
 
   protected

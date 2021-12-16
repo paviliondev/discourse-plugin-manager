@@ -27,6 +27,7 @@ ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_manager/repository_owner.rb ${DISCOURSE
 ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_manager/repository_host.rb ${DISCOURSE_ROOT}/lib/plugin_manager/repository_host.rb
 ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_manager/repository_host/github.rb ${DISCOURSE_ROOT}/lib/plugin_manager/repository_host/github.rb
 ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_manager/repository_manager.rb ${DISCOURSE_ROOT}/lib/plugin_manager/repository_manager.rb
+ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_manager/status_handler.rb ${DISCOURSE_ROOT}/lib/plugin_manager/status_handler.rb
 
 ln -sf ${PLUGIN_MANAGER_ROOT}/lib/tasks/plugin_guard.rake ${DISCOURSE_ROOT}/lib/tasks/plugin_guard.rake
 ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_initialization_guard.rb ${DISCOURSE_ROOT}/lib/plugin_initialization_guard.rb

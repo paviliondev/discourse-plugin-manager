@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 module Jobs
-  class SendPluginIncompatibleNotification < ::Jobs::Base
+  class SendPluginNotification < ::Jobs::Base
     def execute(args)
       [
         :plugin,
@@ -12,8 +12,8 @@ module Jobs
         raise Discourse::InvalidParameters.new(key) unless args[key].present?
       end
 
-      message = PluginMailer.incompatible_plugin_support(args)
-      Email::Sender.new(message, :incompatible_plugin_support).send
+      message = PluginMailer.plugin_support(args)
+      Email::Sender.new(message, :plugin_support).send
     end
   end
 end

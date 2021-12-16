@@ -16,9 +16,14 @@ class PluginManager::PluginController < ::ApplicationController
     params.require(:url)
     url = params[:url]
     branch = params[:branch] || 'main'
-    result = PluginManager::Plugin.get_from_url(url, branch)
+    result = PluginManager::Plugin.retrieve_from_url(url, branch)
 
     if result.success
+      result.plugin[:url] = url
+      result.plugin[:git_branch] = branch
+      result.plugin[:test_host] = PluginManager::TestHost.detect_remote(url)
+      result.plugin[:status] = PluginManager::Manifest.status[:unknown]
+
       cookies["#{result.plugin[:name]}-url"] = url
       render json: success_json.merge(plugin: result.plugin)
     else
@@ -45,7 +50,8 @@ class PluginManager::PluginController < ::ApplicationController
       :version,
       :contact_emails,
       :test_host,
-      :status
+      :status,
+      :sha
     )
     attrs[:url] = url
 

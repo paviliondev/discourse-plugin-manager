@@ -41,14 +41,14 @@ class ::PluginManager::TestManager
     end
 
     if test_status == PluginManager::TestManager.status[:failing]
-      sha = @host.test_sha || @plugin.installed_sha
+      sha = @host.test_sha || @plugin.sha
       branch = @host.test_branch || @plugin.git_branch
       message = @host.test_name ?
         I18n.t("plugin_manager.test.error_test", test_name: @host.test_name) :
         I18n.t("plugin_manager.test.error")
 
       PluginGuard::Log.add(
-        type: 'test_error',
+        status: PluginManager::Manifest.status[:tests_failing],
         plugin_name: @plugin.name,
         plugin_sha: sha,
         plugin_branch: branch,

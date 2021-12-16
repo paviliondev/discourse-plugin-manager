@@ -27,6 +27,7 @@ hooks:
           - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/repository_host.rb lib/plugin_manager/repository_host.rb
           - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/repository_host/github.rb lib/plugin_manager/repository_host/github.rb
           - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/repository_manager.rb lib/plugin_manager/repository_manager.rb
+          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/status_handler.rb lib/plugin_manager/status_handler.rb
           - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_guard.rb lib/plugin_guard.rb
           - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager.rb lib/plugin_manager.rb
           - cp -rf /shared/discourse-plugin-manager-server/lib/tasks/plugin_guard.rake lib/tasks/plugin_guard.rake

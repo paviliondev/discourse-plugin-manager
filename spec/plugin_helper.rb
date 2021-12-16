@@ -23,31 +23,35 @@ def plugin_sha
   "d5f7a1dbe5fcd9513aebad188e677a89fe955d86"
 end
 
-def plugin_url
-  "https://github.com/paviliondev/discourse-compatible-plugin.git"
-end
-
 def plugin_branch
   "main"
 end
 
-def stub_plugin_git_cmds(dir)
+def stub_plugin_git_cmds(dir, plugin_url)
   Open3.expects(:capture3).with("git rev-parse HEAD", chdir: dir).returns(plugin_sha).at_least_once
   Open3.expects(:capture3).with("git rev-parse --abbrev-ref HEAD", chdir: dir).returns(plugin_branch).at_least_once
-  Open3.expects(:capture3).with("git config --get remote.origin.url", chdir: dir).returns(plugin_url)
+  Open3.expects(:capture3).with("git config --get remote.origin.url", chdir: dir).returns(plugin_url || "https://github.com/paviliondev/discourse-compatible-plugin.git")
 end
 
-def setup_test_plugin(name)
+def setup_test_plugin(name, plugin_url = nil)
   dir = plugin_dir(name)
-  stub_plugin_git_cmds(dir)
+  stub_plugin_git_cmds(dir, plugin_url)
   PluginManager::TestHost.expects(:detect_local).returns("github")
   PluginManager::Plugin.set_from_file(dir)
 end
 
-def stub_github_user_request
-  stub_request(:get, "https://api.github.com/users/paviliondev").to_return(
+def stub_github_user_request(user = "paviliondev")
+  stub_request(:get, "https://api.github.com/users/#{user}").to_return(
     status: 200,
-    body: File.read("#{fixture_dir}/github/paviliondev.json")
+    body: File.read("#{fixture_dir}/github/#{user}.json")
+  )
+end
+
+def stub_github_plugin_file_request
+  plugin_path = "discourse-compatible-plugin"
+  stub_request(:get, "https://api.github.com/repos/paviliondev/#{plugin_path}/contents/plugin.rb?ref=main").to_return(
+    status: 200,
+    body: File.read("#{fixture_dir}/github/plugin.json")
   )
 end
 
