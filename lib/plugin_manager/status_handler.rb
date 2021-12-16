@@ -16,11 +16,19 @@ class ::PluginManager::StatusHandler
 
     if broken
       log_key = log_key(new_status)
-      notifier.perform(:broken, log_key)
-    elsif fixed
+
+      if log_key
+        notifier.perform(:broken, log_key)
+      end
+    end
+
+    if fixed
       log_key = log_key(old_status)
-      resolve_log(log_key)
-      notifier.perform(:fixed, log_key)
+
+      if log_key
+        resolve_log(log_key)
+        notifier.perform(:fixed, log_key)
+      end
     end
   end
 
