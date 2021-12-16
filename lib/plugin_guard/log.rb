@@ -5,18 +5,18 @@ class ::PluginGuard::Log
 
   attr_reader :status,
               :message,
-              :backtrace,
               :discourse_sha,
               :discourse_branch,
               :plugin_name,
               :plugin_sha,
-              :plugin_branch,
-              :test_url
+              :plugin_branch
 
-  attr_accessor :created_at,
+  attr_accessor :backtrace,
+                :created_at,
                 :updated_at,
                 :resolved_at,
                 :issue_url,
+                :test_url,
                 :issue_id
 
   def initialize(attrs)
