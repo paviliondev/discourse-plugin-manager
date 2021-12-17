@@ -31,7 +31,7 @@ Deploying updates of this plugin is slightly different from a deploying a normal
 
 ### Scheduled Rebuilds
 
-The servers running this plugin use ``crontab`` to automatically rebuild every 24 hours, and automatically cleanup docker containers every 4 days. 
+The servers running this plugin use ``crontab`` to automatically rebuild every 24 hours, and automatically cleanup docker containers every Monday and Thursday. 
 
 The cron jobs on both servers are
 
@@ -44,7 +44,7 @@ The templates for ``rebuild_discourse`` and ``cleanup_discourse`` are ``bin/rebu
 
 ### External Monitoring
 
-The 4 cron jobs on the 2 servers are monitored on cronitor.io. The [CronitorCLI](https://cronitor.io/docs/using-cronitor-cli) is installed on the servers, tracking the cron jobs mentioned above. That is why the actual jobs in ``crontab`` looks like this:
+The 4 cron jobs on the 2 servers are monitored on cronitor.io. The [CronitorCLI](https://cronitor.io/docs/using-cronitor-cli) is installed on the servers, tracking the cron jobs mentioned above. That is why the actual jobs in ``crontab`` look like this:
 
 ```
 0 00 * * * cronitor exec 4S7IAm ...
