@@ -1,6 +1,6 @@
 ## Discourse Plugin Manager Server
 
-Discourse plugin management server running on ``stable.plugins.discourse.pavilion.tech`` and ``plugins.discourse.pavilion.tech``.
+Discourse plugin management server running on ``stable.plugins.discourse.pavilion.tech`` and ``plugins.discourse.pavilion.tech`` ("the servers").
 
 Note that this plugin manually overrides files in the Discourse installation itself, before any other plugin is loaded. This is to ensure all plugin errors are caught and handled by this plugin without affecting the normal operation of Discourse. As long as you follow the steps outlined below when developing and deploying the plugin everything will work as expected.
 
@@ -27,22 +27,28 @@ Use a development workflow that looks like this
 
 ### Deployment
 
-Deploying updates of this plugin is slightly different from a deploying a normal plugin update. The script in ``bin/update.sh`` will handle it for you. It's present on the servers running this plugin in ``/usr/local/bin/update_discourse``. Just run this command on the relevant server:
-
-```
-update_discourse
-```
+Deploying updates of this plugin is slightly different from a deploying a normal plugin update. The script in ``bin/update.sh`` will handle it for you. It's present on the servers running this plugin in ``/usr/local/bin/update_discourse``. Just run ``update_discourse`` on the relevant server.
 
 ### Scheduled Rebuilds
 
-The servers running this plugin use ``crontab`` to automatically rebuild every 24 hours, and automatically cleanup docker containers every week. 
+The servers running this plugin use ``crontab`` to automatically rebuild every 24 hours, and automatically cleanup docker containers every 4 days. 
 
 The cron jobs on both servers are
 
 ```
 0 00 * * * /usr/local/bin/rebuild_discourse >>/tmp/cron_debug_log.log 2>&1
-0 00 * * 7 /usr/local/bin/cleanup_discourse >>/tmp/cron_debug_log.log 2>&1
+0 00 * * 1,4 /usr/local/bin/cleanup_discourse >>/tmp/cron_debug_log.log 2>&1
 ```
 
 The templates for ``rebuild_discourse`` and ``cleanup_discourse`` are ``bin/rebuild.sh`` and ``bin/cleanup.sh``.
+
+### External Monitoring
+
+The 4 cron jobs on the 2 servers are monitored on cronitor.io. The [CronitorCLI](https://cronitor.io/docs/using-cronitor-cli) is installed on the servers, tracking the cron jobs mentioned above. That is why the actual jobs in ``crontab`` looks like this:
+
+```
+0 00 * * * cronitor exec 4S7IAm ...
+```
+
+If a job does not start, or it fails to complete, then an alert is sent to angus@thepavilion.io [to be changed to dev@thepavilion.io, which will be setup as a group email on thepavilion.io].
 
