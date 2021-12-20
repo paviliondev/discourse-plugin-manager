@@ -25,17 +25,13 @@ class ::PluginManager::StatusHandler
     if fixed
       log_key = log_key(old_status)
 
-      if log_key
-        resolve_log(log_key)
+      if log_key && log = ::PluginGuard::Log.get(log_key)
+        log.resolved_at = Time.now.iso8601
+        log.save
+
         notifier.perform(:fixed, log_key)
       end
     end
-  end
-
-  def resolve_log(key)
-    log = ::PluginGuard::Log.get(key)
-    log.resolved_at = Time.now.iso8601
-    log.save
   end
 
   def log_key(status)
