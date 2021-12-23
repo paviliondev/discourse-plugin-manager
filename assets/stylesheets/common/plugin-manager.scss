@@ -125,23 +125,6 @@ $incompatible: #ef1700;
         line-height: 20px;
       }
     }
-
-    .update-topic {
-      display: inline-flex;
-
-      > span:first-of-type {
-        margin-right: 8px;
-      }
-
-      .event {
-        display: flex;
-        align-items: center;
-      }
-
-      .d-icon {
-        color: $secondary;
-      }
-    }
   }
 
   .bottom {

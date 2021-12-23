@@ -1,8 +1,4 @@
 plugins:
-  plugin_manager_update_category_id:
-    default: ""
-    type: category
-    client: true
   plugin_manager_issue_management_site_base_url:
     default: "https://thepavilion.io"
   plugin_manager_issue_management_site_api_token:

@@ -17,4 +17,12 @@ class ::PluginManager::Discourse
     @sha = version.installed_sha
     @git_branch = version.git_branch
   end
+
+  def self.get_sha
+    self.new.sha
+  end
+
+  def self.get_branch
+    self.new.git_branch
+  end
 end

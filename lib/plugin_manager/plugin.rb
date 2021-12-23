@@ -62,6 +62,14 @@ class ::PluginManager::Plugin
     name.titleize
   end
 
+  def local?
+    from_file
+  end
+
+  def remote?
+    !from_file
+  end
+
   def branch_url
     @branch_url ||= begin
       return nil unless @host.present?
@@ -252,9 +260,9 @@ class ::PluginManager::Plugin
     metadata = ::Plugin::Metadata.parse(file)
 
     if metadata.present? && ::PluginManager::Manifest.excluded.exclude?(metadata.name)
-      sha = get_sha(path)
-      branch = get_branch(path)
-      url = get_url(path)
+      sha = get_local_sha(path)
+      branch = get_local_branch(path)
+      url = get_local_url(path)
       test_host = PluginManager::TestHost.detect_local(path)
       try_url = get_try_url(metadata, branch)
       status = path.include?(PluginManager.incompatible_dir) ?
@@ -275,8 +283,8 @@ class ::PluginManager::Plugin
         try_url: try_url
       }
 
-      ::PluginManager::Plugin.set(metadata.name, attrs)
-      plugin = ::PluginManager::Plugin.get(metadata.name)
+      set(metadata.name, attrs)
+      plugin = get(metadata.name)
       category = find_plugin_category(plugin)
 
       if category
@@ -285,7 +293,7 @@ class ::PluginManager::Plugin
 
         if plugin.category_id != category.id
           attrs[:category_id] = category.id
-          ::PluginManager::Plugin.set(metadata.name, attrs)
+          set(metadata.name, attrs)
         end
       else
         category =
@@ -302,7 +310,7 @@ class ::PluginManager::Plugin
         category.save
 
         attrs[:category_id] = category.id
-        ::PluginManager::Plugin.set(metadata.name, attrs)
+        set(metadata.name, attrs)
       end
     end
   end
@@ -343,15 +351,55 @@ class ::PluginManager::Plugin
     metadata.respond_to?("#{branch.underscore}_try_url") && metadata.send("#{branch.underscore}_try_url")
   end
 
-  def self.get_sha(path)
+  def self.get_local_sha(path)
     PluginManager.run_shell_cmd('git rev-parse HEAD', chdir: path)
   end
 
-  def self.get_branch(path)
+  def self.get_local_branch(path)
     PluginManager.run_shell_cmd('git rev-parse --abbrev-ref HEAD', chdir: path)
   end
 
-  def self.get_url(path)
+  def self.get_local_url(path)
     PluginManager.run_shell_cmd('git config --get remote.origin.url', chdir: path)
+  end
+
+  def self.get_local_path(plugin_name, status)
+    folder = status == self.class.status[:incompatible] ? PluginManager.incompatible_dir : PluginManager.compatible_dir
+    parent_path = "#{PluginManager.root_dir}/#{folder}"
+    path = nil
+
+    Dir["#{parent_path}/*/plugin.rb"].each do |p|
+      metadata = Plugin::Metadata.parse(File.read(p))
+      plugin = self.new(metadata, path)
+      if plugin.name === plugin_name
+        path = p
+      end
+    end
+
+    path
+  end
+
+  def self.get_sha(plugin_name)
+    plugin = get(plugin_name)
+    sha = plugin ? plugin.sha : nil
+
+    if !plugin || (plugin.local? && !sha)
+      path = get_local_path(plugin_name, status)
+      sha = get_local_sha(path) if path
+    end
+
+    sha
+  end
+
+  def self.get_branch(plugin_name)
+    plugin = get(plugin_name)
+    branch = plugin ? plugin.git_branch : nil
+
+    if !plugin || (plugin.local? && !branch)
+      path = get_local_path(plugin_name, status)
+      branch = get_local_branch(path) if path
+    end
+
+    branch
   end
 end

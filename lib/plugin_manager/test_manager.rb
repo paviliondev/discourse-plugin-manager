@@ -47,11 +47,9 @@ class ::PluginManager::TestManager
         I18n.t("plugin_manager.test.error_test", test_name: @host.test_name) :
         I18n.t("plugin_manager.test.error")
 
-      PluginGuard::Log.add(
-        status: PluginManager::Manifest.status[:tests_failing],
+      PluginManager::Log.add(
         plugin_name: @plugin.name,
-        plugin_sha: sha,
-        plugin_branch: branch,
+        status: PluginManager::Manifest.status[:tests_failing],
         message: message,
         test_url: @host.test_url
       )

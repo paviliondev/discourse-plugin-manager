@@ -5,17 +5,11 @@ class PluginManager::Notifier
   attr_accessor :log
 
   def initialize(plugin_name)
-    @plugin = ::PluginManager::Plugin.get(plugin_name)
+    @plugin = ::PluginManager::Plugin.get_or_create(plugin_name)
   end
 
-  def perform(type, log_key)
-    return unless @plugin
-    @log = PluginGuard::Log.get(log_key)
-    return unless @log
-    send(type)
-  end
-
-  def send(type)
+  def send(type, log)
+    @log = log
     send_post(type) if send_post?
     send_email(type) if send_email?
   end

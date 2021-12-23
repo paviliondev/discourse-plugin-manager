@@ -1,9 +1,9 @@
 # frozen_string_literal: true
-# name: discourse-plugin-manager-server
-# about: Serverside functionality for Pavilion's Plugin Manager
+# name: discourse-plugin-manager
+# about: Pavilion's Plugin Manager
 # version: 0.1.1
 # authors: Angus McLeod
-# url: https://github.com/paviliondev/discourse-plugin-manager-server
+# url: https://github.com/paviliondev/discourse-plugin-manager
 
 register_asset "stylesheets/common/plugin-manager.scss"
 register_asset "stylesheets/mobile/plugin-manager.scss", :mobile
@@ -17,37 +17,17 @@ register_svg_icon "building"
 register_svg_icon "far-life-ring"
 register_svg_icon "far-question-circle"
 
+if Rails.env.test?
+  %w(
+    ../lib/plugin_manager.rb
+    ../lib/plugin_manager_store.rb
+  ).each do |path|
+    load File.expand_path(path, __FILE__)
+  end
+end
+
 after_initialize do
   PluginManagerStore.commit_cache
-
-  if Rails.env.test?
-    %w(
-      ../lib/plugin_guard.rb
-      ../lib/plugin_guard/extensions/discourse.rb
-      ../lib/plugin_guard/extensions/plugin_instance.rb
-      ../lib/plugin_guard/error.rb
-      ../lib/plugin_guard/handler.rb
-      ../lib/plugin_guard/log.rb
-      ../lib/plugin_manager.rb
-      ../lib/plugin_manager/discourse.rb
-      ../lib/plugin_manager/manifest.rb
-      ../lib/plugin_manager/notifier.rb
-      ../lib/plugin_manager/plugin.rb
-      ../lib/plugin_manager/test_host.rb
-      ../lib/plugin_manager/test_host/github.rb
-      ../lib/plugin_manager/test_manager.rb
-      ../lib/plugin_manager/update.rb
-      ../lib/plugin_manager/repository_owner.rb
-      ../lib/plugin_manager/repository_host.rb
-      ../lib/plugin_manager/repository_host/github.rb
-      ../lib/plugin_manager/repository_manager.rb
-      ../lib/plugin_manager/status_handler.rb
-    ).each do |path|
-      load File.expand_path(path, __FILE__)
-    end
-
-    FileUtils.mv('../lib/plugin_initialization_guard.rb', '../../../lib/plugin_initialization_guard.rb', force: true)
-  end
 
   %w(
     ../mailers/plugin_mailer.rb

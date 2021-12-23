@@ -14,11 +14,11 @@ describe PluginManager::TestManager do
   end
 
   it "updates plugin tests" do
-    manager = PluginManager::TestManager.new("github")
+    manager = described_class.new("github")
     manager.update(compatible_plugin)
 
     plugin = PluginManager::Plugin.get(compatible_plugin)
-    expect(plugin.test_status).to eq(PluginManager::TestManager.status[:passing])
+    expect(plugin.test_status).to eq(described_class.status[:passing])
     expect(plugin.test_backend_coverage).to eq(92.45)
 
     test_response_json = JSON.parse(test_response_body)
@@ -27,6 +27,6 @@ describe PluginManager::TestManager do
     manager.update(compatible_plugin)
 
     plugin = PluginManager::Plugin.get(compatible_plugin)
-    expect(plugin.test_status).to eq(PluginManager::TestManager.status[:failing])
+    expect(plugin.test_status).to eq(described_class.status[:failing])
   end
 end

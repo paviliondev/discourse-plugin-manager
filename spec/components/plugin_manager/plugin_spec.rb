@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require_relative '../../plugin_helper'
 
-describe PluginGuard::Handler do
+describe PluginManager::Plugin do
   let(:compatible_plugin) { "compatible_plugin" }
   let(:compatible_plugin_url) { "https://github.com/paviliondev/discourse-compatible-plugin.git" }
   let(:third_party_plugin) { "third_party_plugin" }
@@ -29,12 +29,13 @@ describe PluginGuard::Handler do
       }
     ).to_return(
       status: 200,
-      body: response_body.to_json
+      body: response_body.to_json,
+      headers: {}
     )
   end
 
   def add_log(plugin)
-    PluginGuard::Log.add(
+    PluginManager::Log.add(
       plugin_name: plugin,
       message: "#{plugin.titleize} broke",
       backtrace: "broken at line 123",
@@ -43,22 +44,22 @@ describe PluginGuard::Handler do
   end
 
   def get_log(plugin, status)
-    log_key = PluginGuard::Log.key(plugin, status, plugin_sha, Discourse.git_version)
-    PluginGuard::Log.get(log_key)
+    log_key = PluginManager::Log.key(plugin, status, plugin_sha, Discourse.git_version)
+    PluginManager::Log.get(log_key)
   end
 
   it "sets plugin from file" do
     stub_github_user_request
     setup_test_plugin(compatible_plugin)
 
-    plugin = PluginManager::Plugin.get(compatible_plugin)
+    plugin = described_class.get(compatible_plugin)
     expect(plugin.name).to eq(compatible_plugin)
   end
 
   it "retrieves plugin from url" do
     stub_github_plugin_file_request
 
-    result = PluginManager::Plugin.retrieve_from_url(compatible_plugin_url, plugin_branch)
+    result = described_class.retrieve_from_url(compatible_plugin_url, plugin_branch)
     expect(result.plugin[:name]).to eq(compatible_plugin)
     expect(result.plugin[:about]).to eq("Compatbile plugin fixture")
     expect(result.plugin[:version]).to eq("0.1.1")
@@ -81,7 +82,7 @@ describe PluginGuard::Handler do
           contact_emails: "angus@test.com",
           title: I18n.t("plugin_manager.notifier.broken.title", plugin_name: third_party_plugin.titleize)
         }) do
-          PluginManager::Plugin.set(third_party_plugin, status: ::PluginManager::Manifest.status[:incompatible])
+          described_class.set(third_party_plugin, status: ::PluginManager::Manifest.status[:incompatible])
         end
       end
     end
@@ -90,9 +91,7 @@ describe PluginGuard::Handler do
       before do
         stub_github_user_request
         setup_test_plugin(compatible_plugin)
-        add_log(compatible_plugin)
-
-        log = get_log(compatible_plugin, PluginManager::Manifest.status[:incompatible])
+        log = add_log(compatible_plugin)
         request_body = {
           title: PluginManager::Notifier.title('broken', compatible_plugin.titleize),
           raw: PluginManager::Notifier.post_markdown('broken', log, compatible_plugin.titleize),
@@ -104,7 +103,7 @@ describe PluginGuard::Handler do
       end
 
       it "posts to server if broken" do
-        PluginManager::Plugin.set(compatible_plugin, status: ::PluginManager::Manifest.status[:incompatible])
+        described_class.set(compatible_plugin, status: ::PluginManager::Manifest.status[:incompatible])
         expect(WebMock).to have_requested(
           :post,
           "#{base_url}/posts",
@@ -118,7 +117,7 @@ describe PluginGuard::Handler do
       end
 
       it "posts to server if fixed" do
-        PluginManager::Plugin.set(compatible_plugin, status: ::PluginManager::Manifest.status[:incompatible])
+        described_class.set(compatible_plugin, status: ::PluginManager::Manifest.status[:incompatible])
 
         log = get_log(compatible_plugin, PluginManager::Manifest.status[:incompatible])
         request_body = {
@@ -129,7 +128,7 @@ describe PluginGuard::Handler do
         }
         stub_post_request(request_body, response_post)
 
-        PluginManager::Plugin.set(compatible_plugin, status: ::PluginManager::Manifest.status[:compatible])
+        described_class.set(compatible_plugin, status: ::PluginManager::Manifest.status[:compatible])
 
         expect(WebMock).to have_requested(
           :post,

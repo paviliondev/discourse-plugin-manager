@@ -14,6 +14,7 @@ class ::PluginManager::Manifest
     @excluded ||= %w(
       docker_manager
       discourse-plugin-manager-server
+      discourse-plugin-guard
       discourse-details
       discourse-local-dates
       discourse-narrative-bot

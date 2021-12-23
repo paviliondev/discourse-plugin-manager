@@ -1,21 +1,22 @@
-## Discourse Plugin Manager Server
+## Discourse Plugin Manager
 
-Discourse plugin management server running on ``stable.plugins.discourse.pavilion.tech`` and ``plugins.discourse.pavilion.tech`` ("the servers").
+Discourse plugin manager running on ``stable.plugins.discourse.pavilion.tech`` and ``plugins.discourse.pavilion.tech`` ("the servers"). Must be run with ``paviliondev/discourse-plugin-guard``.
 
 Note that this plugin manually overrides files in the Discourse installation itself, before any other plugin is loaded. This is to ensure all plugin errors are caught and handled by this plugin without affecting the normal operation of Discourse. As long as you follow the steps outlined below when developing and deploying the plugin everything will work as expected.
 
 ### Development
 
-Setup two environment variables
+First, make sure you have ``paviliondev/discourse-plugin-guard`` installed. Then setup three environment variables
 
 ```
 PLUGIN_MANAGER_ROOT: the root of paviliondev/discourse-plugin-manager-server
+PLUGIN_GUARD_ROOT: the root of paviliondev/discourse-plugin-guard
 DISCOURSE_ROOT: the root of discourse/discourse
 ```
 
 Use a development workflow that looks like this
 
-1. Run ``bin/setup.sh`` to create the necessary folders and symlink the necessary files.
+1. Run ``bin/setup.sh`` in both plugins to create the necessary folders and symlink the necessary files.
 
 2. Perform development as normal.
 

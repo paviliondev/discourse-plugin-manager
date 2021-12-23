@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ::PluginGuard::Log
+class ::PluginManager::Log
   include ActiveModel::Serialization
 
   attr_reader :status,
@@ -40,48 +40,56 @@ class ::PluginGuard::Log
   def save
     @updated_at = Time.now.iso8601
     ::PluginManagerStore.set(
-      PluginGuard::NAMESPACE,
+      self.class.plugin_name,
       self.class.key(plugin_name, status, plugin_sha, discourse_sha),
       self.instance_values
     )
   end
 
-  def self.add(plugin_name: nil, plugin_sha: nil, plugin_branch: nil, message: nil, backtrace: nil, test_url: nil, issue_url: nil, status: nil)
-    plugin = ::PluginManager::Plugin.get_or_create(plugin_name)
+  def key
+    self.class.key(plugin_name, status, plugin_sha, discourse_sha)
+  end
+
+  def self.add(plugin_name: nil, status: nil, message: nil, backtrace: nil, test_url: nil)
+    plugin_sha = PluginManager::Plugin.get_sha(plugin_name)
+    plugin_branch = PluginManager::Plugin.get_branch(plugin_name)
+    return if !plugin_sha || !plugin_branch
+
+    discourse_sha = PluginManager::Discourse.get_sha
+    discourse_branch = PluginManager::Discourse.get_branch
     attrs = {
       plugin_name: plugin_name,
-      plugin_sha: plugin_sha || (plugin && plugin.sha || ""),
-      plugin_branch: plugin_branch || (plugin && plugin.git_branch || ""),
-      discourse_sha: Discourse.git_version,
-      discourse_branch: Discourse.git_branch,
+      plugin_sha: plugin_sha,
+      plugin_branch: plugin_branch,
+      discourse_sha: discourse_sha,
+      discourse_branch: discourse_branch,
       message: message,
       status: status
     }
-    log = get(key(attrs[:plugin_name], attrs[:status], attrs[:plugin_sha], attrs[:discourse_sha]))
+    log_key = key(plugin_name, status, plugin_sha, discourse_sha)
+    log = get(log_key)
 
     if log
       log.backtrace = backtrace if backtrace.present?
-      log.test_url = test_url if issue_url.present?
-      log.issue_url = issue_url if test_url.present?
+      log.test_url = test_url if test_url.present?
     else
       attrs[:backtrace] = backtrace if backtrace.present?
-      attrs[:issue_url] = issue_url if issue_url.present?
       attrs[:test_url] = test_url if test_url.present?
 
       log = new(attrs)
       log.created_at = Time.now.iso8601
     end
 
-    log.save
+    log.save ? log : nil
   end
 
   def self.get(key)
-    raw = ::PluginManagerStore.get(PluginGuard::NAMESPACE, key)
+    raw = ::PluginManagerStore.get(plugin_name, key)
     raw ? new(raw) : nil
   end
 
   def self.list(plugin_name = nil)
-    query = PluginStoreRow.where(plugin_name: PluginGuard::NAMESPACE)
+    query = PluginStoreRow.where(plugin_name: plugin_name)
     query = query.where("key LIKE '#{plugin_name}-log-%'") if plugin_name
     query.order("value::json->>'updated_at' DESC")
       .map { |record| new(JSON.parse(record.value)) }
@@ -92,6 +100,10 @@ class ::PluginGuard::Log
   end
 
   def self.key(plugin_name, status, plugin_sha, discourse_sha)
-    "#{plugin_name.dasherize}-log-#{digest(status, plugin_sha, discourse_sha)}"
+    "#{plugin_name.dasherize}-#{digest(status, plugin_sha, discourse_sha)}"
+  end
+
+  def self.plugin_name
+    PluginManager::NAMESPACE + "-log"
   end
 end

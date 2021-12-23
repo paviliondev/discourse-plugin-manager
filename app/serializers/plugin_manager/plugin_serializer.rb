@@ -20,7 +20,7 @@ class PluginManager::PluginSerializer < ::PluginManager::BasicPluginSerializer
              :category_id
 
   def log
-    log = ::PluginGuard::Log.list(object.name).first
+    log = ::PluginManager::Log.list(object.name).first
     PluginManager::LogSerializer.new(log, root: false).as_json
   end
 
