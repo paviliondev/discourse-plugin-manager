@@ -20,7 +20,7 @@ export default Component.extend({
     this.loadPlugins(false);
   },
 
-  loadPlugins(addingPage) {
+  loadPlugins(addingPage = false) {
     this.set("loading", true);
 
     const currentNames = this.plugins.map((p) => p.name);

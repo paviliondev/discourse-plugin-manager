@@ -6,8 +6,8 @@ class PluginManager::Engine < ::Rails::Engine
 end
 
 PluginManager::Engine.routes.draw do
-  get 'status' => 'status#index'
   get 'status/:plugin_name' => 'status#show'
+  get 'discourse' => 'discourse#index'
   get 'plugin' => 'plugin#index'
   get 'plugin/retrieve' => 'plugin#retrieve'
   put 'plugin/:plugin_name' => 'plugin#save', constraints: AdminConstraint.new

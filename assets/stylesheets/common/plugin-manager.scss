@@ -22,11 +22,6 @@ $incompatible: #ef1700;
   border-top: 1px solid var(--primary-low);
   border-left: 1px solid var(--primary-low);
   border-right: 1px solid var(--primary-low);
-  display: none;
-
-  &.visible {
-    display: block;
-  }
 
   .top {
     display: flex;

@@ -17,13 +17,11 @@ register_svg_icon "building"
 register_svg_icon "far-life-ring"
 register_svg_icon "far-question-circle"
 
-if Rails.env.test?
-  %w(
-    ../lib/plugin_manager.rb
-    ../lib/plugin_manager_store.rb
-  ).each do |path|
-    load File.expand_path(path, __FILE__)
-  end
+%w(
+  ../lib/plugin_manager.rb
+  ../lib/plugin_manager_store.rb
+).each do |path|
+  load File.expand_path(path, __FILE__)
 end
 
 after_initialize do
@@ -33,6 +31,7 @@ after_initialize do
     ../mailers/plugin_mailer.rb
     ../app/jobs/scheduled/fetch_plugin_tests_status.rb
     ../app/jobs/regular/send_plugin_notification.rb
+    ../app/controllers/plugin_manager/discourse_controller.rb
     ../app/controllers/plugin_manager/plugin_controller.rb
     ../app/controllers/plugin_manager/status_controller.rb
     ../app/serializers/plugin_manager/discourse_serializer.rb

@@ -57,8 +57,8 @@ const PluginManager = ManagerStatus.extend({
 });
 
 PluginManager.reopenClass({
-  status() {
-    return ajax("/plugin-manager/status");
+  discourse() {
+    return ajax("/plugin-manager/discourse");
   },
 
   list(data) {
