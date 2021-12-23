@@ -7,18 +7,18 @@ hooks:
           - mkdir -p lib/plugin_manager
           - mkdir -p lib/plugin_manager/test_host
           - mkdir -p lib/plugin_manager/repository_host
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager_store.rb lib/plugin_manager_store.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/log.rb lib/plugin_manager/log.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/discourse.rb lib/plugin_manager/discourse.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/manifest.rb lib/plugin_manager/manifest.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/notifier.rb lib/plugin_manager/notifier.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/plugin.rb lib/plugin_manager/plugin.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/test_host.rb lib/plugin_manager/test_host.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/test_host/github.rb lib/plugin_manager/test_host/github.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/test_manager.rb lib/plugin_manager/test_manager.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/repository_owner.rb lib/plugin_manager/repository_owner.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/repository_host.rb lib/plugin_manager/repository_host.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/repository_host/github.rb lib/plugin_manager/repository_host/github.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/repository_manager.rb lib/plugin_manager/repository_manager.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager/status_handler.rb lib/plugin_manager/status_handler.rb
-          - cp -rf /shared/discourse-plugin-manager-server/lib/plugin_manager.rb lib/plugin_manager.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager_store.rb lib/plugin_manager_store.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/log.rb lib/plugin_manager/log.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/discourse.rb lib/plugin_manager/discourse.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/manifest.rb lib/plugin_manager/manifest.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/notifier.rb lib/plugin_manager/notifier.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/plugin.rb lib/plugin_manager/plugin.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/test_host.rb lib/plugin_manager/test_host.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/test_host/github.rb lib/plugin_manager/test_host/github.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/test_manager.rb lib/plugin_manager/test_manager.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/repository_owner.rb lib/plugin_manager/repository_owner.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/repository_host.rb lib/plugin_manager/repository_host.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/repository_host/github.rb lib/plugin_manager/repository_host/github.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/repository_manager.rb lib/plugin_manager/repository_manager.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/status_handler.rb lib/plugin_manager/status_handler.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager.rb lib/plugin_manager.rb
