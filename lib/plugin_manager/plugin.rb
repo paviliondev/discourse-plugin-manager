@@ -178,7 +178,7 @@ class ::PluginManager::Plugin
   end
 
   def self.list_query(query, with_plugin_manager, page: nil, filter: nil, order: nil, asc: nil)
-    query = query.where.not(key: "discourse-plugin-manager-server") unless with_plugin_manager
+    query = query.where.not(key: "discourse-plugin-manager") unless with_plugin_manager
 
     if filter.present?
       query = query.where("

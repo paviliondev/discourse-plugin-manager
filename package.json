@@ -1,7 +1,7 @@
 {
   "name": "discourse-custom-wizard",
   "version": "1.0.0",
-  "repository": "git@github.com:paviliondev/discourse-plugin-manager-server.git",
+  "repository": "git@github.com:paviliondev/discourse-plugin-manager.git",
   "author": "Pavilion",
   "license": "GPL V2",
   "devDependencies": {

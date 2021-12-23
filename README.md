@@ -9,7 +9,7 @@ Note that this plugin manually overrides files in the Discourse installation its
 First, make sure you have ``paviliondev/discourse-plugin-guard`` installed. Then setup three environment variables
 
 ```
-PLUGIN_MANAGER_ROOT: the root of paviliondev/discourse-plugin-manager-server
+PLUGIN_MANAGER_ROOT: the root of paviliondev/discourse-plugin-manager
 PLUGIN_GUARD_ROOT: the root of paviliondev/discourse-plugin-guard
 DISCOURSE_ROOT: the root of discourse/discourse
 ```

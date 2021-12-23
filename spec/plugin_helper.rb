@@ -4,14 +4,14 @@ if ENV['SIMPLECOV']
   require 'simplecov'
 
   SimpleCov.start do
-    root "plugins/discourse-plugin-manager-server"
-    track_files "plugins/discourse-plugin-manager-server/**/*.rb"
+    root "plugins/discourse-plugin-manager"
+    track_files "plugins/discourse-plugin-manager/**/*.rb"
     add_filter { |src| src.filename =~ /(\/spec\/|\/db\/|plugin\.rb)/ }
   end
 end
 
 def fixture_dir
-  "#{Rails.root}/plugins/discourse-plugin-manager-server/spec/fixtures"
+  "#{Rails.root}/plugins/discourse-plugin-manage/spec/fixtures"
 end
 
 def plugin_dir(name, compatible: true)
