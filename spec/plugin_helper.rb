@@ -11,7 +11,7 @@ if ENV['SIMPLECOV']
 end
 
 def fixture_dir
-  "#{Rails.root}/plugins/discourse-plugin-manage/spec/fixtures"
+  "#{Rails.root}/plugins/discourse-plugin-manager/spec/fixtures"
 end
 
 def plugin_dir(name, compatible: true)
