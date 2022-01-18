@@ -1,6 +1,6 @@
 ## Discourse Plugin Manager
 
-Discourse plugin manager running on ``stable.plugins.discourse.pavilion.tech`` and ``plugins.discourse.pavilion.tech`` ("the servers"). Must be run with ``paviliondev/discourse-plugin-guard``.
+Discourse plugin manager running on ``stable.plugins.discourse.pavilion.tech`` and ``plugins.discourse.pavilion.tech`` ("the servers"). Should be run with ``paviliondev/discourse-plugin-guard``.
 
 Note that this plugin manually overrides files in the Discourse installation itself, before any other plugin is loaded. This is to ensure all plugin errors are caught and handled by this plugin without affecting the normal operation of Discourse. As long as you follow the steps outlined below when developing and deploying the plugin everything will work as expected.
 

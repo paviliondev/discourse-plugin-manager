@@ -1,11 +1,11 @@
 <div class="detail-title">
-  <h3 title={{detailDescription}}>
+  <div title={{detailDescription}}>
     <span class="plugin-name">{{plugin.display_name}}</span>
     {{branch-label plugin}}
-    {{detailTitle}}
+    <span>{{detailTitle}}</span>
     <span class="discourse-name">{{i18n "server_status.discourse.title"}}</span>
     {{branch-label discourse}}
-  </h3>
+  </div>
 
   <div class="detail-links">
     <span class="status-badge {{plugin.statusClass}}" title={{plugin.statusTitle}}>

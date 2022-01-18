@@ -22,7 +22,8 @@ class ::PluginManager::Plugin
                 :support_url,
                 :try_url,
                 :from_file,
-                :category_id
+                :category_id,
+                :group_id
 
   attr_reader   :owner,
                 :host
@@ -48,6 +49,7 @@ class ::PluginManager::Plugin
     @try_url = attrs[:try_url]
     @from_file = attrs[:from_file]
     @category_id = attrs[:category_id]
+    @group_id = attrs[:group_id]
 
     if @from_file
       @instance = Discourse.plugins.select { |p| p.metadata.name == plugin_name }.first
@@ -76,6 +78,38 @@ class ::PluginManager::Plugin
       @host.url = url
       @host.branch = git_branch
       @host.branch_url
+    end
+  end
+
+  def users
+    group ? group.users : []    
+  end
+
+  def add_user(user)
+    group && group.add(user)    
+  end
+
+  def group
+    @group ||= begin
+      if group_id
+        Group.find_by_id(id: group_id)
+      elsif
+        Group.find_by(name: name)
+      else
+        nil
+      end
+    end
+  end
+
+  def category
+    @category ||= begin
+      if category_id
+        Category.find_by_id(id: category_id)
+      elsif
+        Category.find_by(slug: name)
+      else
+        nil
+      end
     end
   end
 
@@ -285,44 +319,56 @@ class ::PluginManager::Plugin
 
       set(metadata.name, attrs)
       plugin = get(metadata.name)
-      category = find_plugin_category(plugin)
 
-      if category
-        category.description = build_category_description(plugin)
-        category.save
-
-        if plugin.category_id != category.id
-          attrs[:category_id] = category.id
-          set(metadata.name, attrs)
-        end
-      else
-        category =
-          begin
-            Category.new(
-              name: plugin.display_name,
-              slug: plugin.name,
-              description: build_category_description(plugin),
-              user: Discourse.system_user
-            )
-          rescue ArgumentError => e
-            raise Discourse::InvalidParameters, "Failed to create category"
-          end
-        category.save
-
-        attrs[:category_id] = category.id
-        set(metadata.name, attrs)
-      end
+      update_category(plugin)
+      update_group(plugin)
     end
   end
 
-  def self.find_plugin_category(plugin)
-    if plugin.category_id
-      Category.find_by_id(id: plugin.category_id)
-    elsif
-      Category.find_by(slug: plugin.name)
+  def self.update_category(plugin)
+    category = plugin.category
+
+    if category
+      category.description = build_category_description(plugin)
+      category.save
     else
-      nil
+      category =
+        begin
+          Category.new(
+            name: plugin.display_name,
+            slug: plugin.name,
+            description: build_category_description(plugin),
+            user: Discourse.system_user
+          )
+        rescue ArgumentError => e
+          raise Discourse::InvalidParameters, "Failed to create category"
+        end
+      category.save
     end
+
+    if plugin.category_id != category.id
+      set(metadata.name, category_id: category.id)
+    end
+  end
+
+  def self.update_group(plugin)
+    group = plugin.group
+
+    if !group
+      group =
+        begin
+          Group.new(
+            name: plugin.name,
+            full_name: plugin.display_name,
+            bio_raw: I18n.t("plugin_manager.group.name", plugin_name: plugin.display_name)
+          )
+        rescue ArgumentError => e
+          raise Discourse::InvalidParameters, "Failed to create group"
+        end
+      group.save
+    end
+
+    set(plugin.name, group_id: group.id) if group.present?
   end
 
   def self.extra_metadata

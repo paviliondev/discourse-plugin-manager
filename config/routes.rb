@@ -6,12 +6,14 @@ class PluginManager::Engine < ::Rails::Engine
 end
 
 PluginManager::Engine.routes.draw do
-  get 'status/:plugin_name' => 'status#show'
+  get 'status/:plugin_name' => 'plugin_status#show'
+  post 'status/:plugin_name' => 'plugin_status#update'
   get 'discourse' => 'discourse#index'
   get 'plugin' => 'plugin#index'
   get 'plugin/retrieve' => 'plugin#retrieve'
   put 'plugin/:plugin_name' => 'plugin#save', constraints: AdminConstraint.new
   delete 'plugin/:plugin_name' => 'plugin#delete', constraints: AdminConstraint.new
+  post 'user/register' => 'plugin_user#register'
 end
 
 Discourse::Application.routes.prepend do

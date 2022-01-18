@@ -26,3 +26,9 @@ en:
       error:
         plugin_already_exists: Plugin already in the manifest
         failed_to_retrieve_plugin: Failed to retrieve plugin
+    group:
+      name: Users of the %{plugin_name} plugin.
+
+  user_api_key:
+    scopes:
+      discourse-plugin-manager:plugin_user: Plugin User

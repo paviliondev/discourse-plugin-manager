@@ -30,10 +30,12 @@ after_initialize do
   %w(
     ../mailers/plugin_mailer.rb
     ../app/jobs/scheduled/fetch_plugin_tests_status.rb
+    ../app/jobs/scheduled/fetch_remote_plugins.rb
     ../app/jobs/regular/send_plugin_notification.rb
     ../app/controllers/plugin_manager/discourse_controller.rb
     ../app/controllers/plugin_manager/plugin_controller.rb
-    ../app/controllers/plugin_manager/status_controller.rb
+    ../app/controllers/plugin_manager/plugin_status_controller.rb
+    ../app/controllers/plugin_manager/plugin_user_controller.rb
     ../app/serializers/plugin_manager/discourse_serializer.rb
     ../app/serializers/plugin_manager/log_serializer.rb
     ../app/serializers/plugin_manager/basic_plugin_serializer.rb
@@ -50,4 +52,49 @@ after_initialize do
     PluginManager::Manifest.update_local_plugins
     PluginManager::Manifest.update_test_status
   end
+
+  user_key_suffix = 'plugin-registrations'
+  user_updated_at_key_suffix = 'plugin-registrations-updated-at'
+
+  add_to_class(:user, :plugin_registered?) do |domain, plugin_name|
+    key = "#{plugin_name}-#{user_key_suffix}"
+    custom_fields[key].present? && custom_fields[key].include?(domain)
+  end
+
+  add_to_class(:user, :register_plugins) do |domain, plugin_names|
+    plugin_names.select { |n| PluginManager::Plugin.exists?(n) }.each do |name|
+      key = "#{name}-#{user_key_suffix}"
+      custom_fields[key] ||= []
+      custom_fields[key].push(domain) unless custom_fields[key].include?(domain)
+    end
+    custom_fields["#{domain}-#{user_updated_at_key_suffix}"] = DateTime.now.iso8601(3)
+
+    save_custom_fields(true)
+    update_plugin_group_membership(domain)
+    registered_plugins(domain)
+  end
+
+  add_to_class(:user, :registered_plugins) do |domain|
+    ::UserCustomField.where("user_id = #{self.id} AND name LIKE '%-#{user_key_suffix}' AND value LIKE '%#{domain}%'").map do |ucf|
+      ucf.name.split("-#{user_key_suffix}").first
+    end
+  end
+
+  add_to_class(:user, :registered_plugins_updated_at) do |domain|
+    ::UserCustomField.where("user_id = #{self.id} AND name = '#{domain}-#{user_updated_at_key_suffix}'").first.value
+  end
+
+  add_to_class(:user, :update_plugin_group_membership) do |domain|
+    registered_plugins(domain).each do |plugin_name|
+      if plugin = PluginManager::Plugin.get(plugin_name)
+        plugin.add_user(self)
+      end
+    end
+  end
+
+  add_user_api_key_scope(:plugin_user,
+    methods: :post,
+    actions: "plugin_manager/plugin_user#register",
+    params: %i[plugin_names domain]
+  )
 end
