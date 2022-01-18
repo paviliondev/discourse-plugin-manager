@@ -40,6 +40,7 @@ after_initialize do
     ../app/serializers/plugin_manager/log_serializer.rb
     ../app/serializers/plugin_manager/basic_plugin_serializer.rb
     ../app/serializers/plugin_manager/plugin_serializer.rb
+    ../app/serializers/plugin_manager/plugin_user_serializer.rb
     ../app/serializers/plugin_manager/owner_serializer.rb
     ../config/routes.rb
   ).each do |path|
@@ -55,6 +56,20 @@ after_initialize do
 
   user_key_suffix = 'plugin-registrations'
   user_updated_at_key_suffix = 'plugin-registrations-updated-at'
+
+  class UserPlugin
+    include ActiveModel::Serialization
+
+    attr_reader :name,
+                :domain
+
+    attr_accessor :updated_at
+
+    def initialize(name, domain)
+      @name = name
+      @domain = domain
+    end
+  end
 
   add_to_class(:user, :plugin_registered?) do |domain, plugin_name|
     key = "#{plugin_name}-#{user_key_suffix}"
@@ -74,14 +89,32 @@ after_initialize do
     registered_plugins(domain)
   end
 
-  add_to_class(:user, :registered_plugins) do |domain|
-    ::UserCustomField.where("user_id = #{self.id} AND name LIKE '%-#{user_key_suffix}' AND value LIKE '%#{domain}%'").map do |ucf|
-      ucf.name.split("-#{user_key_suffix}").first
+  add_to_class(:user, :registered_plugins) do |domain = nil|
+    query = "user_id = #{self.id} AND name LIKE '%-#{user_key_suffix}'"
+    query += " AND value LIKE '%#{domain}%'" if domain
+
+    ::UserCustomField.where(query).map do |ucf|
+      UserPlugin.new(ucf.name.split("-#{user_key_suffix}").first, ucf.value)
     end
   end
 
-  add_to_class(:user, :registered_plugins_updated_at) do |domain|
-    ::UserCustomField.where("user_id = #{self.id} AND name = '#{domain}-#{user_updated_at_key_suffix}'").first.value
+  add_to_class(:user, :registered_plugins_updated_at) do |domain = nil|
+    query = "user_id = #{self.id}"
+
+    if domain
+      query += "AND name = '#{domain}-#{user_updated_at_key_suffix}'"
+    else
+      query += "AND name LIKE '%-#{user_updated_at_key_suffix}'"
+    end
+
+    records = ::UserCustomField.where(query)
+    return records.first.value if domain.present?
+
+    records.reduce({}) do |result, r|
+      domain = r.name.split("-#{user_updated_at_key_suffix}").first
+      result[domain] = r.value
+      result
+    end
   end
 
   add_to_class(:user, :update_plugin_group_membership) do |domain|

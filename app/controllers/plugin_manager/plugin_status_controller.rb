@@ -14,7 +14,7 @@ class PluginManager::PluginStatusController < ::ApplicationController
 
   def update
     @plugins = params.permit(plugins: {})
-  
+
     unless current_user.plugin_registered?(request.domain, plugin_name)
       raise Discourse::InvalidAccess.new("you are not authorized to update #{@plugin.name} status'")
     end

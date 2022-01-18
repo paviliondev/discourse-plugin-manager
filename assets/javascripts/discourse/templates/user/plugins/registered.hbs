@@ -1,0 +1,22 @@
+{{#if model}}
+  <table class="table plugin-manager-user-table">
+    <thead>
+      <th>{{i18n "plugin_manager.user.plugin.name"}}</th>
+      <th>{{i18n "plugin_manager.user.plugin.domain"}}</th>
+      <th>{{i18n "plugin_manager.user.plugin.updated_at"}}</th>
+    </thead>
+    <tbody>
+      {{#each model as |plugin|}}
+        <tr>
+          <td>{{plugin.name}}</td>
+          <td>{{plugin.domain}}</td>
+          <td>{{format-date plugin.updated_at leaveAgo="true"}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  <div class="alert alert-info">
+    {{i18n "plugin_manager.user.no_plugins"}}
+  </div>
+{{/if}}

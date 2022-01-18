@@ -1,0 +1,17 @@
+{{#d-section pageClass="user-plugins" class="user-secondary-navigation" scrollTop="false"}}
+  {{#mobile-nav
+    class="activity-nav"
+    desktopClass="action-list nav-stacked"
+    currentPath=router._router.currentPath
+  }}
+    <li>
+      {{#link-to "user.plugins.registered"}}
+        {{i18n "plugin_manager.user.plugins.registered"}}
+      {{/link-to}}
+    </li>
+  {{/mobile-nav}}
+{{/d-section}}
+
+<section class="user-content">
+  {{outlet}}
+</section>

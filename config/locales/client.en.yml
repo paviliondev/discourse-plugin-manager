@@ -63,6 +63,17 @@ en:
           message: message
           backtrace: backtrace
 
+    plugin_manager:
+      user:
+        plugins: 
+          nav: Plugins
+          registered: Registered
+        plugin:
+          name: Plugin
+          domain: Domain
+          updated_at: Updated At
+        no_plugins: No plugins.
+
   admin_js:
     admin:
       plugin_manager:

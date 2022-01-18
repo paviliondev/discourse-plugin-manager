@@ -22,4 +22,9 @@ Discourse::Application.routes.prepend do
   scope module: 'plugin_manager', constraints: AdminConstraint.new do
     get 'admin/plugin-manager' => 'plugin#index'
   end
+
+  %w{users u}.each do |root_path|
+    get "#{root_path}/:username/plugins" => "plugin_manager/plugin_user#index"
+    get "#{root_path}/:username/plugins/registered" => "plugin_manager/plugin_user#registered"
+  end
 end

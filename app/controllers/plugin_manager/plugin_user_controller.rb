@@ -4,6 +4,13 @@ class PluginManager::PluginUserController < ::ApplicationController
   skip_before_action :check_xhr, :preload_json, :verify_authenticity_token, only: [:register]
   before_action :ensure_api, only: [:register]
 
+  def index
+  end
+
+  def registered
+    render_serialized(current_user.registered_plugins, PluginManager::PluginUserSerializer)
+  end
+
   def register
     plugin_names = params[:plugin_names]
     domain = params[:domain]
@@ -17,7 +24,7 @@ class PluginManager::PluginUserController < ::ApplicationController
       render json: success_json.merge(
         user_id: current_user.id,
         domain: domain,
-        plugins: registered_plugins,
+        plugins: registered_plugins.map(:name),
         updated_at: current_user.registered_plugins_updated_at(domain)
       )
     else

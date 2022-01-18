@@ -82,11 +82,11 @@ class ::PluginManager::Plugin
   end
 
   def users
-    group ? group.users : []    
+    group ? group.users : []
   end
 
   def add_user(user)
-    group && group.add(user)    
+    group && group.add(user)
   end
 
   def group
