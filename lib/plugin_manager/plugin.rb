@@ -347,7 +347,7 @@ class ::PluginManager::Plugin
     end
 
     if plugin.category_id != category.id
-      set(metadata.name, category_id: category.id)
+      set(plugin.name, category_id: category.id)
     end
   end
 
