@@ -130,4 +130,22 @@ after_initialize do
     actions: "plugin_manager/plugin_user#register",
     params: %i[plugin_names domain]
   )
+
+  if defined?(DiscourseCodeReview) == 'constant' && DiscourseCodeReview.class == Module &&
+    DiscourseCodeReview::Hooks.add_parent_category_finder(:plugin_manager) do |repo_name, repo_id, issues|
+      if issues && category = Category.find_by(name: repo_name.split("/", 2).last)
+        category.id
+      else
+        nil
+      end
+    end
+
+    DiscourseCodeReview::Hooks.add_category_namer(:plugin_manager) do |repo_name, repo_id, issues|
+      if issues
+        "issues"
+      else
+        nil
+      end 
+    end
+  end
 end
