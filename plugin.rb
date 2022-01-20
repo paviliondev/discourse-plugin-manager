@@ -131,7 +131,7 @@ after_initialize do
     params: %i[plugin_names domain]
   )
 
-  if defined?(DiscourseCodeReview) == 'constant' && DiscourseCodeReview.class == Module &&
+  if defined?(DiscourseCodeReview) == 'constant' && DiscourseCodeReview.class == Module
     DiscourseCodeReview::Hooks.add_parent_category_finder(:plugin_manager) do |repo_name, repo_id, issues|
       if issues && category = Category.find_by(name: repo_name.split("/", 2).last)
         category.id
