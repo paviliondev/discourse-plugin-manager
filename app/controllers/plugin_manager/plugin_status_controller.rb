@@ -3,7 +3,6 @@
 class PluginManager::PluginStatusController < ::ApplicationController
   skip_before_action :check_xhr, :preload_json, :verify_authenticity_token, only: [:show, :update]
   before_action :ensure_api, only: [:update]
-  before_action :find_plugin
 
   def show
     @plugin = PluginManager::Plugin.get(params.permit(:plugin_name).dasherize)
