@@ -133,7 +133,7 @@ after_initialize do
 
   if defined?(DiscourseCodeReview) == 'constant' && DiscourseCodeReview.class == Module
     DiscourseCodeReview::Hooks.add_parent_category_finder(:plugin_manager) do |repo_name, repo_id, issues|
-      if issues && category = Category.find_by(name: repo_name.split("/", 2).last)
+      if issues && category = Category.find_by(slug: repo_name.split("/", 2).last)
         category.id
       else
         nil
