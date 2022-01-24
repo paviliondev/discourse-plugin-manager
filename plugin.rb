@@ -142,7 +142,7 @@ after_initialize do
 
     DiscourseCodeReview::Hooks.add_category_namer(:plugin_manager) do |repo_name, repo_id, issues|
       if issues
-        "issues"
+        "Issues"
       else
         nil
       end 
