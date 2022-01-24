@@ -145,7 +145,7 @@ after_initialize do
         "Issues"
       else
         nil
-      end 
+      end
     end
   end
 end
