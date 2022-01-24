@@ -11,12 +11,17 @@ class ::PluginManager::RepositoryManager
 
     if @host
       @host.url = url
-      @host.branch = branch
+      @host.branch = branch || get_default_branch
     end
   end
 
   def ready?
-    @host&.domain.present?
+    @host && @host.domain.present? && @host.branch.present?
+  end
+
+  def get_default_branch
+    response = request(@host.repository_path)
+    response ? response["default_branch"] : nil
   end
 
   def get_owner

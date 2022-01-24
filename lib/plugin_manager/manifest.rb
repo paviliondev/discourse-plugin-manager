@@ -49,21 +49,21 @@ class ::PluginManager::Manifest
     @discourse ||= ::PluginManager::Discourse.new
   end
 
-  def set(status)
+  def set_local(status)
     folder = status == self.class.status[:incompatible] ? PluginManager.incompatible_dir : PluginManager.compatible_dir
     path = "#{PluginManager.root_dir}/#{folder}"
     return unless File.directory?(path)
 
     Dir.each_child(path) do |dir|
       plugin_path = "#{path}/#{dir}"
-      PluginManager::Plugin.set_from_file(plugin_path)
+      PluginManager::Plugin.set_local(plugin_path)
     end
   end
 
   def self.update_local_plugins
     manifest = self.new
-    manifest.set(self.status[:compatible])
-    manifest.set(self.status[:incompatible])
+    manifest.set_local(self.status[:compatible])
+    manifest.set_local(self.status[:incompatible])
   end
 
   def self.update_remote_plugins

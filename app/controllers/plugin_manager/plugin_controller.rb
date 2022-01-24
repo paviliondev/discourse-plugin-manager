@@ -16,12 +16,9 @@ class PluginManager::PluginController < ::ApplicationController
   def retrieve
     params.require(:url)
     url = params[:url]
-    branch = params[:branch] || 'main'
-    result = PluginManager::Plugin.retrieve_from_url(url, branch)
+    result = PluginManager::Plugin.retrieve_from_url(url, params[:branch])
 
     if result.success
-      result.plugin[:url] = url
-      result.plugin[:git_branch] = branch
       result.plugin[:test_host] = PluginManager::TestHost.detect_remote(url)
       result.plugin[:status] = PluginManager::Manifest.status[:unknown]
 
@@ -56,7 +53,7 @@ class PluginManager::PluginController < ::ApplicationController
     )
     attrs[:url] = url
 
-    if PluginManager::Plugin.set(name, attrs)
+    if PluginManager::Plugin.set_remote(name, attrs)
       plugin = PluginManager::Plugin.get(name)
       serialized_plugin = PluginManager::PluginSerializer.new(plugin, root: false).as_json
       render json: success_json.merge(plugin: serialized_plugin)

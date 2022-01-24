@@ -37,7 +37,7 @@ def setup_test_plugin(name, plugin_url = nil)
   dir = plugin_dir(name)
   stub_plugin_git_cmds(dir, plugin_url)
   PluginManager::TestHost.expects(:detect_local).returns("github")
-  PluginManager::Plugin.set_from_file(dir)
+  PluginManager::Plugin.set_local(dir)
 end
 
 def stub_github_user_request(user = "paviliondev")

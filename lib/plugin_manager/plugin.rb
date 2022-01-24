@@ -190,12 +190,6 @@ class ::PluginManager::Plugin
     ::PluginStoreRow.exists?(plugin_name: ::PluginManager::NAMESPACE, key: plugin_name)
   end
 
-  def self.get_or_create(plugin_name)
-    plugin = get(plugin_name)
-    plugin = set_from_file("#{PluginManager.root_dir}/#{PluginManager.compatible_dir}/#{plugin_name}") if !plugin.present?
-    plugin
-  end
-
   def self.list(with_plugin_manager: false, page: 0, filter: nil, order: nil, asc: true)
     query = ::PluginStoreRow.where(plugin_name: ::PluginManager::NAMESPACE)
     list_query(query, with_plugin_manager, page: page, filter: filter, order: order, asc: asc)
@@ -252,7 +246,7 @@ class ::PluginManager::Plugin
     new(name, attrs.with_indifferent_access)
   end
 
-  def self.retrieve_from_url(url, branch)
+  def self.retrieve_from_url(url, branch = nil)
     manager = PluginManager::RepositoryManager.new(url, branch)
     result = OpenStruct.new(plugin: {}, error: '', success: false)
 
@@ -276,16 +270,18 @@ class ::PluginManager::Plugin
     result.plugin = {
       sha: plugin_data.sha,
       name: metadata.name,
+      git_branch: manager.host.branch,
       contact_emails: metadata.contact_emails,
       authors: metadata.authors,
       about: metadata.about,
-      version: metadata.version
+      version: metadata.version,
+      url: url
     }
     result.success = true
     result
   end
 
-  def self.set_from_file(path)
+  def self.set_local(path)
     begin
       file = File.read("#{path}/plugin.rb")
     rescue
@@ -317,9 +313,21 @@ class ::PluginManager::Plugin
         try_url: try_url
       }
 
-      set(metadata.name, attrs)
-      plugin = get(metadata.name)
+      saved = set(metadata.name, attrs)
 
+      if saved
+        plugin = get(metadata.name)
+        update_category(plugin)
+        update_group(plugin)
+      end
+    end
+  end
+
+  def self.set_remote(name, attrs)
+    saved = set(name, attrs)
+
+    if saved
+      plugin = get(name)
       update_category(plugin)
       update_group(plugin)
     end

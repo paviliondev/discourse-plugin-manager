@@ -6,12 +6,16 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
     @domain = "#{client_id}:#{client_secret}@#{@domain}" if basic_auth?
   end
 
+  def repository_path
+    "repos/#{repo_user}/#{repo_name}"
+  end
+
   def owner_path
     "users/#{repo_user}"
   end
 
   def plugin_file_path
-    "repos/#{repo_user}/#{repo_name}/contents/plugin.rb?ref=#{@branch}"
+    "#{repository_path}/contents/plugin.rb?ref=#{@branch}"
   end
 
   def branch_url

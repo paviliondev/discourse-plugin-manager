@@ -5,7 +5,7 @@ class PluginManager::Notifier
   attr_accessor :log
 
   def initialize(plugin_name)
-    @plugin = ::PluginManager::Plugin.get_or_create(plugin_name)
+    @plugin = ::PluginManager::Plugin.get(plugin_name)
   end
 
   def send(type, log)
