@@ -105,10 +105,8 @@ class ::PluginManager::Plugin
     @category ||= begin
       if category_id
         Category.find_by_id(id: category_id)
-      elsif
-        Category.find_by(slug: name)
       else
-        nil
+        Category.find_by(slug: name)
       end
     end
   end

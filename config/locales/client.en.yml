@@ -29,7 +29,7 @@ en:
         commit: "Plugin Commit"
         test_backend_coverage: "Test Coverage"
         contact_emails: "Contacts"
-        actions: "Actions"
+        category: "Category"
         test_link:
           label: Test
           title: "Test the %{pluginName} plugin"

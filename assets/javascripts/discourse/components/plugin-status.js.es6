@@ -2,6 +2,7 @@ import Component from "@ember/component";
 import { bind, scheduleOnce } from "@ember/runloop";
 import { createPopper } from "@popperjs/core";
 import discourseComputed from "discourse-common/utils/decorators";
+import Category from "discourse/models/category";
 
 export default Component.extend({
   tagName: "tr",
@@ -94,6 +95,11 @@ export default Component.extend({
       return `https://thepavilion.io`;
     }
     return `mailto:${contactEmails[0]}`;
+  },
+
+  @discourseComputed("plugin.category_id")
+  pluginCategory(categoryId) {
+    return Category.findById(categoryId);
   },
 
   actions: {

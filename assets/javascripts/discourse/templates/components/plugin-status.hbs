@@ -37,17 +37,8 @@
   </div>
 </td>
 
-<td class="actions">
-  {{#if supportLink}}
-    <a href={{supportLink}} class="btn-plugin" target="_blank" rel="noopener noreferrer">
-      {{d-icon "far-life-ring"}}
-      {{i18n "server_status.support"}}
-    </a>
-  {{/if}}
-  {{#if plugin.try_url}}
-    <a href={{plugin.try_url}} class="btn-plugin" target="_blank" rel="noopener noreferrer">
-      {{d-icon "desktop"}}
-      {{i18n "server_status.try"}}
-    </a>
+<td class="category">
+  {{#if pluginCategory}}
+    {{category-link pluginCategory}}
   {{/if}}
 </td>
