@@ -1,5 +1,8 @@
 <div class="detail-title">
-  <div><span>{{plugin.display_name}}</span> {{branch-label plugin}}</div>
+  <div class="title-contents">
+    <span class="title-text">{{plugin.display_name}}</span>
+    {{branch-label plugin}}
+  </div>
 
   {{#if plugin.owner}}
     {{owner-logo plugin.owner linked=true class="medium"}}
@@ -7,7 +10,7 @@
 </div>
 
 <ul class="detail-metadata">
-  <li class="full-width">
+  <li class={{aboutClass}}>
     <label class="detail-label">{{i18n "server_status.plugin.about"}}</label>
     <span class="detail-value">
       {{plugin.about}}

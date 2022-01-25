@@ -11,6 +11,7 @@ PluginManager::Engine.routes.draw do
   post 'status/:plugin_name' => 'plugin_status#update'
   get 'discourse' => 'discourse#index'
   get 'plugin' => 'plugin#index'
+  get 'plugin/category/:category_id' => 'plugin#category'
   get 'plugin/retrieve' => 'plugin#retrieve'
   put 'plugin/:plugin_name' => 'plugin#save', constraints: AdminConstraint.new
   delete 'plugin/:plugin_name' => 'plugin#delete', constraints: AdminConstraint.new

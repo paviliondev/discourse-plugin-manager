@@ -3,6 +3,7 @@ import { bind, scheduleOnce } from "@ember/runloop";
 import { createPopper } from "@popperjs/core";
 import discourseComputed from "discourse-common/utils/decorators";
 import Category from "discourse/models/category";
+import DiscourseURL from "discourse/lib/url";
 
 export default Component.extend({
   tagName: "tr",
@@ -127,6 +128,10 @@ export default Component.extend({
       if (this.showOwnerDetail) {
         scheduleOnce("afterRender", this, this.createOwnerDetailModal);
       }
+    },
+
+    goToCategory() {
+      DiscourseURL.routeTo(this.pluginCategory.url);
     },
   },
 });

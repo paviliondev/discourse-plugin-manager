@@ -13,6 +13,11 @@ class PluginManager::PluginController < ::ApplicationController
     render_serialized(plugins, PluginManager::PluginSerializer, root: 'plugins')
   end
 
+  def category
+    plugins = ::PluginManager::Plugin.list_by('category_id', params[:category_id])
+    render_serialized(plugins.first, PluginManager::PluginSerializer, root: 'plugin')
+  end
+
   def retrieve
     params.require(:url)
     url = params[:url]

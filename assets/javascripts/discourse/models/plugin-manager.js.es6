@@ -68,6 +68,12 @@ PluginManager.reopenClass({
     }).catch(popupAjaxError);
   },
 
+  categoryPlugin(categoryId) {
+    return ajax(`/plugin-manager/plugin/category/${categoryId}`).catch(
+      popupAjaxError
+    );
+  },
+
   retrieve(data) {
     return ajax("/plugin-manager/plugin/retrieve", {
       type: "GET",

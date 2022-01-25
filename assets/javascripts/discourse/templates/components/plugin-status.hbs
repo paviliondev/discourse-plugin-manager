@@ -5,7 +5,7 @@
     </a>
 
     {{#if showPluginDetail}}
-      {{plugin-detail plugin=plugin}}
+      {{plugin-detail plugin=plugin manifest=true}}
     {{/if}}
   </div>
 </td>
@@ -39,6 +39,9 @@
 
 <td class="category">
   {{#if pluginCategory}}
-    {{category-link pluginCategory}}
+    <a role="button" {{action "goToCategory"}} class="go-to-category">
+      <span>{{i18n "server_status.plugin.more"}}</span>
+      {{d-icon "angle-right"}}
+    </a>
   {{/if}}
 </td>

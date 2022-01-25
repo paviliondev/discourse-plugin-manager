@@ -9,7 +9,7 @@ export default {
   initialize() {
     withPluginApi("0.8.13", (api) => {
       api.modifyClass("route:discovery-categories", {
-        modifyClass: "plugin-manager",
+        pluginId: "plugin-manager",
 
         afterModel() {
           return all([this._getDiscourse(), this._getPlugins()]);
@@ -40,6 +40,37 @@ export default {
             this.set("plugins", result.plugins);
           });
         },
+      });
+
+      ["discovery.category"].forEach((name) => {
+        api.modifyClass(`route:${name}`, {
+          pluginId: "plugin-manager",
+
+          afterModel(model) {
+            return this._super(...arguments).then(() => {
+              let categoryId = model.category.parentCategory
+                ? model.category.parentCategory.id
+                : model.category.id;
+
+              return PluginManager.categoryPlugin(categoryId).then((result) => {
+                if (result.plugin) {
+                  this.set(
+                    "categoryPlugin",
+                    PluginManager.create(result.plugin)
+                  );
+                }
+              });
+            });
+          },
+
+          setupController(controller, model) {
+            this._super(...arguments);
+
+            if (this.categoryPlugin) {
+              model.category.set("plugin", this.categoryPlugin);
+            }
+          },
+        });
       });
     });
   },
