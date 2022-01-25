@@ -129,14 +129,17 @@ $incompatible: #ef1700;
       .go-to-category {
         display: inline-flex;
         align-items: center;
+        background: var(--primary-very-low);
+        padding: 0.15em 0.5em;
 
         > span,
         .d-icon {
-          color: var(--primary);
+          color: var(--primary-medium);
         }
 
         > span {
           margin-right: 0.5em;
+          padding-bottom: 0.12em;
         }
       }
     }
