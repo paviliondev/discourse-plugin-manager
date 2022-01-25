@@ -4,6 +4,14 @@ Discourse plugin manager running on ``stable.plugins.discourse.pavilion.tech`` a
 
 Note that this plugin manually overrides files in the Discourse installation itself, before any other plugin is loaded. This is to ensure all plugin errors are caught and handled by this plugin without affecting the normal operation of Discourse. As long as you follow the steps outlined below when developing and deploying the plugin everything will work as expected.
 
+### Settings
+
+The following settings are required for this plugin
+
+- allow user api key scopes: ``discourse-plugin-manager:plugin_user``
+- plugin manager github oauth client id
+- plugin manager github oauth client secret
+
 ### Development
 
 First, make sure you have ``paviliondev/discourse-plugin-guard`` installed. Then setup three environment variables

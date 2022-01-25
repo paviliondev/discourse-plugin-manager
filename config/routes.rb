@@ -6,6 +6,7 @@ class PluginManager::Engine < ::Rails::Engine
 end
 
 PluginManager::Engine.routes.draw do
+  get 'status/validate-key' => 'plugin_status#validate_key'
   get 'status/:plugin_name' => 'plugin_status#show'
   post 'status/:plugin_name' => 'plugin_status#update'
   get 'discourse' => 'discourse#index'

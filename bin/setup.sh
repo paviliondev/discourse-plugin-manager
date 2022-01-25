@@ -17,3 +17,4 @@ ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_manager/repository_host.rb ${DISCOURSE_
 ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_manager/repository_host/github.rb ${DISCOURSE_ROOT}/lib/plugin_manager/repository_host/github.rb
 ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_manager/repository_manager.rb ${DISCOURSE_ROOT}/lib/plugin_manager/repository_manager.rb
 ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_manager/status_handler.rb ${DISCOURSE_ROOT}/lib/plugin_manager/status_handler.rb
+ln -sf ${PLUGIN_MANAGER_ROOT}/lib/plugin_manager/user_plugin.rb ${DISCOURSE_ROOT}/lib/plugin_manager/user_plugin.rb

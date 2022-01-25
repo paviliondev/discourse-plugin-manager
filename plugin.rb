@@ -5,6 +5,8 @@
 # authors: Angus McLeod
 # url: https://github.com/paviliondev/discourse-plugin-manager
 
+hide_plugin if self.respond_to?(:hide_plugin)
+
 register_asset "stylesheets/common/plugin-manager.scss"
 register_asset "stylesheets/mobile/plugin-manager.scss", :mobile
 
@@ -57,20 +59,6 @@ after_initialize do
   user_key_suffix = 'plugin-registrations'
   user_updated_at_key_suffix = 'plugin-registrations-updated-at'
 
-  class UserPlugin
-    include ActiveModel::Serialization
-
-    attr_reader :name,
-                :domain
-
-    attr_accessor :updated_at
-
-    def initialize(name, domain)
-      @name = name
-      @domain = domain
-    end
-  end
-
   add_to_class(:user, :plugin_registered?) do |domain, plugin_name|
     key = "#{plugin_name}-#{user_key_suffix}"
     custom_fields[key].present? && custom_fields[key].include?(domain)
@@ -94,7 +82,7 @@ after_initialize do
     query += " AND value LIKE '%#{domain}%'" if domain
 
     ::UserCustomField.where(query).map do |ucf|
-      UserPlugin.new(ucf.name.split("-#{user_key_suffix}").first, ucf.value)
+      ::PluginManager::UserPlugin.new(ucf.name.split("-#{user_key_suffix}").first, ucf.value)
     end
   end
 
@@ -118,8 +106,8 @@ after_initialize do
   end
 
   add_to_class(:user, :update_plugin_group_membership) do |domain|
-    registered_plugins(domain).each do |plugin_name|
-      if plugin = PluginManager::Plugin.get(plugin_name)
+    registered_plugins(domain).each do |user_plugin|
+      if plugin = PluginManager::Plugin.get(user_plugin.name)
         plugin.add_user(self)
       end
     end
@@ -127,9 +115,23 @@ after_initialize do
 
   add_user_api_key_scope(:plugin_user,
     methods: :post,
-    actions: "plugin_manager/plugin_user#register",
-    params: %i[plugin_names domain]
+    actions: %w[
+      plugin_manager/plugin_user#register
+      plugin_manager/plugin_status#update
+      plugin_manager/plugin_status#validate_key
+    ],
+    params: %i[plugins domain]
   )
+
+  add_api_key_scope(:plugin_manager, {
+    status: {
+      actions: %w[
+        plugin_manager/plugin_status#update
+        plugin_manager/plugin_status#validate_key
+      ],
+      params: %i[plugins domain]
+    }
+  })
 
   if defined?(DiscourseCodeReview) == 'constant' && DiscourseCodeReview.class == Module
     DiscourseCodeReview::Hooks.add_parent_category_finder(:plugin_manager) do |repo_name, repo_id, issues|

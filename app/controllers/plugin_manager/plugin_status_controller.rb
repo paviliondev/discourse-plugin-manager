@@ -12,35 +12,70 @@ class PluginManager::PluginStatusController < ::ApplicationController
   end
 
   def update
-    @plugins = params.permit(plugins: {})
+    plugins = params.permit(plugins: [:name, :status, :message, :backtrace])
+    domain = params[:domain]
 
-    unless current_user.plugin_registered?(request.domain, plugin_name)
-      raise Discourse::InvalidAccess.new("you are not authorized to update #{@plugin.name} status'")
+    registered_plugins =
+      plugins.reduce do |result, plugin|
+        auth_site = is_api? && ::PluginManager::Plugin.exist?(plugin['name'])
+        auth_user = current_user.plugin_registered?(domain, plugin['name'])
+
+        result.push(plugin.symbolize_keys) if auth_site || auth_user
+        result
+      end
+
+    unless registered_plugins.any?
+      raise Discourse::InvalidAccess.new("you are not authorized to update the status of any of these plugins")
     end
 
-    status = params[:status]
-    unless ::PluginManager::Manifest.status.values.include?(status)
-      raise Discourse::InvalidAccess.new("not a valid plugin status")
+    registered_plugins = registered_plugins.select do |plugin|
+      ::PluginManager::Manifest.status.values.include?(plugin[:status])
     end
 
-    message, backtrace = params.permit(:message, :backtrace)
+    unless registered_plugins.any?
+      raise Discourse::InvalidParameters.new("no valid plugin statuses")
+    end
 
-    PluginManager::Log.add(
-      plugin_name: @plugin.name,
-      status: status,
-      message: message,
-      backtrace: backtrace,
-    )
+    registered_plugins.each do |plugin|
+      logged = PluginManager::Log.add(plugin)
+      updated = PluginManager::Plugin.set(plugin[:name], status: plugin[:status])
+      errors.push(plugin[:name]) unless logged && updated
+    end
 
-    if ::PluginManager::Plugin.set(@plugin.name, status: status)
-      render json: success_json
+    if errors.any?
+      render json: failed_json.merge(plugins: errors)
     else
-      render json: failed_json
+      render json: success_json
     end
   end
 
+  def validate_key
+    valid = false
+
+    if is_api?
+      api_key = request.env[Auth::DefaultCurrentUserProvider::HEADER_API_KEY]
+      api_key_record = ApiKey.active.with_key(api_key).first
+      valid = api_key_record&.api_key_scopes&.any? { |scope| scope.resource == "plugin_manager" && scope.action == "status" }
+    end
+
+    if is_user_api?
+      user_api_key = request.env[Auth::DefaultCurrentUserProvider::USER_API_KEY]
+      hashed_user_api_key = ApiKey.hash_key(user_api_key)
+      user_api_key_record = UserApiKey.active.where(key_hash: hashed_user_api_key).first
+      valid = user_api_key_record&.scopes&.any? { |scope| scope.name == "discourse-plugin-manager:plugin_user" }
+    end
+
+    if valid
+      render json: success_json
+    else
+      render status: 400, json: failed_json
+    end
+  end
+
+  protected
+
   def ensure_api
-    unless is_user_api? && current_user.present?
+    unless is_api? || (is_user_api? && current_user.present?)
       raise Discourse::InvalidAccess.new('plugin statuses can only be updated via authorized api requests')
     end
   end

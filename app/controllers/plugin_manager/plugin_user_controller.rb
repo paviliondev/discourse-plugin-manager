@@ -12,19 +12,19 @@ class PluginManager::PluginUserController < ::ApplicationController
   end
 
   def register
-    plugin_names = params[:plugin_names]
+    plugins = params[:plugins]
     domain = params[:domain]
 
-    raise Discourse::InvalidParameters.new(:plugin_names) if plugin_names.blank?
+    raise Discourse::InvalidParameters.new(:plugins) if plugins.blank?
     raise Discourse::InvalidParameters.new(:domain) if domain.blank?
 
-    registered_plugins = current_user.register_plugins(domain, plugin_names)
+    registered_plugins = current_user.register_plugins(domain, plugins)
 
     if registered_plugins.any?
       render json: success_json.merge(
         user_id: current_user.id,
         domain: domain,
-        plugins: registered_plugins.map(:name),
+        plugins: registered_plugins.map(&:name),
         updated_at: current_user.registered_plugins_updated_at(domain)
       )
     else
