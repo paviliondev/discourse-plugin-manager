@@ -17,17 +17,7 @@
 
     <div class="url">
       <label>{{i18n "admin.plugin_manager.plugin.branch"}}</label>
-      {{input type="text" value=model.git_branch placeholder="main" disabled=urlDisabled}}
-    </div>
-
-    <div class="url">
-      <label>{{i18n "admin.plugin_manager.plugin.support_url"}}</label>
-      {{input type="text" value=model.support_url}}
-    </div>
-
-    <div class="url">
-      <label>{{i18n "admin.plugin_manager.plugin.try_url"}}</label>
-      {{input type="text" value=model.try_url}}
+      {{input type="text" value=model.branch placeholder="main" disabled=urlDisabled}}
     </div>
   </div>
 
@@ -47,12 +37,17 @@
             )
           }}
         </div>
+        <div class="discourse-branch">
+          <label>{{i18n "server_status.plugin.discourse_branch"}}</label>
+          {{combo-box
+            content=discourseBranches
+            value=model.discourse_branch
+            options=(hash
+              disabled=readOnlyStatus
+            )
+          }}
+        </div>
         <div class="attributes">
-          <div class="plugin-attr">
-            <label>{{i18n "admin.plugin_manager.plugin.sha"}}</label>
-            {{model.shortSha}}
-          </div>
-
           <div class="plugin-attr">
             <label>{{i18n "admin.plugin_manager.plugin.authors"}}</label>
             {{model.authorList}}

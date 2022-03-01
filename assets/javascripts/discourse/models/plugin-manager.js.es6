@@ -3,7 +3,7 @@ import ManagerStatus from "./status";
 import { dasherize } from "@ember/string";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
-import { alias, not, notEmpty } from "@ember/object/computed";
+import { notEmpty } from "@ember/object/computed";
 import I18n from "I18n";
 
 const statusIcons = {
@@ -15,9 +15,6 @@ const statusIcons = {
 };
 
 const PluginManager = ManagerStatus.extend({
-  remote: not("from_file"),
-  local: alias("from_file"),
-
   @discourseComputed("status")
   statusIcon(status) {
     return status ? statusIcons[status] : "";

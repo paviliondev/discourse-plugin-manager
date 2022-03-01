@@ -1,22 +1,15 @@
 # frozen_string_literal: true
-class PluginManager::PluginSerializer < ::PluginManager::BasicPluginSerializer
+class PluginManager::PluginSerializer < ::ApplicationSerializer
   attributes :display_name,
              :url,
              :authors,
              :about,
-             :version,
              :owner,
              :contact_emails,
-             :sha,
-             :git_branch,
              :branch_url,
-             :test_status,
-             :test_backend_coverage,
              :log,
              :owner,
-             :support_url,
-             :try_url,
-             :from_file,
+             :status,
              :category_id
 
   def log
@@ -25,8 +18,18 @@ class PluginManager::PluginSerializer < ::PluginManager::BasicPluginSerializer
   end
 
   def include_log?
-    object.status === PluginManager::Manifest.status[:incompatible] ||
-    object.status === PluginManager::Manifest.status[:tests_failing]
+    object.status.present? && (
+      object.status.status === PluginManager::Plugin::Status.statuses[:incompatible] ||
+      object.status.status === PluginManager::Plugin::Status.statuses[:tests_failing]
+    )
+  end
+
+  def status
+    ::PluginManager::Plugin::Status.statuses.keys(object.status.status)
+  end
+
+  def include_status?
+    object.status.present?
   end
 
   def owner

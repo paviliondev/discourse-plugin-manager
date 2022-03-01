@@ -10,7 +10,8 @@ class ::PluginManager::TestHost
               :test_url
 
   attr_accessor :plugin,
-                :branch
+                :branch,
+                :discourse_branch
 
   ## overide in child
   def status_path
@@ -38,12 +39,7 @@ class ::PluginManager::TestHost
     ]
   end
 
-  def self.detect_local(path)
-    host = self.list.find { |h| File.file?("#{path}/#{h.config}") }
-    host ? host.name : nil
-  end
-
-  def self.detect_remote(url)
+  def self.detect(url)
     name = get_name(url)
     host = list.find { |h| h.name == name }
     host ? host.name : nil
@@ -54,5 +50,10 @@ class ::PluginManager::TestHost
     host = URI.parse(url).host.downcase
     host = host[4..-1] if host.start_with?('www.')
     host.split('.').first
+  end
+
+  def self.detect_local(path)
+    host = self.list.find { |h| File.file?("#{path}/#{h.config}") }
+    host ? host.name : nil
   end
 end

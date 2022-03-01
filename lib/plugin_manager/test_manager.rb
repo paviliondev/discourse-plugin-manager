@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 class ::PluginManager::TestManager
-  COVERAGE_FILE ||= "coverage/.last_run.json"
-
   attr_reader :host,
-              :domain
+              :domain,
+              :branch,
+              :discourse_branch
 
-  def initialize(host_name)
+  def initialize(host_name, branch, discourse_branch)
     @host = PluginManager::TestHost.get(host_name)
     return unless @host
+
+    @branch = branch
+    @discourse_branch = discourse_branch
     @domain = host.domain
   end
 
@@ -25,38 +28,20 @@ class ::PluginManager::TestManager
   def update(plugin_name)
     @plugin = ::PluginManager::Plugin.get(plugin_name)
     return nil unless @plugin && @plugin.url
+
     @host.plugin = @plugin
-    @host.branch = @plugin.git_branch
+    @host.branch = branch
+    @host.discourse_branch = discourse_branch
 
-    test_status = get_test_status
-    test_backend_coverage = get_test_backend_coverage
-    plugin_attrs = {}
+    test_status = request_test_status
 
-    if test_backend_coverage.present? && @plugin.test_backend_coverage != test_backend_coverage
-      plugin_attrs[:test_backend_coverage] = test_backend_coverage
-    end
+    if test_status.present?
+      attrs = {}
+      attrs[:test_status] = test_status
+      attrs[:branch] = branch
+      attrs[:discourse_branch] = discourse_branch
 
-    if test_status.present? && @plugin.test_status != test_status
-      plugin_attrs[:test_status] = test_status
-    end
-
-    if test_status == PluginManager::TestManager.status[:failing]
-      sha = @host.test_sha || @plugin.sha
-      branch = @host.test_branch || @plugin.git_branch
-      message = @host.test_name ?
-        I18n.t("plugin_manager.test.error_test", test_name: @host.test_name) :
-        I18n.t("plugin_manager.test.error")
-
-      PluginManager::Log.add(
-        plugin_name: @plugin.name,
-        status: PluginManager::Manifest.status[:tests_failing],
-        message: message,
-        test_url: @host.test_url
-      )
-    end
-
-    if plugin_attrs.present?
-      ::PluginManager::Plugin.set(@plugin.name, plugin_attrs)
+      PluginManager::Plugin.set(@plugin.name, attrs)
     end
   end
 
@@ -68,20 +53,9 @@ class ::PluginManager::TestManager
     test_status == PluginManager::TestManager.status[:failing]
   end
 
-  def self.recommended_coverage?(coverage)
-    coverage.to_i >= SiteSetting.plugin_manager_recommended_coverage_threshold.to_i
-  end
-
   protected
 
-  def get_test_backend_coverage
-    file_path = "#{PluginManager.root_dir}/#{PluginManager.compatible_dir}/#{@plugin.name}/#{COVERAGE_FILE}"
-    return nil if !File.exist?(file_path)
-    coverage = JSON.parse(File.read(file_path))
-    coverage["result"]["line"]
-  end
-
-  def get_test_status
+  def request_test_status
     status_path = @host.status_path
 
     if status_path && response = request(status_path)

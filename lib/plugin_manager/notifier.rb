@@ -78,10 +78,8 @@ class PluginManager::Notifier
 
       Time: #{log.updated_at}
       Message: #{log.message}
-      Discourse Commit: #{log.discourse_sha}
       Discourse Branch: #{log.discourse_branch}
-      Plugin Commit: #{log.plugin_sha}
-      Plugin Branch: #{log.plugin_branch}
+      Plugin Branch: #{log.branch}
       #{post_markdown_details(log)}
     EOF
   end
@@ -94,12 +92,10 @@ class PluginManager::Notifier
       Message: ``#{log.message}``
 
       ### Discourse
-      Commit: #{log.discourse_sha}
       Branch: #{log.discourse_branch}
 
       ### Plugin
-      Commit: #{log.plugin_sha}
-      Branch: #{log.plugin_branch}
+      Branch: #{log.branch}
 
       ### Details
       #{post_markdown_details(log)}

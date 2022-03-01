@@ -1,19 +1,57 @@
 # frozen_string_literal: true
 
 class PluginManager::PluginStatusController < ::ApplicationController
-  skip_before_action :check_xhr, :preload_json, :verify_authenticity_token, only: [:show, :update]
+  skip_before_action :check_xhr, :preload_json, :verify_authenticity_token
   before_action :ensure_api, only: [:update]
 
-  def show
-    @plugin = PluginManager::Plugin.get(params.permit(:plugin_name).dasherize)
-    raise Discourse::InvalidParameters.new(:plugin_name) if !@plugin
+  def index
+    plugins = params.permit(plugins: [:name, :branch, :discourse_branch])
 
-    render_serialized(@plugin, PluginManager::BasicPluginSerializer, root: false)
+    unless plugins[:plugins].present?
+      raise Discourse::InvalidParameters.new(:plugins)
+    end
+
+    plugin_list = plugins.to_h[:plugins]
+    status_keys = plugin_list.reduce([]) do |result, plugin|
+      if ::PluginManager::Plugin.exists?(plugin['name'])
+        result.push(
+          PluginManager::Plugin::Status.status_key(
+            plugin['name'],
+            plugin['branch'],
+            plugin['discourse_branch']
+          )
+        )
+      end
+        result
+    end
+
+    page = params[:page].to_i
+    result = ::PluginManager::Plugin::Status.list(keys: status_keys, page: page)
+
+    response = {
+      statuses: ActiveModel::ArraySerializer.new(result.statuses, each_serializer: PluginManager::PluginStatusSerializer).as_json,
+      total: result.total
+    }
+
+    if result.total > PluginManager::Plugin::Status::PAGE_LIMIT
+      response[:next_page] = page + 1
+    end
+
+    render_json_dump(response)
+  end
+
+  def show
+    attrs = params.permit(:plugin_name, :discourse_branch, :branch)
+    status = ::PluginManager::Plugin::Status.get(attrs[:plugin_name], attrs[:discourse_branch], attrs[:branch])
+    raise Discourse::InvalidParameters.new(:plugin_name) if !status
+
+    render_serialized(@status, PluginManager::PluginStatusSerializer, root: false)
   end
 
   def update
-    plugins = params.permit(plugins: [:name, :status, :message, :backtrace])
+    plugins = params.permit(plugins: [:name, :branch, :status, :message, :backtrace])
     domain = params[:domain]
+    discourse = params.permit(discourse: [:branch])
 
     registered_plugins =
       plugins.reduce do |result, plugin|
@@ -29,7 +67,7 @@ class PluginManager::PluginStatusController < ::ApplicationController
     end
 
     registered_plugins = registered_plugins.select do |plugin|
-      ::PluginManager::Manifest.status.values.include?(plugin[:status])
+      ::PluginManager::Plugin::Status.statuses.values.include?(plugin[:status])
     end
 
     unless registered_plugins.any?
@@ -37,9 +75,24 @@ class PluginManager::PluginStatusController < ::ApplicationController
     end
 
     registered_plugins.each do |plugin|
-      logged = PluginManager::Log.add(plugin)
-      updated = PluginManager::Plugin.set(plugin[:name], status: plugin[:status])
-      errors.push(plugin[:name]) unless logged && updated
+      logged = PluginManager::Log.add(
+        name: plugin[:name],
+        branch: plugin[:branch],
+        discourse_branch: discourse[:branch],
+        status: plugin[:status],
+        message: plugin[:message],
+        backtrace: plugin[:bracktrace]
+      )
+      updated = PluginManager::Plugin::Status.update(
+        plugin[:name],
+        plugin[:branch],
+        discourse[:branch],
+        status: plugin[:status]
+      )
+
+      unless logged && updated
+        errors.push(plugin[:name])
+      end
     end
 
     if errors.any?

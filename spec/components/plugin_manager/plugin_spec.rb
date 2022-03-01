@@ -36,20 +36,23 @@ describe PluginManager::Plugin do
 
   def add_log(plugin)
     PluginManager::Log.add(
-      plugin_name: plugin,
+      name: plugin,
+      branch: plugin_branch,
+      discourse_branch: discourse_branch,
       message: "#{plugin.titleize} broke",
       backtrace: "broken at line 123",
-      status: PluginManager::Manifest.status[:incompatible]
+      status: PluginManager::Plugin::Status.statuses[:incompatible]
     )
   end
 
-  def get_log(plugin, status)
-    log_key = PluginManager::Log.key(plugin, status, plugin_sha, Discourse.git_version)
+  def get_log(plugin, status, branch, discourse_branch)
+    log_key = PluginManager::Log.key(plugin, status, branch, discourse_branch)
     PluginManager::Log.get(log_key)
   end
 
   it "sets plugin from file" do
     stub_github_user_request
+    stub_github_plugin_request
     setup_test_plugin(compatible_plugin)
 
     plugin = described_class.get(compatible_plugin)
@@ -62,7 +65,6 @@ describe PluginManager::Plugin do
     result = described_class.retrieve_from_url(compatible_plugin_url, plugin_branch)
     expect(result.plugin[:name]).to eq(compatible_plugin)
     expect(result.plugin[:about]).to eq("Compatbile plugin fixture")
-    expect(result.plugin[:version]).to eq("0.1.1")
     expect(result.plugin[:authors]).to eq("Angus McLeod")
     expect(result.plugin[:contact_emails]).to eq("angus@test.com")
   end
@@ -71,6 +73,7 @@ describe PluginManager::Plugin do
     context "non pavilion plugin" do
       before do
         stub_github_user_request(third_party_user)
+        stub_github_plugin_request(third_party_user, third_party_plugin)
         setup_test_plugin(third_party_plugin, "https://github.com/#{third_party_user}/discourse-#{third_party_plugin.dasherize}.git")
         add_log(third_party_plugin)
       end
@@ -82,7 +85,12 @@ describe PluginManager::Plugin do
           contact_emails: "angus@test.com",
           title: I18n.t("plugin_manager.notifier.broken.title", plugin_name: third_party_plugin.titleize)
         }) do
-          described_class.set(third_party_plugin, status: ::PluginManager::Manifest.status[:incompatible])
+          described_class.set(
+            third_party_plugin,
+            status: ::PluginManager::Plugin::Status.statuses[:incompatible],
+            branch: plugin_branch,
+            discourse_branch: discourse_branch
+          )
         end
       end
     end
@@ -90,7 +98,9 @@ describe PluginManager::Plugin do
     context "pavilion plugin" do
       before do
         stub_github_user_request
+        stub_github_plugin_request
         setup_test_plugin(compatible_plugin)
+
         log = add_log(compatible_plugin)
         request_body = {
           title: PluginManager::Notifier.title('broken', compatible_plugin.titleize),
@@ -103,7 +113,12 @@ describe PluginManager::Plugin do
       end
 
       it "posts to server if broken" do
-        described_class.set(compatible_plugin, status: ::PluginManager::Manifest.status[:incompatible])
+        described_class.set(
+          compatible_plugin,
+          status: ::PluginManager::Plugin::Status.statuses[:incompatible],
+          branch: plugin_branch,
+          discourse_branch: discourse_branch
+        )
         expect(WebMock).to have_requested(
           :post,
           "#{base_url}/posts",
@@ -117,9 +132,19 @@ describe PluginManager::Plugin do
       end
 
       it "posts to server if fixed" do
-        described_class.set(compatible_plugin, status: ::PluginManager::Manifest.status[:incompatible])
+        described_class.set(
+          compatible_plugin,
+          status: ::PluginManager::Plugin::Status.statuses[:incompatible],
+          branch: plugin_branch,
+          discourse_branch: discourse_branch
+        )
 
-        log = get_log(compatible_plugin, PluginManager::Manifest.status[:incompatible])
+        log = get_log(
+          compatible_plugin,
+          ::PluginManager::Plugin::Status.statuses[:incompatible],
+          plugin_branch,
+          discourse_branch
+        )
         request_body = {
           title: PluginManager::Notifier.title('fixed', compatible_plugin.titleize),
           raw: PluginManager::Notifier.post_markdown('fixed', log, compatible_plugin.titleize),
@@ -128,7 +153,12 @@ describe PluginManager::Plugin do
         }
         stub_post_request(request_body, response_post)
 
-        described_class.set(compatible_plugin, status: ::PluginManager::Manifest.status[:compatible])
+        described_class.set(
+          compatible_plugin,
+          status: ::PluginManager::Plugin::Status.statuses[:compatible],
+          branch: plugin_branch,
+          discourse_branch: discourse_branch
+        )
 
         expect(WebMock).to have_requested(
           :post,

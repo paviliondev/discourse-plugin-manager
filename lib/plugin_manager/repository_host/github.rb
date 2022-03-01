@@ -14,6 +14,10 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
     "users/#{repo_user}"
   end
 
+  def commits_path
+    "#{repository_path}/commits"
+  end
+
   def plugin_file_path
     "#{repository_path}/contents/plugin.rb?ref=#{@branch}"
   end
@@ -53,6 +57,15 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
 
   def get_sha_from_response(response)
     response['sha']
+  end
+
+  def get_commits_from_response(response)
+    response.map do |commit_item|
+      {
+        sha: commit_item['sha'],
+        date: commit_item['commit']['committer']['date']
+      }
+    end
   end
 
   def repo_user

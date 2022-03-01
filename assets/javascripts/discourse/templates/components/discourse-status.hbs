@@ -1,6 +1,6 @@
 <button class="btn btn-icon-text" {{action "toggleDiscourseStatus"}} type="button">
   {{d-icon "code-branch"}}
-  <span classs="d-button-label">{{discourse.git_branch}}</span>
+  <span classs="d-button-label">{{discourse.branch}}</span>
 </button>
 
 {{#if showDiscourseDetail}}
@@ -10,18 +10,6 @@
         <label class="detail-label">{{i18n "server_status.discourse.branch"}}</label>
         <span class="detail-value">
           {{branch-label discourse}}
-        </span>
-      </li>
-      <li>
-        <label class="detail-label">{{i18n "server_status.discourse.version"}}</label>
-        <span class="detail-value">{{dash-if-empty discourse.version}}</span>
-      </li>
-      <li>
-        <label class="detail-label">{{i18n "server_status.discourse.commit"}}</label>
-        <span class="detail-value">
-          <a href={{discourse.gitLink}} rel="noopener noreferrer" target="_blank">
-            {{discourse.shortSha}}
-          </a>
         </span>
       </li>
     </ul>

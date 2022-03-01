@@ -6,7 +6,7 @@ registerUnbound("branch-label", (obj) => {
   if (obj.branchUrl) {
     html += `<a href=${obj.branchUrl} class="branch-link" target="_blank">`;
   }
-  html += obj.git_branch;
+  html += obj.branch;
   if (obj.branchUrl) {
     html += `</a>`;
   }

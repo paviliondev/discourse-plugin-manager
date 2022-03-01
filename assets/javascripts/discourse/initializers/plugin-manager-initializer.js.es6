@@ -2,7 +2,6 @@ import DiscourseStatus from "../models/discourse-status";
 import PluginManager from "../models/plugin-manager";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { A } from "@ember/array";
-import { all } from "rsvp";
 
 export default {
   name: "plugin-manager",
@@ -12,7 +11,7 @@ export default {
         pluginId: "plugin-manager",
 
         afterModel() {
-          return all([this._getDiscourse(), this._getPlugins()]);
+          return this._getPlugins();
         },
 
         renderTemplate() {
@@ -26,12 +25,6 @@ export default {
             plugins: A(
               this.plugins.map((plugin) => PluginManager.create(plugin))
             ),
-          });
-        },
-
-        _getDiscourse() {
-          return PluginManager.discourse().then((result) => {
-            this.set("discourse", result.discourse);
           });
         },
 

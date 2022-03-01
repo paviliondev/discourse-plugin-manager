@@ -1,18 +1,17 @@
 import Component from "@ember/component";
 import discourseComputed from "discourse-common/utils/decorators";
-import { notEmpty, or } from "@ember/object/computed";
+import { notEmpty } from "@ember/object/computed";
 import I18n from "I18n";
 
 export default Component.extend({
   classNames: ["plugin-status-detail", "plugin-manager-detail"],
   hasLog: notEmpty("plugin.log"),
-  hasMetadata: or("plugin.gitLink", "plugin.test_backend_coverage"),
 
   @discourseComputed(
     "plugin.status",
     "plugin.name",
-    "plugin.git_branch",
-    "discourse.git_branch"
+    "plugin.branch",
+    "discourse.branch"
   )
   detailDescription(pluginStatus, pluginName, pluginBranch, discourseBranch) {
     return I18n.t(`server_status.plugin.status.${pluginStatus}.description`, {

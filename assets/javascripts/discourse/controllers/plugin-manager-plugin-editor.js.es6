@@ -19,6 +19,7 @@ export default Controller.extend(ModalFunctionality, {
   canRetrieve: alias("isNew"),
   urlDisabled: not("canRetrieve"),
   retrieveDisabled: empty("model.url"),
+  discourseBranches: ["main", "tests-passed", "stable"],
 
   @discourseComputed("retrieved", "retrieving")
   addPluginDisabled(retrieved, retrieving) {
@@ -64,7 +65,7 @@ export default Controller.extend(ModalFunctionality, {
       this.set("retrieving", true);
       const data = {
         url: this.model.url,
-        branch: this.model.git_branch,
+        branch: this.model.branch,
       };
       PluginManager.retrieve(data).then((result) => {
         if (result.success) {

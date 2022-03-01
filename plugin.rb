@@ -31,29 +31,26 @@ after_initialize do
 
   %w(
     ../mailers/plugin_mailer.rb
-    ../app/jobs/scheduled/fetch_plugin_tests_status.rb
-    ../app/jobs/scheduled/fetch_remote_plugins.rb
+    ../app/jobs/scheduled/update_plugin_test_statuses.rb
+    ../app/jobs/scheduled/update_plugins.rb
     ../app/jobs/regular/send_plugin_notification.rb
-    ../app/controllers/plugin_manager/discourse_controller.rb
     ../app/controllers/plugin_manager/plugin_controller.rb
     ../app/controllers/plugin_manager/plugin_status_controller.rb
     ../app/controllers/plugin_manager/plugin_user_controller.rb
-    ../app/serializers/plugin_manager/discourse_serializer.rb
     ../app/serializers/plugin_manager/log_serializer.rb
-    ../app/serializers/plugin_manager/basic_plugin_serializer.rb
     ../app/serializers/plugin_manager/plugin_serializer.rb
     ../app/serializers/plugin_manager/plugin_user_serializer.rb
+    ../app/serializers/plugin_manager/plugin_status_serializer.rb
     ../app/serializers/plugin_manager/owner_serializer.rb
     ../config/routes.rb
   ).each do |path|
     load File.expand_path(path, __FILE__)
   end
 
-  PluginManager::Plugin.add_extra_metadata
-
   unless Rails.env.test?
-    PluginManager::Manifest.update_local_plugins
-    PluginManager::Manifest.update_test_status
+    PluginManager::Plugin.update_plugins
+    PluginManager::Plugin.update_local_plugins
+    PluginManager::Plugin.update_test_statuses
   end
 
   user_key_suffix = 'plugin-registrations'

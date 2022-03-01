@@ -20,9 +20,7 @@ class ::PluginManager
   end
 end
 
-require_relative 'plugin_manager/discourse.rb'
 require_relative 'plugin_manager/log.rb'
-require_relative 'plugin_manager/manifest.rb'
 require_relative 'plugin_manager/notifier.rb'
 require_relative 'plugin_manager/plugin.rb'
 require_relative 'plugin_manager/repository_host.rb'

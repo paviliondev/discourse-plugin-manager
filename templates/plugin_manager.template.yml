@@ -12,6 +12,7 @@ hooks:
           - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/discourse.rb lib/plugin_manager/discourse.rb
           - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/manifest.rb lib/plugin_manager/manifest.rb
           - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/notifier.rb lib/plugin_manager/notifier.rb
+          - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/plugin/status.rb lib/plugin_manager/plugin/status.rb
           - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/plugin.rb lib/plugin_manager/plugin.rb
           - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/test_host.rb lib/plugin_manager/test_host.rb
           - cp -rf /shared/discourse-plugin-manager/lib/plugin_manager/test_host/github.rb lib/plugin_manager/test_host/github.rb

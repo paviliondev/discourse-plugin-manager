@@ -27,8 +27,11 @@ def plugin_branch
   "main"
 end
 
+def discourse_branch
+  "main"
+end
+
 def stub_plugin_git_cmds(dir, plugin_url)
-  Open3.expects(:capture3).with("git rev-parse HEAD", chdir: dir).returns(plugin_sha).at_least_once
   Open3.expects(:capture3).with("git rev-parse --abbrev-ref HEAD", chdir: dir).returns(plugin_branch).at_least_once
   Open3.expects(:capture3).with("git config --get remote.origin.url", chdir: dir).returns(plugin_url || "https://github.com/paviliondev/discourse-compatible-plugin.git")
 end
@@ -47,9 +50,16 @@ def stub_github_user_request(user = "paviliondev")
   )
 end
 
+def stub_github_plugin_request(user = "paviliondev", plugin_path = "compatible-plugin")
+  stub_request(:get, "https://api.github.com/repos/#{user}/discourse-#{plugin_path.dasherize}").to_return(
+    status: 200,
+    body: File.read("#{fixture_dir}/github/#{plugin_path.dasherize}.json")
+  )
+end
+
 def stub_github_plugin_file_request
   plugin_path = "discourse-compatible-plugin"
-  stub_request(:get, "https://api.github.com/repos/paviliondev/#{plugin_path}/contents/plugin.rb?ref=main").to_return(
+  stub_request(:get, "https://api.github.com/repos/paviliondev/#{plugin_path}/contents/plugin.rb?ref=#{plugin_branch}").to_return(
     status: 200,
     body: File.read("#{fixture_dir}/github/plugin.json")
   )
@@ -57,8 +67,7 @@ end
 
 def stub_github_test_request(response_body)
   plugin_path = "discourse-compatible-plugin"
-  branch = "main"
-  stub_request(:get, "https://api.github.com/repos/paviliondev/#{plugin_path}/actions/runs?branch=#{branch}&status=completed&per_page=1&page=1").to_return(
+  stub_request(:get, "https://api.github.com/repos/paviliondev/#{plugin_path}/actions/runs?branch=#{plugin_branch}&status=completed&per_page=1&page=1").to_return(
     status: 200,
     body: response_body
   )

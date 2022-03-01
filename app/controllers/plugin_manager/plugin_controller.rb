@@ -10,6 +10,27 @@ class PluginManager::PluginController < ::ApplicationController
       order: params[:order],
       asc: params[:asc]
     )
+
+    branch = params[:branch]
+    discourse_branch = params[:discourse_branch]
+    status_keys = plugins.map do |plugin|
+      PluginManager::Plugin::Status.status_key(
+        plugin.name,
+        discourse_branch,
+        branch
+      )
+    end
+    statuses = PluginManager::Plugin::Status.list(keys: status_keys)
+
+    status_map = statuses.statuses.reduce({}) do |result, status|
+      result[status.name] = status
+      result
+    end
+
+    plugins.each do |plugin|
+      plugin.status = statuses[plugin.name]
+    end
+
     render_serialized(plugins, PluginManager::PluginSerializer, root: 'plugins')
   end
 
@@ -24,8 +45,8 @@ class PluginManager::PluginController < ::ApplicationController
     result = PluginManager::Plugin.retrieve_from_url(url, params[:branch])
 
     if result.success
-      result.plugin[:test_host] = PluginManager::TestHost.detect_remote(url)
-      result.plugin[:status] = PluginManager::Manifest.status[:unknown]
+      result.plugin[:test_host] = PluginManager::TestHost.detect(url)
+      result.plugin[:status] = PluginManager::Plugin::Status.statuses[:unknown]
 
       cookies["#{result.plugin[:name]}-url"] = url
       render json: success_json.merge(plugin: result.plugin)
@@ -46,19 +67,18 @@ class PluginManager::PluginController < ::ApplicationController
     end
 
     attrs = params.require(:plugin).permit(
-      :support_url,
-      :try_url,
       :authors,
       :about,
       :version,
       :contact_emails,
       :test_host,
       :status,
-      :sha
+      :branch,
+      :discourse_branch
     )
     attrs[:url] = url
 
-    if PluginManager::Plugin.set_remote(name, attrs)
+    if PluginManager::Plugin.set(name, attrs)
       plugin = PluginManager::Plugin.get(name)
       serialized_plugin = PluginManager::PluginSerializer.new(plugin, root: false).as_json
       render json: success_json.merge(plugin: serialized_plugin)

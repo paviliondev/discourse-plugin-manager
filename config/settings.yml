@@ -12,6 +12,5 @@ plugins:
     default: 1
     type: integer
     min: 1
-  plugin_manager_recommended_coverage_threshold: 80
   plugin_manager_github_oauth_client_id: ""
   plugin_manager_github_oauth_client_secret: ""

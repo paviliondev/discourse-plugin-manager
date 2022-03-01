@@ -27,13 +27,13 @@ en:
             user: User
             organization: Organization
         commit: "Plugin Commit"
-        test_backend_coverage: "Test Coverage"
         contact_emails: "Contacts"
         more: more
         test_link:
           label: Test
           title: "Test the %{pluginName} plugin"
-        status: 
+        discourse_branch: "Discourse Branch"
+        status:
           label: "Status"
           unknown:
             title: Unknown
@@ -65,7 +65,7 @@ en:
 
     plugin_manager:
       user:
-        plugins: 
+        plugins:
           nav: Plugins
           registered: Registered
         plugin:

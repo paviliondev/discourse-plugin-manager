@@ -26,16 +26,13 @@
               title="admin.plugin_manager.plugin.edit"
               action="editPlugin"
               actionParam=plugin}}
-
-            {{#if plugin.remote}}
-              {{d-button
-                action="removePlugin"
-                actionParam=plugin
-                label="admin.plugin_manager.plugin.remove"
-                title="admin.plugin_manager.plugin.remove"
-                icon="times"
-                class="destroy"}}
-            {{/if}}
+            {{d-button
+              action="removePlugin"
+              actionParam=plugin
+              label="admin.plugin_manager.plugin.remove"
+              title="admin.plugin_manager.plugin.remove"
+              icon="times"
+              class="destroy"}}
           </td>
         </tr>
       {{/each}}

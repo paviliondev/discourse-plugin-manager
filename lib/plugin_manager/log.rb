@@ -3,13 +3,11 @@
 class ::PluginManager::Log
   include ActiveModel::Serialization
 
-  attr_reader :status,
-              :message,
-              :discourse_sha,
+  attr_reader :name,
+              :branch,
               :discourse_branch,
-              :plugin_name,
-              :plugin_sha,
-              :plugin_branch
+              :status,
+              :message
 
   attr_accessor :backtrace,
                 :created_at,
@@ -21,14 +19,13 @@ class ::PluginManager::Log
 
   def initialize(attrs)
     attrs = attrs.with_indifferent_access
+    @name = attrs[:name]
+    @branch = attrs[:branch]
+    @discourse_branch = attrs[:discourse_branch]
+
     @status = attrs[:status]
     @message = attrs[:message]
     @backtrace = attrs[:backtrace]
-    @discourse_sha = attrs[:discourse_sha]
-    @discourse_branch = attrs[:discourse_branch]
-    @plugin_name = attrs[:plugin_name]
-    @plugin_sha = attrs[:plugin_sha]
-    @plugin_branch = attrs[:plugin_branch]
     @test_url = attrs[:test_url]
     @issue_url = attrs[:issue_url]
     @issue_id = attrs[:issue_id]
@@ -39,34 +36,28 @@ class ::PluginManager::Log
 
   def save
     @updated_at = Time.now.iso8601
+
     ::PluginManagerStore.set(
-      self.class.plugin_name,
-      self.class.key(plugin_name, status, plugin_sha, discourse_sha),
+      self.class.db_key,
+      self.class.key(name, status, branch, discourse_branch),
       self.instance_values
     )
   end
 
   def key
-    self.class.key(plugin_name, status, plugin_sha, discourse_sha)
+    self.class.key(name, status, branch, discourse_branch)
   end
 
-  def self.add(plugin_name: nil, status: nil, message: nil, backtrace: nil, test_url: nil)
-    plugin_sha = PluginManager::Plugin.get_sha(plugin_name)
-    plugin_branch = PluginManager::Plugin.get_branch(plugin_name)
-    return if !plugin_sha || !plugin_branch
-
-    discourse_sha = PluginManager::Discourse.get_sha
-    discourse_branch = PluginManager::Discourse.get_branch
+  def self.add(name: nil, branch: nil, discourse_branch: nil, status: nil, message: nil, backtrace: nil, test_url: nil)
+    return if !branch || !discourse_branch
     attrs = {
-      plugin_name: plugin_name,
-      plugin_sha: plugin_sha,
-      plugin_branch: plugin_branch,
-      discourse_sha: discourse_sha,
+      name: name,
+      branch: branch,
       discourse_branch: discourse_branch,
       message: message,
       status: status
     }
-    log_key = key(plugin_name, status, plugin_sha, discourse_sha)
+    log_key = key(name, status, branch, discourse_branch)
     log = get(log_key)
 
     if log
@@ -84,12 +75,12 @@ class ::PluginManager::Log
   end
 
   def self.get(key)
-    raw = ::PluginManagerStore.get(plugin_name, key)
+    raw = ::PluginManagerStore.get(db_key, key)
     raw ? new(raw) : nil
   end
 
   def self.list(plugin_name = nil)
-    query = PluginStoreRow.where(plugin_name: plugin_name)
+    query = PluginStoreRow.where(plugin_name: db_key)
     query = query.where("key LIKE '#{plugin_name}-log-%'") if plugin_name
     query.order("value::json->>'updated_at' DESC")
       .map { |record| new(JSON.parse(record.value)) }
@@ -99,11 +90,11 @@ class ::PluginManager::Log
     Digest::SHA256.hexdigest("#{status}-#{plugin_sha}-#{discourse_sha}")
   end
 
-  def self.key(plugin_name, status, plugin_sha, discourse_sha)
-    "#{plugin_name.dasherize}-#{digest(status, plugin_sha, discourse_sha)}"
+  def self.key(name, status, branch, discourse_branch)
+    "#{name.dasherize}-#{digest(status, branch, discourse_branch)}"
   end
 
-  def self.plugin_name
+  def self.db_key
     PluginManager::NAMESPACE + "-log"
   end
 end
