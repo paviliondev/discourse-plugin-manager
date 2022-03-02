@@ -1,6 +1,6 @@
 import Controller from "@ember/controller";
 import discourseComputed, { bind } from "discourse-common/utils/decorators";
-import PluginManager from "../models/plugin-manager";
+import Plugin from "../models/plugin";
 import { alias, empty, equal, not, or } from "@ember/object/computed";
 import ModalFunctionality from "discourse/mixins/modal-functionality";
 import { schedule } from "@ember/runloop";
@@ -67,10 +67,10 @@ export default Controller.extend(ModalFunctionality, {
         url: this.model.url,
         branch: this.model.branch,
       };
-      PluginManager.retrieve(data).then((result) => {
+      Plugin.retrieve(data).then((result) => {
         if (result.success) {
           this.setProperties({
-            model: PluginManager.create(result.plugin),
+            model: Plugin.create(result.plugin),
             retrieved: true,
           });
         } else {
@@ -95,9 +95,9 @@ export default Controller.extend(ModalFunctionality, {
         test_host: model.test_host,
         status: model.status,
       };
-      PluginManager.save(attrs).then((result) => {
+      Plugin.save(attrs).then((result) => {
         if (result.success) {
-          this.afterSave(PluginManager.create(result.plugin));
+          this.afterSave(Plugin.create(result.plugin));
         }
         this.set("saving", false);
         this.send("closeModal");

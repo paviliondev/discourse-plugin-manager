@@ -31,14 +31,6 @@ export default Component.extend({
 
     if (
       !event.target.closest(
-        `.plugin-status.${this.plugin.name} .status-container`
-      )
-    ) {
-      this.set("showStatusDetail", false);
-    }
-
-    if (
-      !event.target.closest(
         `.plugin-status.${this.plugin.name} .name-container`
       )
     ) {
@@ -57,12 +49,6 @@ export default Component.extend({
   createPluginDetailModal() {
     let container = this.element.querySelector(".name-container");
     let modal = this.element.querySelector(".plugin-detail");
-    this.createModal(container, modal);
-  },
-
-  createStatusDetailModal() {
-    let container = this.element.querySelector(".status-container");
-    let modal = this.element.querySelector(".plugin-status-detail");
     this.createModal(container, modal);
   },
 
@@ -109,16 +95,6 @@ export default Component.extend({
 
       if (this.showPluginDetail) {
         scheduleOnce("afterRender", this, this.createPluginDetailModal);
-      }
-    },
-
-    toggleStatusDetail() {
-      if (!event.target.closest(`.plugin-status.${this.plugin.name} .log`)) {
-        this.toggleProperty("showStatusDetail");
-
-        if (this.showStatusDetail) {
-          scheduleOnce("afterRender", this, this.createStatusDetailModal);
-        }
       }
     },
 

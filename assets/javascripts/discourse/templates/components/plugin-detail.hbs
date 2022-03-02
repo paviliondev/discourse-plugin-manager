@@ -1,7 +1,25 @@
 <div class="detail-title">
   <div class="title-contents">
-    <span class="title-text">{{plugin.display_name}}</span>
+    {{#if category}}
+      {{category-drop
+        category=category
+        categories=site.categories
+        options=(hash
+          parentCategory=category.parentCategory
+          subCategory=category.isSubcategory
+          noSubcategories=category.noSubcategories
+          autoFilterable=true
+        )
+      }}
+    {{else}}
+      <span class="title-text">{{plugin.display_name}}</span>
+    {{/if}}
     {{branch-label plugin}}
+
+    {{#if category}}
+      {{discourse-status discourse=discourse}}
+      {{plugin-status-button plugin=plugin discourse=discourse}}
+    {{/if}}
   </div>
 
   {{#if plugin.owner}}

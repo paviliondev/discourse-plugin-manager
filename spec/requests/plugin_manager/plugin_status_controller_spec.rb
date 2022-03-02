@@ -31,6 +31,6 @@ describe PluginManager::PluginStatusController do
 
     expect(response.status).to eq(200)
     expect(response.parsed_body['total']).to eq(2)
-    expect(response.parsed_body['statuses'].first['status']).to eq(PluginManager::Plugin::Status.statuses[:compatible])
+    expect(response.parsed_body['statuses'].first['status']).to eq('compatible')
   end
 end

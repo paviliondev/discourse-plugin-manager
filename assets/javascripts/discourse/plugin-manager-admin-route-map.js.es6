@@ -1,7 +1,7 @@
 export default {
   resource: "admin",
   map() {
-    this.route("adminPluginManager", {
+    this.route("adminPlugin", {
       path: "/plugin-manager",
       resetNamespace: true,
     });

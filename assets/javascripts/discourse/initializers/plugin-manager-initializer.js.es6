@@ -1,7 +1,8 @@
-import DiscourseStatus from "../models/discourse-status";
-import PluginManager from "../models/plugin-manager";
+import Discourse from "../models/discourse";
+import Plugin from "../models/plugin";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { A } from "@ember/array";
+import { observes } from "discourse-common/utils/decorators";
 
 export default {
   name: "plugin-manager",
@@ -9,6 +10,12 @@ export default {
     withPluginApi("0.8.13", (api) => {
       api.modifyClass("route:discovery-categories", {
         pluginId: "plugin-manager",
+
+        queryParams: {
+          branch: {
+            refreshModel: true,
+          },
+        },
 
         afterModel() {
           return this._getPlugins();
@@ -20,50 +27,65 @@ export default {
 
         setupController(controller) {
           this._super(...arguments);
+
+          const branch = this.branch;
+          const discourse = Discourse.create({ branch });
+          const plugins = A(
+            this.plugins.map((plugin) => Plugin.create(plugin))
+          );
+
           controller.setProperties({
-            discourse: DiscourseStatus.create(this.discourse),
-            plugins: A(
-              this.plugins.map((plugin) => PluginManager.create(plugin))
-            ),
+            discourse,
+            plugins,
           });
         },
 
         _getPlugins() {
-          return PluginManager.list().then((result) => {
-            this.set("plugins", result.plugins);
+          const params = this.paramsFor("discovery.categories");
+          return Plugin.list({ branch: params.branch }).then((result) => {
+            this.setProperties(result);
           });
         },
       });
 
-      ["discovery.category"].forEach((name) => {
-        api.modifyClass(`route:${name}`, {
-          pluginId: "plugin-manager",
+      api.modifyClass("controller:discovery/categories", {
+        queryParams: ["branch"],
 
-          afterModel(model) {
-            return this._super(...arguments).then(() => {
-              let categoryId = model.category.parentCategory
-                ? model.category.parentCategory.id
-                : model.category.id;
+        @observes("discourse.branch")
+        setBranch() {
+          this.set("branch", this.discourse.branch);
+        },
+      });
 
-              return PluginManager.categoryPlugin(categoryId).then((result) => {
-                if (result.plugin) {
-                  this.set(
-                    "categoryPlugin",
-                    PluginManager.create(result.plugin)
-                  );
-                }
-              });
+      api.modifyClass("route:discovery.category", {
+        pluginId: "plugin-manager",
+
+        afterModel(model) {
+          return this._super(...arguments).then(() => {
+            let categoryId = model.category.parentCategory
+              ? model.category.parentCategory.id
+              : model.category.id;
+
+            return Plugin.categoryPlugin(categoryId).then((result) => {
+              this.setProperties(result);
             });
-          },
+          });
+        },
 
-          setupController(controller, model) {
-            this._super(...arguments);
+        setupController() {
+          this._super(...arguments);
 
-            if (this.categoryPlugin) {
-              model.category.set("plugin", this.categoryPlugin);
-            }
-          },
-        });
+          if (this.plugin) {
+            const branch = this.branch;
+            const discourse = Discourse.create({ branch });
+            const plugin = Plugin.create(this.plugin);
+
+            this.controllerFor("navigation/category").category.setProperties({
+              discourse,
+              plugin,
+            });
+          }
+        },
       });
     });
   },

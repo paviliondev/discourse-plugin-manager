@@ -8,12 +8,12 @@ export default Component.extend({
   hasLog: notEmpty("plugin.log"),
 
   @discourseComputed(
-    "plugin.status",
     "plugin.name",
-    "plugin.branch",
+    "plugin.status.status",
+    "plugin.status.branch",
     "discourse.branch"
   )
-  detailDescription(pluginStatus, pluginName, pluginBranch, discourseBranch) {
+  detailDescription(pluginName, pluginStatus, pluginBranch, discourseBranch) {
     return I18n.t(`server_status.plugin.status.${pluginStatus}.description`, {
       plugin_name: pluginName,
       plugin_branch: pluginBranch,
@@ -21,7 +21,7 @@ export default Component.extend({
     });
   },
 
-  @discourseComputed("plugin.status")
+  @discourseComputed("plugin.status.status")
   detailTitle(pluginStatus) {
     return I18n.t(`server_status.plugin.status.${pluginStatus}.detail_title`);
   },

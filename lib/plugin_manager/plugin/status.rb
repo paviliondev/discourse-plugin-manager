@@ -4,6 +4,7 @@ class ::PluginManager::Plugin::Status
   include ActiveModel::Serialization
 
   PAGE_LIMIT = 30
+  KEY_DELIMITER = "|"
 
   attr_reader :name,
               :branch,
@@ -18,6 +19,7 @@ class ::PluginManager::Plugin::Status
     @name = name
     @branch = attrs[:branch]
     @discourse_branch = attrs[:discourse_branch]
+    @key = self.class.status_key(@name, @branch, @discourse_branch)
 
     # changable attrs
     @status = attrs[:status].to_i
@@ -81,11 +83,15 @@ class ::PluginManager::Plugin::Status
     new(name, raw)
   end
 
-  def self.list(keys: [], page: nil)
+  def self.list(keys: [], discourse_branch: nil, page: nil)
     query = ::PluginStoreRow.where("plugin_name = '#{db_key}'")
 
     if keys.any?
-      query.where("key in (?)", keys.join(','))
+      query = query.where(key: keys)
+    end
+
+    if discourse_branch.present?
+      query = query.where("split_part(key, '#{KEY_DELIMITER}', 3) = ?", discourse_branch)
     end
 
     total = query.size
@@ -111,7 +117,7 @@ class ::PluginManager::Plugin::Status
   end
 
   def self.status_key(name, branch, discourse_branch)
-    "#{name.dasherize}-#{discourse_branch}-#{branch}"
+    "#{name.dasherize}#{KEY_DELIMITER}#{branch}#{KEY_DELIMITER}#{discourse_branch}"
   end
 
   def self.working?(status)
@@ -136,5 +142,15 @@ class ::PluginManager::Plugin::Status
 
   def self.recommended?(status)
     status == statuses[:recommended]
+  end
+
+  def self.build_unknown_status(plugin, discourse_branch)
+    new(
+      plugin.name,
+      branch: plugin.default_branch,
+      discourse_branch: discourse_branch,
+      status: statuses[:unknown],
+      status_changed_at: nil,
+    )
   end
 end

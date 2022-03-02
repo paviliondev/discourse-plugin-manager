@@ -34,6 +34,7 @@ end
 def stub_plugin_git_cmds(dir, plugin_url)
   Open3.expects(:capture3).with("git rev-parse --abbrev-ref HEAD", chdir: dir).returns(plugin_branch).at_least_once
   Open3.expects(:capture3).with("git config --get remote.origin.url", chdir: dir).returns(plugin_url || "https://github.com/paviliondev/discourse-compatible-plugin.git")
+  Discourse.expects(:git_branch).returns(discourse_branch)
 end
 
 def setup_test_plugin(name, plugin_url = nil)

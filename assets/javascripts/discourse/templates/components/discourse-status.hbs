@@ -1,17 +1,6 @@
-<button class="btn btn-icon-text" {{action "toggleDiscourseStatus"}} type="button">
-  {{d-icon "code-branch"}}
-  <span classs="d-button-label">{{discourse.branch}}</span>
-</button>
-
-{{#if showDiscourseDetail}}
-  <div class="discourse-detail plugin-manager-detail">
-    <ul class="detail-metadata">
-      <li>
-        <label class="detail-label">{{i18n "server_status.discourse.branch"}}</label>
-        <span class="detail-value">
-          {{branch-label discourse}}
-        </span>
-      </li>
-    </ul>
-  </div>
-{{/if}}
+{{d-icon "code-branch"}}
+{{combo-box
+  content=branches
+  value=discourse.branch
+  onChange=(action (mut discourse.branch))
+}}

@@ -1,9 +1,9 @@
 import discourseComputed from "discourse-common/utils/decorators";
-import ManagerStatus from "./status";
 import { dasherize } from "@ember/string";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
-import { notEmpty } from "@ember/object/computed";
+import { notEmpty, readOnly } from "@ember/object/computed";
+import EmberObject from "@ember/object";
 import I18n from "I18n";
 
 const statusIcons = {
@@ -14,18 +14,18 @@ const statusIcons = {
   incompatible: "times-circle",
 };
 
-const PluginManager = ManagerStatus.extend({
-  @discourseComputed("status")
+const Plugin = EmberObject.extend({
+  @discourseComputed("status.status")
   statusIcon(status) {
     return status ? statusIcons[status] : "";
   },
 
-  @discourseComputed("status")
+  @discourseComputed("status.status")
   statusTitle(status) {
     return status ? I18n.t(`server_status.plugin.status.${status}.title`) : "";
   },
 
-  @discourseComputed("status")
+  @discourseComputed("status.status")
   statusClass(status) {
     return status ? dasherize(status) : "";
   },
@@ -51,9 +51,12 @@ const PluginManager = ManagerStatus.extend({
   authorList(authors) {
     return authors ? authors.split(",") : [];
   },
+
+  branchUrl: readOnly("branch_url"),
+  branch: readOnly("status.branch"),
 });
 
-PluginManager.reopenClass({
+Plugin.reopenClass({
   discourse() {
     return ajax("/plugin-manager/discourse");
   },
@@ -65,10 +68,11 @@ PluginManager.reopenClass({
     }).catch(popupAjaxError);
   },
 
-  categoryPlugin(categoryId) {
-    return ajax(`/plugin-manager/plugin/category/${categoryId}`).catch(
-      popupAjaxError
-    );
+  categoryPlugin(categoryId, data = {}) {
+    return ajax(`/plugin-manager/plugin/category/${categoryId}`, {
+      type: "GET",
+      data,
+    }).catch(popupAjaxError);
   },
 
   retrieve(data) {
@@ -94,4 +98,4 @@ PluginManager.reopenClass({
   },
 });
 
-export default PluginManager;
+export default Plugin;

@@ -1,5 +1,5 @@
 import Controller from "@ember/controller";
-import PluginManager from "../models/plugin-manager";
+import Plugin from "../models/plugin";
 import showModal from "discourse/lib/show-modal";
 
 export default Controller.extend({
@@ -15,7 +15,7 @@ export default Controller.extend({
 
   actions: {
     addPlugin(plugin) {
-      let model = plugin || PluginManager.create({ new: true });
+      let model = plugin || Plugin.create({ new: true });
       let controller = showModal("plugin-manager-plugin-editor", { model });
 
       controller.setProperties({
@@ -26,7 +26,7 @@ export default Controller.extend({
 
     removePlugin(plugin) {
       this.set("destroying", true);
-      PluginManager.destroy(plugin.name).then((result) => {
+      Plugin.destroy(plugin.name).then((result) => {
         if (result.success) {
           this.removePlugin(result.plugin_name);
         }

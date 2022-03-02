@@ -1,4 +1,4 @@
-.server-status {
+.plugin-manager-manifest {
   .top {
     flex-direction: column;
     align-items: flex-start;
@@ -53,5 +53,15 @@
 
   .statuses {
     max-height: initial;
+  }
+}
+
+.plugin-manager-category-plugin {
+  .plugin-manager-detail:not(.plugin-status-detail) {
+    .title-contents {
+      > * {
+        margin-bottom: 0.5em;
+      }
+    }
   }
 }

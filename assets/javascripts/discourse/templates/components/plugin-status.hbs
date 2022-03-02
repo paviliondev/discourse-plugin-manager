@@ -26,14 +26,7 @@
 
 <td class="status">
   <div class="status-container">
-    <div role="button" {{action "toggleStatusDetail"}} class="status-badge with-text {{plugin.statusClass}}">
-      {{d-icon plugin.statusIcon}}
-      <span>{{plugin.statusTitle}}</span>
-    </div>
-
-    {{#if showStatusDetail}}
-      {{plugin-status-detail plugin=plugin discourse=discourse}}
-    {{/if}}
+    {{plugin-status-button plugin=plugin discourse=discourse}}
   </div>
 </td>
 

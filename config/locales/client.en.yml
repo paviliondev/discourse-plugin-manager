@@ -18,7 +18,7 @@ en:
         about: "About"
         filter: "filter"
         owner:
-          label: Owner
+          label: Supplier
           logo: "%{ownerName} logo"
           website: Website
           email: Email

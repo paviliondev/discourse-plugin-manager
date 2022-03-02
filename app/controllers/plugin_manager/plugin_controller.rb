@@ -2,41 +2,20 @@
 
 class PluginManager::PluginController < ::ApplicationController
   before_action :ensure_admin, only: [:retrieve, :save, :delete]
+  before_action :list_plugins, only: [:index, :category]
 
   def index
-    plugins = PluginManager::Plugin.list(
-      page: params[:page].to_i,
-      filter: params[:filter],
-      order: params[:order],
-      asc: params[:asc]
+    render_json_dump(
+      branch: discourse_branch,
+      plugins: serialize_data(@plugins, PluginManager::PluginSerializer)
     )
-
-    branch = params[:branch]
-    discourse_branch = params[:discourse_branch]
-    status_keys = plugins.map do |plugin|
-      PluginManager::Plugin::Status.status_key(
-        plugin.name,
-        discourse_branch,
-        branch
-      )
-    end
-    status_list = PluginManager::Plugin::Status.list(keys: status_keys)
-
-    status_map = status_list.statuses.reduce({}) do |result, status|
-      result[status.name] = status
-      result
-    end
-
-    plugins.each do |plugin|
-      plugin.status = status_map[plugin.name]
-    end
-
-    render_serialized(plugins, PluginManager::PluginSerializer, root: 'plugins')
   end
 
   def category
-    plugins = ::PluginManager::Plugin.list_by('category_id', params[:category_id])
-    render_serialized(plugins.first, PluginManager::PluginSerializer, root: 'plugin')
+    render_json_dump(
+      branch: discourse_branch,
+      plugin: serialize_data(@plugins.first, PluginManager::PluginSerializer, root: false)
+    )
   end
 
   def retrieve
@@ -94,6 +73,51 @@ class PluginManager::PluginController < ::ApplicationController
       render json: success_json.merge(plugin_name: name)
     else
       render json: failed_json
+    end
+  end
+
+  protected
+
+  def list_plugins
+    if action_name === 'category'
+      @plugins = ::PluginManager::Plugin.list_by(
+        'category_id',
+        params[:category_id]
+      )
+    else
+      @plugins = PluginManager::Plugin.list(
+        page: params[:page].to_i,
+        filter: params[:filter],
+        order: params[:order],
+        asc: params[:asc]
+      )
+    end
+
+    map_status_to_plugins
+  end
+
+  def discourse_branch
+    @discourse_branch ||= params[:branch] || 'main'
+  end
+
+  def map_status_to_plugins
+    @plugins.each do |plugin|
+      if status = status_map[plugin.name]
+        plugin.status = status
+      else
+        plugin.status = PluginManager::Plugin::Status.build_unknown_status(plugin, discourse_branch)
+      end
+    end
+  end
+
+  def status_map
+    @status_map ||= begin
+      status_map = PluginManager::Plugin::Status.list(discourse_branch: discourse_branch)
+        .statuses
+        .reduce({}) do |result, status|
+          result[status.name] = status
+          result
+        end
     end
   end
 end
