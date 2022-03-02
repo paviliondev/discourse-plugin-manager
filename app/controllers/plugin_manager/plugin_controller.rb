@@ -20,15 +20,15 @@ class PluginManager::PluginController < ::ApplicationController
         branch
       )
     end
-    statuses = PluginManager::Plugin::Status.list(keys: status_keys)
+    status_list = PluginManager::Plugin::Status.list(keys: status_keys)
 
-    status_map = statuses.statuses.reduce({}) do |result, status|
+    status_map = status_list.statuses.reduce({}) do |result, status|
       result[status.name] = status
       result
     end
 
     plugins.each do |plugin|
-      plugin.status = statuses[plugin.name]
+      plugin.status = status_map[plugin.name]
     end
 
     render_serialized(plugins, PluginManager::PluginSerializer, root: 'plugins')

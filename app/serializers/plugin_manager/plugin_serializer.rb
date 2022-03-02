@@ -18,14 +18,12 @@ class PluginManager::PluginSerializer < ::ApplicationSerializer
   end
 
   def include_log?
-    object.status.present? && (
-      object.status.status === PluginManager::Plugin::Status.statuses[:incompatible] ||
-      object.status.status === PluginManager::Plugin::Status.statuses[:tests_failing]
-    )
+    object.status.present? &&
+      PluginManager::Plugin::Status.not_working?(object.status.status)
   end
 
   def status
-    ::PluginManager::Plugin::Status.statuses.keys(object.status.status)
+    PluginManager::PluginStatusSerializer.new(object.status, root: false).as_json
   end
 
   def include_status?
