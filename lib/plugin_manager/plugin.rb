@@ -394,6 +394,7 @@ class ::PluginManager::Plugin
       discourse-plugin-manager
       discourse-plugin-guard
       discourse-code-review
+      discourse-custom-wizard
       discourse-details
       discourse-local-dates
       discourse-narrative-bot
