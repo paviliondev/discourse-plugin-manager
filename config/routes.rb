@@ -12,9 +12,9 @@ PluginManager::Engine.routes.draw do
   get 'status/validate-key' => 'plugin_status#validate_key'
   get 'discourse' => 'discourse#index'
   get 'plugin' => 'plugin#index'
-  get 'plugin/:plugin_name' => 'plugin#show'
   get 'plugin/category/:category_id' => 'plugin#category'
   get 'plugin/retrieve' => 'plugin#retrieve'
+  get 'plugin/:plugin_name' => 'plugin#show'
   put 'plugin/:plugin_name' => 'plugin#save', constraints: AdminConstraint.new
   delete 'plugin/:plugin_name' => 'plugin#delete', constraints: AdminConstraint.new
   post 'user/register' => 'plugin_user#register'
