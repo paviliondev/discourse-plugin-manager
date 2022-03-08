@@ -17,7 +17,10 @@ export default {
         );
         const plugin = categoriesController.plugins.findBy("name", pluginName);
         const discourse = categoriesController.discourse;
-        plugin.reload(discourse.branch);
+
+        if (plugin && discourse) {
+          plugin.reload(discourse.branch);
+        }
       }
     );
 
