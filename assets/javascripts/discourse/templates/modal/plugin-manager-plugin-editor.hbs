@@ -14,11 +14,6 @@
           class="save"}}
       {{/if}}
     </div>
-
-    <div class="url">
-      <label>{{i18n "admin.plugin_manager.plugin.branch"}}</label>
-      {{input type="text" value=model.branch placeholder="main" disabled=urlDisabled}}
-    </div>
   </div>
 
   {{#if showPlugin}}
@@ -39,16 +34,11 @@
           </div>
 
           <div class="plugin-attr">
-            <label>{{i18n "admin.plugin_manager.plugin.version"}}</label>
-            {{model.version}}
-          </div>
-
-          <div class="plugin-attr">
             <label>{{i18n "admin.plugin_manager.plugin.test_host"}}</label>
             {{model.test_host}}
           </div>
 
-          {{#if hasContactEmails}}
+          {{#if model.hasContactEmails}}
             <div class="plugin-attr">
               <label>{{i18n "admin.plugin_manager.plugin.contact_emails"}}</label>
               {{model.contactEmails}}
@@ -62,14 +52,13 @@
 
 <div class="modal-footer">
   {{d-button
-    icon="save"
     label="admin.plugin_manager.plugin.save"
     title="admin.plugin_manager.plugin.save"
     action="save"
-    disabled=loading
+    disabled=saving
     class="save"}}
 
   {{conditional-loading-spinner
     size="small"
-    condition=loading}}
+    condition=saving}}
 </div>

@@ -219,9 +219,11 @@ class ::PluginManager::Plugin
     new(name, attrs.with_indifferent_access)
   end
 
-  def self.retrieve_from_url(url, branch)
-    manager = PluginManager::RepositoryManager.new(url, branch)
+  def self.retrieve_from_url(url)
     result = OpenStruct.new(plugin: {}, error: '', success: false)
+
+    manager = PluginManager::RepositoryManager.new(url)
+    manager.use_default_branch
 
     if !manager.ready?
       result.error = I18n.t("plugin_manager.plugin.error.failed_to_retrieve_plugin")
@@ -302,14 +304,10 @@ class ::PluginManager::Plugin
 
   def self.update_plugins
     list.each do |plugin|
-      if plugin.branches
-        plugin.branches.each do |branch|
-          result = retrieve_from_url(plugin.url, branch)
+      result = retrieve_from_url(plugin.url)
 
-          if result.success
-            set(plugin.name, result.plugin)
-          end
-        end
+      if result.success
+        set(plugin.name, result.plugin)
       end
     end
   end

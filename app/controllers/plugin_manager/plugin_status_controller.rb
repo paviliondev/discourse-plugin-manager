@@ -88,16 +88,22 @@ class PluginManager::PluginStatusController < ::ApplicationController
         discourse_branch: discourse[:branch],
         discourse_sha: discourse[:sha]
       }
-      logged = PluginManager::Log.add(
-        plugin[:name],
-        git,
-        plugin.slice(:status, :message, :backtrace)
-      )
       updated = PluginManager::Plugin::Status.update(
         plugin[:name],
         git,
-        status: plugin[:status].to_i
+        status: plugin[:status].to_i,
+        skip_git_check: current_user.admin?
       )
+
+      if updated
+        logged = PluginManager::Log.add(
+          plugin[:name],
+          git,
+          plugin.slice(:status, :message, :backtrace)
+        )
+      else
+        logged = false
+      end
 
       unless logged && updated
         errors.push(plugin[:name])

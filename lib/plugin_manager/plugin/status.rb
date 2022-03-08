@@ -77,6 +77,8 @@ class ::PluginManager::Plugin::Status
     if status_changed
       status_handler = ::PluginManager::StatusHandler.new(name, git)
       status_handler.perform(current_status.status, new_attrs[:status])
+    else
+      true
     end
   end
 
@@ -179,7 +181,7 @@ class ::PluginManager::Plugin::Status
     if !discourse_equal
       discourse_manager = PluginManager::RepositoryManager.new(DISCOURSE_URL, current_status.discourse_branch)
       discourse_commits_since = discourse_manager.get_commits(since: commits_since)
-      return false unless discourse_commits_since.any? { |c| c[:sha] === sha }
+      return false unless discourse_commits_since.any? { |c| c[:sha] === discourse_sha }
     end
 
     plugin = PluginManager::Plugin.get(current_status.name)

@@ -4,6 +4,7 @@ import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import { notEmpty, readOnly } from "@ember/object/computed";
 import EmberObject from "@ember/object";
+import Category from "discourse/models/category";
 import I18n from "I18n";
 
 const statusIcons = {
@@ -54,6 +55,17 @@ const Plugin = EmberObject.extend({
 
   branchUrl: readOnly("branch_url"),
   branch: readOnly("status.branch"),
+
+  @discourseComputed("category_id")
+  category(categoryId) {
+    return Category.findById(categoryId);
+  },
+
+  reload(discourseBranch) {
+    Plugin.find(this.name, discourseBranch).then((result) => {
+      this.setProperties(result.plugin);
+    });
+  },
 });
 
 Plugin.reopenClass({
@@ -65,6 +77,15 @@ Plugin.reopenClass({
     return ajax("/plugin-manager/plugin", {
       type: "GET",
       data,
+    }).catch(popupAjaxError);
+  },
+
+  find(pluginName, branch) {
+    return ajax(`/plugin-manager/plugin/${pluginName}`, {
+      type: "GET",
+      data: {
+        branch,
+      },
     }).catch(popupAjaxError);
   },
 

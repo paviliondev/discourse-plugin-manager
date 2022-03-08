@@ -17,6 +17,10 @@ class ::PluginManager::RepositoryManager
     @host && @host.domain.present? && @host.branch.present?
   end
 
+  def use_default_branch
+    @host.branch = get_default_branch
+  end
+
   def get_repository
     request(@host.repository_path)
   end

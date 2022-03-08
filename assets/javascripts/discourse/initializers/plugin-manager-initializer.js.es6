@@ -6,7 +6,21 @@ import { observes } from "discourse-common/utils/decorators";
 
 export default {
   name: "plugin-manager",
-  initialize() {
+  initialize(container) {
+    const messageBus = container.lookup("message-bus:main");
+
+    messageBus.subscribe(
+      "/plugin-manager/status-updated",
+      function (pluginName) {
+        const categoriesController = container.lookup(
+          "controller:discovery/categories"
+        );
+        const plugin = categoriesController.plugins.findBy("name", pluginName);
+        const discourse = categoriesController.discourse;
+        plugin.reload(discourse.branch);
+      }
+    );
+
     withPluginApi("0.8.13", (api) => {
       api.modifyClass("route:discovery-categories", {
         pluginId: "plugin-manager",

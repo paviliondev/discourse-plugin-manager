@@ -88,7 +88,7 @@ class ::PluginManager::Log
   def self.list(plugin_name = nil)
     list_query(plugin_name)
       .order("value::json->>'updated_at' DESC")
-      .map { |record| new(JSON.parse(record.value)) }
+      .map { |record| new(record.key, JSON.parse(record.value)) }
   end
 
   def self.key(plugin_name)

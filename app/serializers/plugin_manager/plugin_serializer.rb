@@ -10,6 +10,7 @@ class PluginManager::PluginSerializer < ::ApplicationSerializer
              :branch_url,
              :log,
              :owner,
+             :test_host,
              :status,
              :category_id
 

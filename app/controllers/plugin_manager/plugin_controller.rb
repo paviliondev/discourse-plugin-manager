@@ -2,12 +2,19 @@
 
 class PluginManager::PluginController < ::ApplicationController
   before_action :ensure_admin, only: [:retrieve, :save, :delete]
-  before_action :list_plugins, only: [:index, :category]
+  before_action :find_plugins, only: [:index, :show, :category]
 
   def index
     render_json_dump(
       branch: discourse_branch,
       plugins: serialize_data(@plugins, PluginManager::PluginSerializer)
+    )
+  end
+
+  def show
+    render_json_dump(
+      branch: discourse_branch,
+      plugin: serialize_data(@plugins.first, PluginManager::PluginSerializer, root: false)
     )
   end
 
@@ -21,7 +28,7 @@ class PluginManager::PluginController < ::ApplicationController
   def retrieve
     params.require(:url)
     url = params[:url]
-    result = PluginManager::Plugin.retrieve_from_url(url, params[:branch])
+    result = PluginManager::Plugin.retrieve_from_url(url)
 
     if result.success
       result.plugin[:test_host] = PluginManager::TestHost.detect(url)
@@ -75,12 +82,11 @@ class PluginManager::PluginController < ::ApplicationController
 
   protected
 
-  def list_plugins
+  def find_plugins
     if action_name === 'category'
-      @plugins = ::PluginManager::Plugin.list_by(
-        'category_id',
-        params[:category_id]
-      )
+      @plugins = PluginManager::Plugin.list_by('category_id', params[:category_id])
+    elsif action_name === 'show'
+      @plugins = [PluginManager::Plugin.get(params[:plugin_name])]
     else
       @plugins = PluginManager::Plugin.list(
         page: params[:page].to_i,

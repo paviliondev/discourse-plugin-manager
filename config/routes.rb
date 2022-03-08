@@ -8,10 +8,11 @@ end
 PluginManager::Engine.routes.draw do
   get 'status' => 'plugin_status#index'
   get 'status/:plugin_name' => 'plugin_status#show'
-  post 'status' => 'plugin_status#update'
+  post 'status' => 'plugin_status#update', defaults: { format: 'json' }
   get 'status/validate-key' => 'plugin_status#validate_key'
   get 'discourse' => 'discourse#index'
   get 'plugin' => 'plugin#index'
+  get 'plugin/:plugin_name' => 'plugin#show'
   get 'plugin/category/:category_id' => 'plugin#category'
   get 'plugin/retrieve' => 'plugin#retrieve'
   put 'plugin/:plugin_name' => 'plugin#save', constraints: AdminConstraint.new

@@ -34,6 +34,10 @@ class ::PluginManager::StatusHandler
         notifier.send(:fixed, log)
       end
     end
+
+    MessageBus.publish("/#{PluginManager::NAMESPACE}/status-updated", name)
+
+    true
   end
 
   def broken?(old_status, new_status)

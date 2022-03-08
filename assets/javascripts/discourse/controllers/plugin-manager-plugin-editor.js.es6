@@ -5,12 +5,6 @@ import { alias, empty, equal, not, or } from "@ember/object/computed";
 import ModalFunctionality from "discourse/mixins/modal-functionality";
 import { schedule } from "@ember/runloop";
 
-const pluginStatuses = {
-  unknown: 0,
-  compatible: 1,
-  incompatible: 2,
-};
-
 export default Controller.extend(ModalFunctionality, {
   readOnlyStatus: equal("model.status", "tests_failing"),
   showPlugin: or("model.name", "retrieving"),
@@ -41,6 +35,7 @@ export default Controller.extend(ModalFunctionality, {
   onClose() {
     const element = document.querySelector(".plugin-url");
     element.removeEventListener("keydown", this.keyDown);
+    this.set("model", null);
   },
 
   @bind
@@ -57,7 +52,6 @@ export default Controller.extend(ModalFunctionality, {
       this.set("retrieving", true);
       const data = {
         url: this.model.url,
-        branch: this.model.branch,
       };
       Plugin.retrieve(data).then((result) => {
         if (result.success) {
@@ -80,9 +74,8 @@ export default Controller.extend(ModalFunctionality, {
         name: model.name,
         authors: model.authors,
         about: model.about,
-        version: model.version,
         contact_emails: model.contact_emails,
-        test_host: model.test_host
+        test_host: model.test_host,
       };
       Plugin.save(attrs).then((result) => {
         if (result.success) {
