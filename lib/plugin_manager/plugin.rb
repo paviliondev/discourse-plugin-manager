@@ -101,13 +101,15 @@ class ::PluginManager::Plugin
       about: attrs[:about] || plugin.about,
       contact_emails: attrs[:contact_emails] || plugin.contact_emails,
       owner: attrs[:owner]&.instance_values || plugin.owner&.instance_values,
-      category_id: attrs[:category_id] || plugin.category_id
+      category_id: attrs[:category_id] || plugin.category_id,
+      default_branch: attrs[:default_branch] || plugin.default_branch,
+      branches: plugin.branches || []
     }
 
-    new_attrs[:default_branch] = attrs[:default_branch] || plugin.default_branch
-    new_attrs[:branches] = plugin.branches || []
-    if attrs[:branch] && new_attrs[:branches].exclude?(attrs[:branch])
-      new_attrs[:branches] << attrs[:branch]
+    [:branch, :default_branch].each do |key|
+      if attrs[key] && new_attrs[:branches].exclude?(attrs[key])
+        new_attrs[:branches] << attrs[key]
+      end
     end
 
     new_attrs = update_repository_attrs(new_attrs[:url], new_attrs)
@@ -115,13 +117,10 @@ class ::PluginManager::Plugin
     PluginManagerStore.set(::PluginManager::NAMESPACE, plugin_name, new_attrs)
 
     status_attrs = attrs.slice(:status, :test_status)
-    if status_attrs.present? && attrs[:branch] && attrs[:discourse_branch]
-      PluginManager::Plugin::Status.update(
-        plugin_name,
-        attrs[:branch],
-        attrs[:discourse_branch],
-        status_attrs
-      )
+    git = attrs.slice(*PluginManager::Plugin::Status.required_git_attrs)
+
+    if status_attrs.present? && git.present?
+      PluginManager::Plugin::Status.update(plugin_name, git, status_attrs)
     end
 
     plugin = get(plugin_name)
@@ -243,7 +242,6 @@ class ::PluginManager::Plugin
 
     result.plugin = {
       name: metadata.name,
-      branch: manager.host.branch,
       contact_emails: metadata.contact_emails,
       authors: metadata.authors,
       about: metadata.about,
@@ -304,11 +302,13 @@ class ::PluginManager::Plugin
 
   def self.update_plugins
     list.each do |plugin|
-      plugin.branches.each do |branch|
-        result = retrieve_from_url(plugin.url, branch)
+      if plugin.branches
+        plugin.branches.each do |branch|
+          result = retrieve_from_url(plugin.url, branch)
 
-        if result.success
-          set(plugin.name, result.plugin)
+          if result.success
+            set(plugin.name, result.plugin)
+          end
         end
       end
     end
@@ -358,7 +358,9 @@ class ::PluginManager::Plugin
         about: metadata.about,
         version: metadata.version,
         branch: get_local_branch(path),
+        sha: get_local_sha(path),
         discourse_branch: Discourse.git_branch,
+        discourse_sha: Discourse.git_version,
         status: status,
         test_host: PluginManager::TestHost.detect_local(path)
       }

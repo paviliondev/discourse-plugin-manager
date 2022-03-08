@@ -31,8 +31,8 @@ class ::PluginManager::RepositoryManager
     response ? @host.get_owner_from_response(response) : nil
   end
 
-  def get_commits(after_sha:)
-    response = request(@host.commits_path, { body: { after_sha: after_sha } })
+  def get_commits(since: nil)
+    response = request(@host.commits_path(since: since, sha: @host.branch))
     response ? @host.get_commits_from_response(response) : nil
   end
 
@@ -49,10 +49,9 @@ class ::PluginManager::RepositoryManager
 
   def request(endpoint, opts = {})
     url = "https://#{@host.domain}/#{endpoint}"
-
     headers = {}
     headers["User-Agent"] = "discourse-plugin-manager"
-    headers["Content-Type"] = "application/json" if opts[:body]
+    args = { method: 'GET' }
 
     connection = Excon.new(
       url,
@@ -60,10 +59,7 @@ class ::PluginManager::RepositoryManager
       middlewares: Excon.defaults[:middlewares] + [Excon::Middleware::RedirectFollower]
     )
 
-    params = { method: 'GET' }
-    params[:body] = JSON.generate(opts[:body]) if opts[:body]
-
-    response = connection.request(params)
+    response = connection.request(args)
 
     if response.status == 200
       JSON.parse(response.body)

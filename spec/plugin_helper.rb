@@ -19,22 +19,81 @@ def plugin_dir(name, compatible: true)
   "#{fixture_dir}/#{plugins_dir}/#{name}"
 end
 
+def plugin_url
+  "https://github.com/paviliondev/discourse-compatible-plugin"
+end
+
 def plugin_sha
   "d5f7a1dbe5fcd9513aebad188e677a89fe955d86"
+end
+
+def new_plugin_sha
+  "36e7163d164fe7ecf02928c42255412edda544f4"
 end
 
 def plugin_branch
   "main"
 end
 
+def discourse_url
+  "https://github.com/discourse/discourse"
+end
+
+def discourse_sha
+  "eb2e3b510de9295d1ed91919d2df0dc800364689"
+end
+
+def new_discourse_sha
+  "a7db0ce985aa61a6d323cde010e7f47ab4f46696"
+end
+
 def discourse_branch
   "main"
 end
 
+def compatible_plugin
+  "compatible_plugin"
+end
+
+def incompatible_plugin
+  "incompatible_plugin"
+end
+
+def third_party_plugin
+  "third_party_plugin"
+end
+
+def git
+  {
+    branch: plugin_branch,
+    sha: plugin_sha,
+    discourse_branch: discourse_branch,
+    discourse_sha: discourse_sha
+  }
+end
+
+def domain
+  "thepavilion.test"
+end
+
+def base_url
+  "https://#{domain}"
+end
+
+def api_user
+  "angus"
+end
+
+def api_token
+  "12345"
+end
+
 def stub_plugin_git_cmds(dir, plugin_url)
+  Open3.expects(:capture3).with("git rev-parse HEAD", chdir: dir).returns(plugin_sha).at_least_once
   Open3.expects(:capture3).with("git rev-parse --abbrev-ref HEAD", chdir: dir).returns(plugin_branch).at_least_once
   Open3.expects(:capture3).with("git config --get remote.origin.url", chdir: dir).returns(plugin_url || "https://github.com/paviliondev/discourse-compatible-plugin.git")
   Discourse.expects(:git_branch).returns(discourse_branch)
+  Discourse.expects(:git_version).returns(discourse_sha)
 end
 
 def setup_test_plugin(name, plugin_url = nil)
@@ -72,6 +131,54 @@ def stub_github_test_request(response_body)
     status: 200,
     body: response_body
   )
+end
+
+def stub_commits_url(since: nil, ref: nil, sha: nil, commits: nil, branch: nil, url: nil)
+  host = PluginManager::RepositoryHost::Github.new
+  host.url = url || plugin_url
+  host.branch = branch || plugin_branch
+  url = "https://" + host.domain + "/" + host.commits_path(since: since, ref: ref, sha: sha)
+  body = commits.map { |c| { sha: c[:sha], commit: { committer: { date: c[:date] } } } }
+  stub_request(:get, url).to_return(body: body.to_json)
+end
+
+def stub_post_request(request_body, response_body)
+  stub_request(:post, "#{base_url}/posts").with(
+    body: request_body.to_json,
+    headers: {
+      'Api-Key' => api_token,
+      'Api-Username' => api_user,
+      'Content-Type' => 'application/json',
+      'Host' => domain
+    }
+  ).to_return(
+    status: 200,
+    body: response_body.to_json,
+    headers: {}
+  )
+end
+
+def create_commits_record(plugin_sha = nil)
+  stub_commits_url(
+    sha: plugin_branch,
+    since: 1.day.ago.iso8601(3),
+    commits: [ { sha: plugin_sha || new_plugin_sha, date: 1.minute.ago.iso8601(3) } ]
+  )
+  stub_commits_url(
+    url: discourse_url,
+    branch: discourse_branch,
+    sha: discourse_branch,
+    since: 1.day.ago.iso8601(3),
+    commits: [ { sha: new_discourse_sha, date: 1.minute.ago.iso8601(3) } ]
+  )
+end
+
+def compatible_status
+  { status: PluginManager::Plugin::Status.statuses[:compatible] }
+end
+
+def incompatible_status
+  { status: PluginManager::Plugin::Status.statuses[:incompatible] }
 end
 
 require 'rails_helper'

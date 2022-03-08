@@ -22,7 +22,7 @@ class PluginManager::PluginStatusController < ::ApplicationController
           )
         )
       end
-        result
+      result
     end
 
     page = params[:page].to_i
@@ -49,14 +49,20 @@ class PluginManager::PluginStatusController < ::ApplicationController
   end
 
   def update
-    plugins = params.permit(plugins: [:name, :branch, :status, :message, :backtrace])
     domain = params[:domain]
-    discourse = params.permit(discourse: [:branch])
+
+    plugins = params.permit(plugins: [:name, :branch, :sha, :status, :message, :backtrace])
+      .to_h[:plugins]
+      .map(&:with_indifferent_access)
+
+    discourse = params.permit(discourse: [:branch, :sha])
+      .to_h[:discourse]
+      .with_indifferent_access
 
     registered_plugins =
-      plugins.reduce do |result, plugin|
-        auth_site = is_api? && ::PluginManager::Plugin.exist?(plugin['name'])
-        auth_user = current_user.plugin_registered?(domain, plugin['name'])
+      plugins.reduce([]) do |result, plugin|
+        auth_site = is_api? && ::PluginManager::Plugin.exists?(plugin[:name])
+        auth_user = current_user.plugin_registered?(domain, plugin[:name])
 
         result.push(plugin.symbolize_keys) if auth_site || auth_user
         result
@@ -66,28 +72,31 @@ class PluginManager::PluginStatusController < ::ApplicationController
       raise Discourse::InvalidAccess.new("you are not authorized to update the status of any of these plugins")
     end
 
-    registered_plugins = registered_plugins.select do |plugin|
-      ::PluginManager::Plugin::Status.statuses.values.include?(plugin[:status])
+    registered_plugins = [*registered_plugins].select do |plugin|
+      ::PluginManager::Plugin::Status.statuses.values.include?(plugin[:status].to_i)
     end
 
     unless registered_plugins.any?
       raise Discourse::InvalidParameters.new("no valid plugin statuses")
     end
 
+    errors = []
     registered_plugins.each do |plugin|
-      logged = PluginManager::Log.add(
-        name: plugin[:name],
+      git = {
         branch: plugin[:branch],
+        sha: plugin[:sha],
         discourse_branch: discourse[:branch],
-        status: plugin[:status],
-        message: plugin[:message],
-        backtrace: plugin[:bracktrace]
+        discourse_sha: discourse[:sha]
+      }
+      logged = PluginManager::Log.add(
+        plugin[:name],
+        git,
+        plugin.slice(:status, :message, :backtrace)
       )
       updated = PluginManager::Plugin::Status.update(
         plugin[:name],
-        plugin[:branch],
-        discourse[:branch],
-        status: plugin[:status]
+        git,
+        status: plugin[:status].to_i
       )
 
       unless logged && updated

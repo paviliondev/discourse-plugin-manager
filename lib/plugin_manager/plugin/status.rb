@@ -3,12 +3,16 @@
 class ::PluginManager::Plugin::Status
   include ActiveModel::Serialization
 
+  DISCOURSE_URL = "https://github.com/discourse/discourse"
+
   PAGE_LIMIT = 30
   KEY_DELIMITER = "|"
 
   attr_reader :name,
               :branch,
+              :sha,
               :discourse_branch,
+              :discourse_sha,
               :key
 
   attr_accessor :status,
@@ -18,7 +22,9 @@ class ::PluginManager::Plugin::Status
   def initialize(name, attrs)
     @name = name
     @branch = attrs[:branch]
+    @sha = attrs[:sha]
     @discourse_branch = attrs[:discourse_branch]
+    @discourse_sha = attrs[:discourse_sha]
     @key = self.class.status_key(@name, @branch, @discourse_branch)
 
     # changable attrs
@@ -37,30 +43,40 @@ class ::PluginManager::Plugin::Status
     )
   end
 
-  def self.update(name, branch, discourse_branch, attrs)
-    old_status = get(name, branch, discourse_branch)
+  def self.required_git_attrs
+    [:branch, :sha, :discourse_branch, :discourse_sha]
+  end
+
+  def self.update(name, git = {}, attrs = {})
+    current_status = get(name, git[:branch], git[:discourse_branch])
+
+    if attrs[:status].present? && attrs[:test_status].nil?
+      return false if required_git_attrs.any? { |attr| git[attr].nil? }
+      return false if
+        current_status.present? &&
+        !attrs[:skip_git_check] &&
+        !newer_commit(current_status, git[:sha], git[:discourse_sha])
+    end
 
     new_attrs = {}
     [:status, :test_status].each do |attr|
-      new_attrs[attr] = attrs[attr] || old_status.send(attr)
+      new_attrs[attr] = attrs[attr] || (current_status && current_status.send(attr))
     end
-
     return false if new_attrs.values.blank?
 
     new_attrs[:status] = normalize_status(**new_attrs)
-    status_changed = old_status.status != new_attrs[:status]
-    new_attrs[:status_changed_at] = status_changed ? Time.now : old_status.status_changed_at
+    status_changed = current_status && (current_status.status != new_attrs[:status])
+    new_attrs[:status_changed_at] = (!current_status || status_changed) ? Time.now : current_status.status_changed_at
 
-    key = status_key(name, branch, discourse_branch)
+    key = status_key(name, git[:branch], git[:discourse_branch])
     new_attrs[:name] = name
-    new_attrs[:branch] = branch
-    new_attrs[:discourse_branch] = discourse_branch
+    required_git_attrs.each { |attr| new_attrs[attr] = git[attr] }
 
     ::PluginManagerStore.set(db_key, key, new_attrs)
 
     if status_changed
-      status_handler = ::PluginManager::StatusHandler.new(name, branch, discourse_branch)
-      status_handler.perform(old_status.status, new_attrs[:status])
+      status_handler = ::PluginManager::StatusHandler.new(name, git)
+      status_handler.perform(current_status.status, new_attrs[:status])
     end
   end
 
@@ -80,7 +96,7 @@ class ::PluginManager::Plugin::Status
 
   def self.get(name, branch, discourse_branch)
     raw = (::PluginManagerStore.get(db_key, status_key(name, branch, discourse_branch)) || {}).symbolize_keys
-    new(name, raw)
+    raw.present? ? new(name, raw) : nil
   end
 
   def self.list(keys: [], discourse_branch: nil, page: nil)
@@ -144,7 +160,7 @@ class ::PluginManager::Plugin::Status
     status == statuses[:recommended]
   end
 
-  def self.build_unknown_status(plugin, discourse_branch)
+  def self.placeholder_status(plugin, discourse_branch)
     new(
       plugin.name,
       branch: plugin.default_branch,
@@ -152,5 +168,23 @@ class ::PluginManager::Plugin::Status
       status: statuses[:unknown],
       status_changed_at: nil,
     )
+  end
+
+  def self.newer_commit(current_status, sha, discourse_sha)
+    discourse_equal = current_status.discourse_sha === discourse_sha
+    plugin_equal = current_status.sha === sha
+    return false if discourse_equal && plugin_equal
+
+    commits_since = current_status.status_changed_at
+    if !discourse_equal
+      discourse_manager = PluginManager::RepositoryManager.new(DISCOURSE_URL, current_status.discourse_branch)
+      discourse_commits_since = discourse_manager.get_commits(since: commits_since)
+      return false unless discourse_commits_since.any? { |c| c[:sha] === sha }
+    end
+
+    plugin = PluginManager::Plugin.get(current_status.name)
+    plugin_manager = PluginManager::RepositoryManager.new(plugin.url, current_status.discourse_branch)
+    plugin_commits_since = plugin_manager.get_commits(since: commits_since)
+    plugin_commits_since.any? { |c| c[:sha] === sha }
   end
 end

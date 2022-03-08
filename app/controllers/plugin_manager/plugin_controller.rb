@@ -50,10 +50,7 @@ class PluginManager::PluginController < ::ApplicationController
       :about,
       :version,
       :contact_emails,
-      :test_host,
-      :status,
-      :branch,
-      :discourse_branch
+      :test_host
     )
     attrs[:url] = url
 
@@ -105,7 +102,7 @@ class PluginManager::PluginController < ::ApplicationController
       if status = status_map[plugin.name]
         plugin.status = status
       else
-        plugin.status = PluginManager::Plugin::Status.build_unknown_status(plugin, discourse_branch)
+        plugin.status = PluginManager::Plugin::Status.placeholder_status(plugin, discourse_branch)
       end
     end
   end

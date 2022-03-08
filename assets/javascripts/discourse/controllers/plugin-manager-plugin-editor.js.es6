@@ -26,14 +26,6 @@ export default Controller.extend(ModalFunctionality, {
     return !retrieved || retrieving;
   },
 
-  @discourseComputed
-  pluginStatuses() {
-    return Object.keys(pluginStatuses).map((status) => ({
-      id: pluginStatuses[status],
-      name: status,
-    }));
-  },
-
   @discourseComputed("isNew")
   modalTitle(isNew) {
     return `admin.plugin_manager.plugin.${isNew ? "add" : "edit"}`;
@@ -85,15 +77,12 @@ export default Controller.extend(ModalFunctionality, {
       const model = this.model;
       const attrs = {
         url: model.url,
-        support_url: model.support_url,
-        try_url: model.try_url,
         name: model.name,
         authors: model.authors,
         about: model.about,
         version: model.version,
         contact_emails: model.contact_emails,
-        test_host: model.test_host,
-        status: model.status,
+        test_host: model.test_host
       };
       Plugin.save(attrs).then((result) => {
         if (result.success) {

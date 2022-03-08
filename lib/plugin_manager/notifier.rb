@@ -79,7 +79,9 @@ class PluginManager::Notifier
       Time: #{log.updated_at}
       Message: #{log.message}
       Discourse Branch: #{log.discourse_branch}
+      Discourse SHA: #{log.discourse_sha}
       Plugin Branch: #{log.branch}
+      Plugin SHA: #{log.sha}
       #{post_markdown_details(log)}
     EOF
   end
@@ -93,9 +95,11 @@ class PluginManager::Notifier
 
       ### Discourse
       Branch: #{log.discourse_branch}
+      SHA: #{log.discourse_sha}
 
       ### Plugin
       Branch: #{log.branch}
+      SHA: #{log.sha}
 
       ### Details
       #{post_markdown_details(log)}

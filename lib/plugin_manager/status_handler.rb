@@ -2,13 +2,11 @@
 
 class ::PluginManager::StatusHandler
   attr_reader :name,
-              :branch,
-              :discourse_branch
+              :git
 
-  def initialize(name, branch, discourse_branch)
+  def initialize(name, git)
     @name = name
-    @branch = branch
-    @discourse_branch = discourse_branch
+    @git = git
   end
 
   def perform(old_status, new_status)
@@ -17,20 +15,12 @@ class ::PluginManager::StatusHandler
 
     if broken || fixed
       status = broken ? new_status : old_status
-      log_key = ::PluginManager::Log.key(name, status, branch, discourse_branch)
-      return false unless log_key
+      log = ::PluginManager::Log.get_unresolved(name, git)
 
-      log = ::PluginManager::Log.get(log_key)
       if !log
         message_key = broken ? 'broken' : 'fixed'
         message = I18n.t("plugin_manager.notifier.#{message_key}.title", plugin_name: name)
-        log = ::PluginManager::Log.add(
-          name: name,
-          branch: branch,
-          discourse_branch: discourse_branch,
-          status: new_status,
-          message: message
-        )
+        log = ::PluginManager::Log.add(name, git, status: new_status, message: message)
       end
 
       notifier = ::PluginManager::Notifier.new(name)

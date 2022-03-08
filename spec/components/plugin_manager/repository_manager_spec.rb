@@ -2,8 +2,6 @@
 require_relative '../../plugin_helper'
 
 describe PluginManager::RepositoryManager do
-  let(:compatible_plugin) { "compatible_plugin" }
-
   before do
     stub_github_user_request
     stub_github_plugin_request

@@ -35,7 +35,7 @@ class ::PluginManager::TestManager
 
     test_status = request_test_status
 
-    if test_status.present?
+    if !test_status.nil?
       attrs = {}
       attrs[:test_status] = test_status
       attrs[:branch] = branch

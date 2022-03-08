@@ -3,9 +3,12 @@
 class ::PluginManager::Log
   include ActiveModel::Serialization
 
-  attr_reader :name,
+  attr_reader :key,
+              :plugin_name,
               :branch,
+              :sha,
               :discourse_branch,
+              :discourse_sha,
               :status,
               :message
 
@@ -13,15 +16,20 @@ class ::PluginManager::Log
                 :created_at,
                 :updated_at,
                 :resolved_at,
+                :issue_id,
                 :issue_url,
                 :test_url,
                 :issue_id
 
-  def initialize(attrs)
+  def initialize(key, attrs)
     attrs = attrs.with_indifferent_access
-    @name = attrs[:name]
+
+    @key = key || self.class.key(attrs[:plugin_name])
+    @plugin_name = attrs[:plugin_name]
     @branch = attrs[:branch]
+    @sha = attrs[:sha]
     @discourse_branch = attrs[:discourse_branch]
+    @discourse_sha = attrs[:discourse_sha]
 
     @status = attrs[:status]
     @message = attrs[:message]
@@ -36,62 +44,55 @@ class ::PluginManager::Log
 
   def save
     @updated_at = Time.now.iso8601
-
-    ::PluginManagerStore.set(
-      self.class.db_key,
-      self.class.key(name, status, branch, discourse_branch),
-      self.instance_values
-    )
+    ::PluginManagerStore.set(self.class.db_key, key, self.instance_values)
   end
 
-  def key
-    self.class.key(name, status, branch, discourse_branch)
-  end
-
-  def self.add(name: nil, branch: nil, discourse_branch: nil, status: nil, message: nil, backtrace: nil, test_url: nil)
-    return if !branch || !discourse_branch
-    attrs = {
-      name: name,
-      branch: branch,
-      discourse_branch: discourse_branch,
-      message: message,
-      status: status
-    }
-    log_key = key(name, status, branch, discourse_branch)
-    log = get(log_key)
+  def self.add(plugin_name, git = {}, attrs = {})
+    log = get_unresolved(plugin_name, git)
 
     if log
-      log.backtrace = backtrace if backtrace.present?
-      log.test_url = test_url if test_url.present?
+      log.backtrace = attrs[:backtrace] if attrs[:backtrace].present?
+      log.test_url = attrs[:test_url] if attrs[:test_url].present?
     else
-      attrs[:backtrace] = backtrace if backtrace.present?
-      attrs[:test_url] = test_url if test_url.present?
+      new_attrs = {}
+      new_attrs[:plugin_name] = plugin_name
+      new_attrs.merge!(git)
+      new_attrs.merge!(attrs)
 
-      log = new(attrs)
+      log = new(nil, new_attrs)
       log.created_at = Time.now.iso8601
     end
 
     log.save ? log : nil
   end
 
-  def self.get(key)
-    raw = ::PluginManagerStore.get(db_key, key)
-    raw ? new(raw) : nil
+  def self.get_unresolved(plugin_name, git = {})
+    record = list_query(plugin_name)
+      .where("value::json->>'branch' = '#{git[:branch]}' AND value::json->>'discourse_branch' = '#{git[:discourse_branch]}'")
+      .where("coalesce((value::json->>'resolved_at'), '') = ''")
+      .order("value::json->>'updated_at' DESC")
+      .first
+    record ? new(record.key, JSON.parse(record.value)) : nil
+  end
+
+  def self.list_query(plugin_name = nil)
+    query = PluginStoreRow.where(plugin_name: db_key)
+
+    if plugin_name
+      query.where("key LIKE '#{plugin_name}-%'")
+    else
+      query
+    end
   end
 
   def self.list(plugin_name = nil)
-    query = PluginStoreRow.where(plugin_name: db_key)
-    query = query.where("key LIKE '#{plugin_name}-log-%'") if plugin_name
-    query.order("value::json->>'updated_at' DESC")
+    list_query(plugin_name)
+      .order("value::json->>'updated_at' DESC")
       .map { |record| new(JSON.parse(record.value)) }
   end
 
-  def self.digest(status, plugin_sha, discourse_sha)
-    Digest::SHA256.hexdigest("#{status}-#{plugin_sha}-#{discourse_sha}")
-  end
-
-  def self.key(name, status, branch, discourse_branch)
-    "#{name.dasherize}-#{digest(status, branch, discourse_branch)}"
+  def self.key(plugin_name)
+    "#{plugin_name.dasherize}-#{SecureRandom.hex(16)}"
   end
 
   def self.db_key

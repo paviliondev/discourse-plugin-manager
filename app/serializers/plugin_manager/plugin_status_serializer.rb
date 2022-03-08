@@ -2,7 +2,9 @@
 class PluginManager::PluginStatusSerializer < ::ApplicationSerializer
   attributes :name,
              :branch,
+             :sha,
              :discourse_branch,
+             :discourse_sha,
              :status,
              :status_changed_at,
              :test_status

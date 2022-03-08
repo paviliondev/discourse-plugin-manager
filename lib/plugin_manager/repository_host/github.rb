@@ -14,8 +14,18 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
     "users/#{repo_user}"
   end
 
-  def commits_path
-    "#{repository_path}/commits"
+  def commits_path(since: nil, ref: nil, sha: nil)
+    path = "#{repository_path}/commits"
+    path = "#{path}/#{ref}" if ref
+
+    query_params = {}
+    query_params[:since] = since if since
+    query_params[:sha] = sha if sha
+    if query_params.present?
+      path = "#{path}?#{URI.encode_www_form(query_params)}"
+    end
+
+    path
   end
 
   def plugin_file_path
@@ -60,7 +70,7 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
   end
 
   def get_commits_from_response(response)
-    response.map do |commit_item|
+    [*response].map do |commit_item|
       {
         sha: commit_item['sha'],
         date: commit_item['commit']['committer']['date']
