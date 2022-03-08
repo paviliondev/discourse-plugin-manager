@@ -47,11 +47,15 @@ class ::PluginManager::Plugin::Status
     [:branch, :sha, :discourse_branch, :discourse_sha]
   end
 
+  def self.has_required_git_attrs?(git)
+    required_git_attrs.all? { |attr| git[attr].present? }
+  end
+
   def self.update(name, git = {}, attrs = {})
     current_status = get(name, git[:branch], git[:discourse_branch])
 
     if attrs[:status].present? && attrs[:test_status].nil?
-      return false if required_git_attrs.any? { |attr| git[attr].nil? }
+      return false if !has_required_git_attrs?(git)
       return false if
         current_status.present? &&
         !attrs[:skip_git_check] &&
