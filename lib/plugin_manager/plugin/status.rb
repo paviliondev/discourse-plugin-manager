@@ -76,7 +76,7 @@ class ::PluginManager::Plugin::Status
 
     if status_changed
       status_handler = ::PluginManager::StatusHandler.new(name, git)
-      status_handler.perform(current_status.status, new_attrs[:status])
+      status_handler.perform(current_status.status, new_attrs[:status], attrs.slice(:backtrace, :message))
     else
       true
     end

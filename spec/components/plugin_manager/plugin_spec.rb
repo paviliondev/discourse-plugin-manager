@@ -12,9 +12,10 @@ describe PluginManager::Plugin do
   end
 
   it "retrieves plugin from url" do
+    stub_github_plugin_request
     stub_github_plugin_file_request
 
-    result = described_class.retrieve_from_url(plugin_url, plugin_branch)
+    result = described_class.retrieve_from_url(plugin_url)
     expect(result.plugin[:name]).to eq(compatible_plugin)
     expect(result.plugin[:about]).to eq("Compatbile plugin fixture")
     expect(result.plugin[:authors]).to eq("Angus McLeod")
