@@ -395,6 +395,7 @@ class ::PluginManager::Plugin
       docker_manager
       discourse-plugin-manager
       discourse-plugin-guard
+      discourse-code-review
       discourse-details
       discourse-local-dates
       discourse-narrative-bot
