@@ -54,7 +54,7 @@ class PluginManager::PluginStatusController < ::ApplicationController
     plugins = params.permit(plugins: [:name, :branch, :sha, :status, :message, :backtrace])
       .to_h[:plugins]
       .map(&:with_indifferent_access)
-      .select { |plugin| plugin[:branch] && plugin[:sha] }
+      .select { |plugin| plugin[:branch].present? && plugin[:sha].present? }
 
     unless plugins.any?
       raise Discourse::InvalidParameters.new(:plugins)
