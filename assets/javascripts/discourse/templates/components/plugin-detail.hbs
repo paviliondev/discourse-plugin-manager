@@ -17,13 +17,16 @@
     {{branch-label plugin}}
 
     {{#if category}}
-      {{discourse-status discourse=discourse}}
       {{plugin-status-button plugin=plugin discourse=discourse}}
     {{/if}}
   </div>
 
-  {{#if plugin.owner}}
-    {{owner-logo plugin.owner linked=true class="medium"}}
+  {{#if category}}
+    {{discourse-status discourse=discourse}}
+  {{else}}
+    {{#if plugin.owner}}
+      {{owner-logo plugin.owner linked=true class="medium"}}
+    {{/if}}
   {{/if}}
 </div>
 

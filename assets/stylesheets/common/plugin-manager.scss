@@ -271,14 +271,18 @@ $incompatible: #ef1700;
   max-width: 85vw;
 
   &.plugin-detail {
-    .owner-logo {
+    .owner-logo,
+    .discourse-status {
       margin-left: auto;
     }
-  }
 
-  .branch-label {
-    margin: 0 0.15em;
-    padding: 0.25em 0.5em;
+    .branch-label {
+      margin: 0 0.15em;
+      padding: 0.25em 1em;
+      height: 35px;
+      box-sizing: border-box;
+      line-height: 27px;
+    }
   }
 }
 

@@ -1,5 +1,25 @@
 en:
   js:
+    categories:
+      all: "all plugins"
+      n_more: "Plugins (%{count} more)..."
+    category:
+      none: "(no plugin)"
+      all: "All plugins"
+      list: "List Plugins"
+    filters:
+      categories:
+        title: "Plugins"
+        title_in: "Plugin - %{categoryName}"
+    search:
+      categories: Plugins
+      type:
+        categories: "Plugins"
+        categories_and_tags: "Plugins/tags"
+      advanced:
+        in_category:
+          label: Plugin
+
     server_status:
       title: "Plugins"
       add_plugin: Submit a Plugin
@@ -73,6 +93,10 @@ en:
           domain: Domain
           updated_at: Updated At
         no_plugins: No plugins.
+
+    user:
+      preferences_nav:
+        categories: Plugins
 
   admin_js:
     admin:

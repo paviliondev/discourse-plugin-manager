@@ -1,4 +1,6 @@
 en:
+  category:
+    topic_prefix: "About the %{category} plugin"
   site_settings:
     plugin_manager_update_category_id: Server update category
     plugin_manager_issue_management_site_base_url: "URL of site where bug reports are being handled"
