@@ -66,6 +66,7 @@ export default {
       });
 
       api.modifyClass("controller:discovery/categories", {
+        pluginId: "plugin-manager",
         queryParams: ["branch"],
 
         @observes("discourse.branch")
