@@ -7,9 +7,9 @@ end
 
 PluginManager::Engine.routes.draw do
   get 'status' => 'plugin_status#index'
+  get 'status/validate-key' => 'plugin_status#validate_key'
   get 'status/:plugin_name' => 'plugin_status#show'
   post 'status' => 'plugin_status#update', defaults: { format: 'json' }
-  get 'status/validate-key' => 'plugin_status#validate_key'
   get 'discourse' => 'discourse#index'
   get 'plugin' => 'plugin#index'
   get 'plugin/category/:category_id' => 'plugin#category'
