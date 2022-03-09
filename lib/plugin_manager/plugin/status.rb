@@ -52,21 +52,46 @@ class ::PluginManager::Plugin::Status
   end
 
   def self.update(name, git = {}, attrs = {})
+    result = OpenStruct.new(success: false, errors: [])
     current_status = get(name, git[:branch], git[:discourse_branch])
 
     if attrs[:status].present? && attrs[:test_status].nil?
-      return false if !has_required_git_attrs?(git)
-      return false if
-        current_status.present? &&
-        !attrs[:skip_git_check] &&
-        !newer_commit(current_status, git[:sha], git[:discourse_sha])
+      if !has_required_git_attrs?(git)
+        result.errors << "Does not have required git attributes"
+        return result
+      end
+
+      if current_status.present? && !attrs[:skip_git_check]
+        discourse_equal = current_status.discourse_sha === git[:discourse_sha]
+        plugin_equal = current_status.sha === git[:sha]
+
+        if discourse_equal && plugin_equal
+          result.errors << "Same Discourse commit and plugin commit as current status."
+          return result
+        end
+
+        since = current_status.status_changed_at
+        if !discourse_equal && !commit_since?(DISCOURSE_URL, current_status.discourse_branch, git[:discourse_sha], since)
+          result.errors << "Discourse commit is older than current status."
+          return result
+        end
+
+        plugin = PluginManager::Plugin.get(current_status.name)
+        if !commits_since?(plugin.url, current_status.branch, git[:sha], since)
+          result.errors << "Plugin commit is the same or older than current status."
+          return result
+        end
+      end
     end
 
     new_attrs = {}
     [:status, :test_status].each do |attr|
       new_attrs[attr] = attrs[attr] || (current_status && current_status.send(attr))
     end
-    return false if new_attrs.values.blank?
+    if new_attrs.values.blank?
+      result.errors << "No valid status attributes"
+      return result
+    end
 
     new_attrs[:status] = normalize_status(**new_attrs)
     status_changed = current_status && (current_status.status != new_attrs[:status])
@@ -80,10 +105,16 @@ class ::PluginManager::Plugin::Status
 
     if status_changed
       status_handler = ::PluginManager::StatusHandler.new(name, git)
-      status_handler.perform(current_status.status, new_attrs[:status], attrs.slice(:backtrace, :message))
+      result.success = status_handler.perform(
+        current_status.status,
+        new_attrs[:status],
+        attrs.slice(:backtrace, :message)
+      )
     else
-      true
+      result.success = true
     end
+
+    result
   end
 
   def self.normalize_status(status:, test_status:)
@@ -176,21 +207,9 @@ class ::PluginManager::Plugin::Status
     )
   end
 
-  def self.newer_commit(current_status, sha, discourse_sha)
-    discourse_equal = current_status.discourse_sha === discourse_sha
-    plugin_equal = current_status.sha === sha
-    return false if discourse_equal && plugin_equal
-
-    commits_since = current_status.status_changed_at
-    if !discourse_equal
-      discourse_manager = PluginManager::RepositoryManager.new(DISCOURSE_URL, current_status.discourse_branch)
-      discourse_commits_since = discourse_manager.get_commits(since: commits_since)
-      return false unless discourse_commits_since.any? { |c| c[:sha] === discourse_sha }
-    end
-
-    plugin = PluginManager::Plugin.get(current_status.name)
-    plugin_manager = PluginManager::RepositoryManager.new(plugin.url, current_status.discourse_branch)
-    plugin_commits_since = plugin_manager.get_commits(since: commits_since)
-    plugin_commits_since.any? { |c| c[:sha] === sha }
+  def self.commits_since?(url, branch, sha, since)
+    manager = PluginManager::RepositoryManager.new(url, branch)
+    commits_since = manager.get_commits(since: since)
+    commits_since.any? { |c| c[:sha] === sha }
   end
 end

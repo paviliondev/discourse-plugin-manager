@@ -90,6 +90,7 @@ class PluginManager::PluginStatusController < ::ApplicationController
     end
 
     errors = []
+    updated = []
     registered_plugins.each do |plugin|
       git = {
         branch: plugin[:branch],
@@ -103,15 +104,23 @@ class PluginManager::PluginStatusController < ::ApplicationController
         message: plugin[:message],
         backtrace: plugin[:backtrace]
       }
-      updated = PluginManager::Plugin::Status.update(plugin[:name], git, attrs)
-      errors.push(plugin[:name]) unless updated
+      result = PluginManager::Plugin::Status.update(plugin[:name], git, attrs)
+
+      if result.errors.any?
+        errors << {
+          plugin: plugin[:name],
+          errors: result.errors
+        }
+      else
+        updated << plugin[:name]
+      end
     end
 
-    if errors.any?
-      render json: failed_json.merge(plugins: errors)
-    else
-      render json: success_json
-    end
+    json = registered_plugins.size === errors.size ? failed_json : success_json
+    json = json.merge(errors: errors) if errors.any?
+    json = json.merge(updated: updated) if updated.any?
+
+    render json: json
   end
 
   def validate_key
