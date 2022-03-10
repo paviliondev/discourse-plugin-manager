@@ -89,6 +89,8 @@ class PluginManager::PluginStatusController < ::ApplicationController
       raise Discourse::InvalidParameters.new("no valid plugin statuses")
     end
 
+    Rails.logger.warn("Plugin status update received: #{registered_plugins.inspect}")
+
     errors = []
     updated = []
     registered_plugins.each do |plugin|
@@ -105,6 +107,8 @@ class PluginManager::PluginStatusController < ::ApplicationController
         backtrace: plugin[:backtrace]
       }
       result = PluginManager::Plugin::Status.update(plugin[:name], git, attrs)
+
+      Rails.logger.warn("Plugin status update result: #{result.inspect}")
 
       if result.errors.any?
         errors << {
