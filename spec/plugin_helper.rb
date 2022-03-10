@@ -48,7 +48,7 @@ def new_discourse_sha
 end
 
 def discourse_branch
-  "main"
+  "tests-passed"
 end
 
 def compatible_plugin

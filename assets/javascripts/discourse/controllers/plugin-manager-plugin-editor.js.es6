@@ -13,7 +13,7 @@ export default Controller.extend(ModalFunctionality, {
   canRetrieve: alias("isNew"),
   urlDisabled: not("canRetrieve"),
   retrieveDisabled: empty("model.url"),
-  discourseBranches: ["main", "tests-passed", "stable"],
+  discourseBranches: ["tests-passed", "stable"],
 
   @discourseComputed("retrieved", "retrieving")
   addPluginDisabled(retrieved, retrieving) {

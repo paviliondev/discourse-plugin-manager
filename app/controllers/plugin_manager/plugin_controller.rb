@@ -100,7 +100,7 @@ class PluginManager::PluginController < ::ApplicationController
   end
 
   def discourse_branch
-    @discourse_branch ||= params[:branch] || 'main'
+    @discourse_branch ||= params[:branch] || 'tests-passed'
   end
 
   def map_status_to_plugins

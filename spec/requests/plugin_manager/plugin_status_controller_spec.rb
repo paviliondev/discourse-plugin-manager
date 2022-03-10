@@ -22,12 +22,12 @@ describe PluginManager::PluginStatusController do
         {
           name: compatible_plugin,
           branch: 'main',
-          discourse_branch: 'main'
+          discourse_branch: 'tests-passed'
         },
         {
           name: third_party_plugin,
           branch: 'main',
-          discourse_branch: 'main'
+          discourse_branch: 'tests-passed'
         }
       ]
     }
@@ -64,7 +64,7 @@ describe PluginManager::PluginStatusController do
           }
         ],
         discourse: {
-          branch: 'main',
+          branch: 'tests-passed',
           sha: discourse_sha
         }
       }

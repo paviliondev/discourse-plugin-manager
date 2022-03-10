@@ -23,7 +23,7 @@ describe PluginManager::PluginController do
   end
 
   it "indexes plugins with statuses filtered by discourse branch" do
-    get "/plugin-manager/plugin.json", params: { branch: plugin_branch }
+    get "/plugin-manager/plugin.json", params: { branch: discourse_branch }
 
     expect(response.status).to eq(200)
 

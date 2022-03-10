@@ -315,7 +315,7 @@ class ::PluginManager::Plugin
 
   def self.update_test_statuses
     with_attr('test_host').each do |plugin|
-      test_manager = PluginManager::TestManager.new(plugin.test_host, plugin.default_branch, 'main')
+      test_manager = PluginManager::TestManager.new(plugin.test_host, plugin.default_branch, 'tests-passed')
 
       if test_manager.ready?
         test_manager.update(plugin.name)
