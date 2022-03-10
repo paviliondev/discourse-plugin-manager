@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
   def initialize
     @name = 'github'
@@ -94,10 +95,10 @@ class PluginManager::RepositoryHost::Github < PluginManager::RepositoryHost
   end
 
   def client_id
-    SiteSetting.plugin_manager_github_oauth_client_id
+    @client_id ||= SiteSetting.plugin_manager_github_oauth_client_id
   end
 
   def client_secret
-    SiteSetting.plugin_manager_github_oauth_client_secret
+    @client_secret ||= SiteSetting.plugin_manager_github_oauth_client_secret
   end
 end

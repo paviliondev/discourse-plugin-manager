@@ -103,7 +103,8 @@ class ::PluginManager::Plugin
       owner: attrs[:owner]&.instance_values || plugin.owner&.instance_values,
       category_id: attrs[:category_id] || plugin.category_id,
       default_branch: attrs[:default_branch] || plugin.default_branch,
-      branches: plugin.branches || []
+      branches: plugin.branches || [],
+      test_host: attrs[:test_host] || plugin.test_host
     }
 
     [:branch, :default_branch].each do |key|
@@ -394,7 +395,6 @@ class ::PluginManager::Plugin
       discourse-plugin-manager
       discourse-plugin-guard
       discourse-code-review
-      discourse-custom-wizard
       discourse-details
       discourse-local-dates
       discourse-narrative-bot

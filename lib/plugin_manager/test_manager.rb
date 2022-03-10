@@ -66,8 +66,13 @@ class ::PluginManager::TestManager
   end
 
   def request(endpoint, opts = {})
+    connection = Excon.new(
+      "https://#{@host.domain}/#{endpoint}",
+      middlewares: Excon.defaults[:middlewares] + [Excon::Middleware::RedirectFollower]
+    )
+
     begin
-      response = Excon.get("https://#{@host.domain}/#{endpoint}")
+      response = connection.request(opts)
     rescue Excon::Error
       response = nil
     end

@@ -77,7 +77,7 @@ class ::PluginManager::Plugin::Status
         end
 
         plugin = PluginManager::Plugin.get(current_status.name)
-        if !commits_since?(plugin.url, current_status.branch, git[:sha], since)
+        if !commit_since?(plugin.url, current_status.branch, git[:sha], since)
           result.errors << "Plugin commit is the same or older than current status."
           return result
         end
@@ -207,7 +207,7 @@ class ::PluginManager::Plugin::Status
     )
   end
 
-  def self.commits_since?(url, branch, sha, since)
+  def self.commit_since?(url, branch, sha, since)
     manager = PluginManager::RepositoryManager.new(url, branch)
     commits_since = manager.get_commits(since: since)
     commits_since.any? { |c| c[:sha] === sha }
