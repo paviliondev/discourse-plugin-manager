@@ -210,6 +210,6 @@ class ::PluginManager::Plugin::Status
   def self.commit_since?(url, branch, sha, since)
     manager = PluginManager::RepositoryManager.new(url, branch)
     commits_since = manager.get_commits(since: since)
-    commits_since.any? { |c| c[:sha] === sha }
+    commits_since.present? && commits_since.any? { |c| c[:sha] === sha }
   end
 end
