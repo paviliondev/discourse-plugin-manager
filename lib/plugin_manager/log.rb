@@ -75,6 +75,15 @@ class ::PluginManager::Log
     record ? new(record.key, JSON.parse(record.value)) : nil
   end
 
+  def self.get_resolved(plugin_name, git = {})
+    record = list_query(plugin_name)
+      .where("value::json->>'branch' = '#{git[:branch]}' AND value::json->>'discourse_branch' = '#{git[:discourse_branch]}'")
+      .where("value::json->>'resolved_at' IS NOT NULL")
+      .order("value::json->>'updated_at' DESC")
+      .first
+    record ? new(record.key, JSON.parse(record.value)) : nil
+  end
+
   def self.list_query(plugin_name = nil)
     query = PluginStoreRow.where(plugin_name: db_key)
 

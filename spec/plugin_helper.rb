@@ -92,15 +92,28 @@ def stub_plugin_git_cmds(dir, plugin_url)
   Open3.expects(:capture3).with("git rev-parse HEAD", chdir: dir).returns(plugin_sha).at_least_once
   Open3.expects(:capture3).with("git rev-parse --abbrev-ref HEAD", chdir: dir).returns(plugin_branch).at_least_once
   Open3.expects(:capture3).with("git config --get remote.origin.url", chdir: dir).returns(plugin_url || "https://github.com/paviliondev/discourse-compatible-plugin.git")
-  Discourse.expects(:git_branch).returns(discourse_branch)
-  Discourse.expects(:git_version).returns(discourse_sha)
+  Discourse.expects(:git_branch).returns(discourse_branch).at_least_once
+  Discourse.expects(:git_version).returns(discourse_sha).at_least_once
 end
 
-def setup_test_plugin(name, plugin_url = nil)
+def setup_test_plugin(name, plugin_url: nil, setup_category: false)
   dir = plugin_dir(name)
   stub_plugin_git_cmds(dir, plugin_url)
   PluginManager::TestHost.expects(:detect_local).returns("github")
-  PluginManager::Plugin.set_local(dir)
+  plugin = PluginManager::Plugin.set_local(dir)
+
+  if setup_category
+    category = Fabricate(:category)
+    plugin = PluginManager::Plugin.set(plugin.name, category_id: category.id)
+    local_management = SiteSetting.plugin_manager_issue_management_local
+    subcategory_name = SiteSetting.plugin_manager_issue_management_local_subcategory_name
+
+    if local_management && subcategory_name.present?
+      Fabricate(:category, parent_category_id: plugin.category_id, name: subcategory_name)
+    end
+  end
+
+  plugin
 end
 
 def stub_github_user_request(user = "paviliondev")

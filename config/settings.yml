@@ -1,6 +1,10 @@
 plugins:
+  plugin_manager_issue_management_local:
+    default: true
+  plugin_manager_issue_management_local_subcategory_name:
+    default: issues
   plugin_manager_issue_management_site_base_url:
-    default: "https://thepavilion.io"
+    default: ""
   plugin_manager_issue_management_site_api_token:
     default: ""
   plugin_manager_issue_management_site_api_user:
@@ -8,9 +12,5 @@ plugins:
   plugin_manager_issue_management_site_issue_tags:
     type: list
     default: "automated"
-  plugin_manager_issue_management_site_issue_category_id:
-    default: 1
-    type: integer
-    min: 1
   plugin_manager_github_oauth_client_id: ""
   plugin_manager_github_oauth_client_secret: ""

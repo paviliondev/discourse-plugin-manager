@@ -3,6 +3,8 @@ en:
     topic_prefix: "About the %{category} plugin"
   site_settings:
     plugin_manager_update_category_id: Server update category
+    plugin_manager_issue_management_local: Post issues locally
+    plugin_manager_issue_management_local_subcategory_name: Name of issues subcategories
     plugin_manager_issue_management_site_base_url: "URL of site where bug reports are being handled"
     plugin_manager_issue_management_site_api_token: "API Token of site where bug reports are being handled"
     plugin_manager_issue_management_site_api_user:  "API User of site where bug reports are being handled"
@@ -17,8 +19,7 @@ en:
         title: "%{plugin_name} does not work on the latest Discourse"
         body: "%{plugin_name} either has a bug, or is incompatible with the Discourse commit linked below."
       fixed:
-        title: "%{plugin_name} is working again on the latest Discourse"
-        body: "%{plugin_name} has recovered from the issue linked below."
+        body: "%{plugin_name} has recovered from this issue."
     test:
       error: "The tests are failing."
       error_test: "The '%{test_name}' test is failing."

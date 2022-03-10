@@ -10,71 +10,109 @@ class PluginManager::Notifier
 
   def send(type, log)
     @log = log
-    send_post(type) if send_post?
-    send_email(type) if send_email?
+    @type = type
+    send_post if send_post?
+    send_email if send_email?
   end
 
-  def send_email(type)
+  def send_email
     Jobs.enqueue(:send_plugin_notification,
       plugin: @plugin.name,
       site: SiteSetting.title,
       contact_emails: contact_emails,
-      title: self.class.title(type, @plugin.display_name),
-      raw: self.class.email_body(type, @log, @plugin.display_name)
+      title: self.class.title(@type, @plugin.display_name),
+      raw: self.class.email_body(@type, @log, @plugin.display_name)
     )
   end
 
-  def send_post(type)
-    body = {
-      title: self.class.title(type, @plugin.display_name),
-      raw: self.class.post_markdown(type, @log, @plugin.display_name),
-      archetype: "regular"
+  def send_post
+    opts = {
+      raw: self.class.post_markdown(@type, @log, @plugin.display_name)
     }
 
-    if type === :broken
-      body[:tags] = post_tags
-      body[:category] = post_category
-    elsif type === :fixed
-      body[:topic_id] = @log.issue_id
+    if @type === :broken
+      category_id = @plugin.category_id
+      local_management = SiteSetting.plugin_manager_issue_management_local
+      subcategory_name = SiteSetting.plugin_manager_issue_management_local_subcategory_name
+
+      if local_management && subcategory_name.present?
+        category = Category.find_by(parent_category_id: @plugin.category_id, name: subcategory_name)
+        category_id = category.id if category
+      end
+
+      opts.merge!(
+        title: self.class.title(@type, @plugin.display_name),
+        archetype: "regular",
+        category: category_id,
+        tags: post_tags
+      )
     end
 
+    if @type === :fixed
+      opts.merge!(
+        topic_id: @log.issue_id
+      )
+    end
+
+    if SiteSetting.plugin_manager_issue_management_local
+      local_post(opts)
+    else
+      remote_post(opts)
+    end
+  end
+
+  def local_post(opts)
+    opts = opts.merge(skip_validations: true)
+    creator = PostCreator.new(Discourse.system_user, opts)
+    post = creator.create
+    topic = post.topic
+
+    if @type === :fixed
+      topic.update_status('closed', true, Discourse.system_user)
+    end
+
+    if @type === :broken
+      update_log(topic.id, topic.url)
+    end
+  end
+
+  def remote_post(opts)
     response = Excon.post("#{post_settings[:base_url]}/posts",
       headers: {
         "Content-Type" => "application/json",
         "Api-Username" => "#{post_settings[:api_user]}",
         "Api-Key" => "#{post_settings[:api_token]}"
       },
-      body: body.to_json
+      body: opts.to_json
     )
 
-    if response.status == 200
-      result = nil
+    return false unless response.status == 200
+    result = nil
 
-      begin
-        result = JSON.parse(response.body)
-      rescue JSON::ParserError
-        #
-      end
-
-      if result && result['topic_id']
-        @log.issue_id = result['topic_id']
-        @log.issue_url = post_settings[:base_url] + "/t/" + result['topic_id'].to_s
-        @log.save
-
-        return true
-      end
+    begin
+      result = JSON.parse(response.body)
+    rescue JSON::ParserError
+      return false
     end
 
-    false
+    return false unless result && result['topic_id']
+
+    update_log(result['topic_id'], post_settings[:base_url] + "/t/" + result['topic_id'].to_s)
+  end
+
+  def update_log(topic_id, url)
+    @log.issue_id = topic_id
+    @log.issue_url = url
+    @log.save
   end
 
   def self.title(type, plugin_name)
-    I18n.t("plugin_manager.notifier.#{type}.title", plugin_name: plugin_name)
+    I18n.t("plugin_manager.notifier.#{type.to_s}.title", plugin_name: plugin_name)
   end
 
   def self.email_body(type, log, plugin_name)
     <<~EOF
-      #{I18n.t("plugin_manager.notifier.#{type}.body", plugin_name: plugin_name)}
+      #{I18n.t("plugin_manager.notifier.#{type.to_s}.body", plugin_name: plugin_name)}
 
       Time: #{log.updated_at}
       Message: #{log.message}
@@ -87,29 +125,38 @@ class PluginManager::Notifier
   end
 
   def self.post_markdown(type, log, plugin_name)
-    <<~EOF
-      #{I18n.t("plugin_manager.notifier.#{type}.body", plugin_name: plugin_name)}
+    body = I18n.t("plugin_manager.notifier.#{type.to_s}.body", plugin_name: plugin_name)
 
-      Time: #{log.updated_at}
-      Message: ``#{log.message}``
+    if type === :fixed
+      body
+    else
+      <<~EOF
+        #{body}
 
-      ### Discourse
-      Branch: #{log.discourse_branch}
-      SHA: #{log.discourse_sha}
+        Time: #{log.updated_at}
+        Message: ``#{log.message}``
 
-      ### Plugin
-      Branch: #{log.branch}
-      SHA: #{log.sha}
+        ### Discourse
+        Branch: #{log.discourse_branch}
+        SHA: #{log.discourse_sha}
 
-      ### Details
-      #{post_markdown_details(log)}
-    EOF
+        ### Plugin
+        Branch: #{log.branch}
+        SHA: #{log.sha}
+
+        ### Details
+        #{post_markdown_details(log)}
+      EOF
+    end
   end
 
   def self.post_markdown_details(log)
     result = ""
-    result += "Test url: #{log.test_url}" if log.test_url
-    result += "Issue url: #{log.issue_url}" if log.issue_url
+    result += "Test url: #{log.test_url}\n" if log.test_url
+
+    if !SiteSetting.plugin_manager_issue_management_local && log.issue_url
+      result += "Issue url: #{log.issue_url}\n"
+    end
 
     if log.backtrace
       result += <<~EOF
@@ -127,7 +174,7 @@ class PluginManager::Notifier
       api_user = SiteSetting.plugin_manager_issue_management_site_api_user
       api_token = SiteSetting.plugin_manager_issue_management_site_api_token
 
-      if base_url && api_user && api_token
+      if base_url.present? && api_user.present? && api_token.present?
         {
           base_url: base_url,
           api_user: api_user,
@@ -150,15 +197,7 @@ class PluginManager::Notifier
   end
 
   def send_post?
-    @plugin.owner&.name&.downcase == 'pavilion' && (
-      post_settings[:base_url].present? &&
-      post_settings[:api_user].present? &&
-      post_settings[:api_token].present?
-    )
-  end
-
-  def post_category
-    SiteSetting.plugin_manager_issue_management_site_issue_category_id
+    SiteSetting.plugin_manager_issue_management_local || post_settings.present?
   end
 
   def post_tags

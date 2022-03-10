@@ -44,12 +44,6 @@ describe PluginManager::Plugin::Status do
   end
 
   context "status change" do
-    before do
-      SiteSetting.plugin_manager_issue_management_site_base_url = base_url
-      SiteSetting.plugin_manager_issue_management_site_api_user = api_user
-      SiteSetting.plugin_manager_issue_management_site_api_token = api_token
-    end
-
     def add_log(plugin)
       PluginManager::Log.add(plugin, git,
         message: "#{plugin.titleize} broke",
@@ -58,17 +52,18 @@ describe PluginManager::Plugin::Status do
       )
     end
 
-    context "non pavilion plugin" do
+    context "without posting enabled" do
       let(:third_party_user) { "angusmcleod" }
 
       before do
+        SiteSetting.plugin_manager_issue_management_local = false
         stub_github_user_request(third_party_user)
         stub_github_plugin_request(third_party_user, third_party_plugin)
-        setup_test_plugin(third_party_plugin, "https://github.com/#{third_party_user}/discourse-#{third_party_plugin.dasherize}.git")
+        setup_test_plugin(third_party_plugin, plugin_url: "https://github.com/#{third_party_user}/discourse-#{third_party_plugin.dasherize}.git")
         add_log(third_party_plugin)
       end
 
-      it "sends an email if broken" do
+      it "sends an email" do
         expect_enqueued_with(job: :send_plugin_notification, args: {
           plugin: third_party_plugin,
           site: SiteSetting.title,
@@ -80,21 +75,25 @@ describe PluginManager::Plugin::Status do
       end
     end
 
-    context "pavilion plugin" do
+    context "with remote posting enabled" do
       let(:response_post) { JSON.parse(File.open("#{fixture_dir}/discourse/post.json").read) }
 
       before do
+        SiteSetting.plugin_manager_issue_management_site_base_url = base_url
+        SiteSetting.plugin_manager_issue_management_site_api_user = api_user
+        SiteSetting.plugin_manager_issue_management_site_api_token = api_token
+        SiteSetting.plugin_manager_issue_management_local = false
         stub_github_user_request
         stub_github_plugin_request
-        setup_test_plugin(compatible_plugin)
+        plugin = setup_test_plugin(compatible_plugin, setup_category: true)
 
         log = add_log(compatible_plugin)
         request_body = {
-          title: PluginManager::Notifier.title('broken', compatible_plugin.titleize),
-          raw: PluginManager::Notifier.post_markdown('broken', log, compatible_plugin.titleize),
+          raw: PluginManager::Notifier.post_markdown(:broken, log, compatible_plugin.titleize),
+          title: PluginManager::Notifier.title(:broken, compatible_plugin.titleize),
           archetype: "regular",
-          tags: ["automated", compatible_plugin],
-          category: 1
+          category: plugin.category_id,
+          tags: ["automated", compatible_plugin]
         }
         stub_post_request(request_body, response_post)
       end
@@ -121,9 +120,7 @@ describe PluginManager::Plugin::Status do
 
         log = add_log(compatible_plugin)
         request_body = {
-          title: PluginManager::Notifier.title('fixed', compatible_plugin.titleize),
-          raw: PluginManager::Notifier.post_markdown('fixed', log, compatible_plugin.titleize),
-          archetype: "regular",
+          raw: PluginManager::Notifier.post_markdown(:fixed, log, compatible_plugin.titleize),
           topic_id: response_post['topic_id']
         }
         stub_post_request(request_body, response_post)
@@ -140,6 +137,44 @@ describe PluginManager::Plugin::Status do
             "Api-Key" => "#{api_token}"
           }
         ).twice
+      end
+    end
+
+    context "with local posting enabled" do
+      before do
+        SiteSetting.plugin_manager_issue_management_local = true
+        stub_github_user_request
+        stub_github_plugin_request
+
+        freeze_time
+        @plugin = setup_test_plugin(compatible_plugin, setup_category: true)
+        add_log(compatible_plugin)
+      end
+
+      it "creates a topic if broken" do
+        described_class.update(compatible_plugin, git, incompatible_status.merge(skip_git_check: true))
+
+        log = PluginManager::Log.get_unresolved(compatible_plugin, git)
+        plugin_name = compatible_plugin.titleize
+        topic = Topic.find(log.issue_id)
+        title = PluginManager::Notifier.title(:broken, plugin_name)
+        post_markdown = PluginManager::Notifier.post_markdown(:broken, log, plugin_name)
+        subcategory_name = SiteSetting.plugin_manager_issue_management_local_subcategory_name
+        category_id = Category.find_by(parent_category_id: @plugin.category_id, name: subcategory_name).id
+
+        expect(topic.present?).to eq(true)
+        expect(topic.title).to eq(title)
+        expect(topic.category_id).to eq(category_id)
+        expect(topic.first_post.raw).to eq(post_markdown.strip)
+      end
+
+      it "creates a post and closes topic if fixed" do
+        described_class.update(compatible_plugin, git, incompatible_status.merge(skip_git_check: true))
+        described_class.update(compatible_plugin, git, compatible_status.merge(skip_git_check: true))
+
+        log = PluginManager::Log.get_resolved(compatible_plugin, git)
+        topic = Topic.find(log.issue_id)
+        expect(topic.closed?).to eq(true)
       end
     end
   end
