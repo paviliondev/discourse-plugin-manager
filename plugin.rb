@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # name: discourse-plugin-manager
 # about: Pavilion's Plugin Manager
-# version: 0.1.1
+# version: 0.2.0
 # authors: Angus McLeod
 # url: https://github.com/paviliondev/discourse-plugin-manager
 
