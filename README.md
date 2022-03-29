@@ -35,4 +35,4 @@ Use a development workflow that looks like this
 
 ### Deployment
 
-Deploying updates of this plugin is slightly different from a deploying a normal plugin update. The script in ``bin/update.sh`` will handle it for you. It's present on `plugins.discourse.pavilion.tech` in ``/usr/local/bin/update_discourse``. Just run ``update_discourse`` on the server.
+Deploying updates of this plugin is slightly different from a deploying a normal plugin update. The script in ``bin/update.sh`` will handle it for you. It's present on `plugins.discourse.pavilion.tech` in ``/usr/local/bin/discourse_update``. Just run ``discourse_update`` on the server.

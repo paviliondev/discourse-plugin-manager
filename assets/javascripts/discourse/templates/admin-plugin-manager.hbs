@@ -2,7 +2,7 @@
   <h3>{{i18n "admin.plugin_manager.title"}}</h3>
   <div class="plugin-manager-buttons">
     {{d-button
-      action="addPlugin"
+      action=(action "addPlugin")
       icon="plus"
       label="admin.plugin_manager.plugin.add"
       title="admin.plugin_manager.plugin.add"}}
@@ -26,10 +26,10 @@
               icon="pencil-alt"
               label="admin.plugin_manager.plugin.edit"
               title="admin.plugin_manager.plugin.edit"
-              action="editPlugin"
+              action=(action "editPlugin")
               actionParam=plugin}}
             {{d-button
-              action="removePlugin"
+              action=(action "removePlugin")
               actionParam=plugin
               label="admin.plugin_manager.plugin.remove"
               title="admin.plugin_manager.plugin.remove"

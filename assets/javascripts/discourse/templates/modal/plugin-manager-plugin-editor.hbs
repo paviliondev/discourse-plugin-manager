@@ -9,7 +9,7 @@
           icon="download"
           label="admin.plugin_manager.plugin.retrieve"
           title="admin.plugin_manager.plugin.retrieve"
-          action="retrieve"
+          action=(action "retrieve")
           disabled=retrieveDisabled
           class="save"}}
       {{/if}}
@@ -54,7 +54,7 @@
   {{d-button
     label="admin.plugin_manager.plugin.save"
     title="admin.plugin_manager.plugin.save"
-    action="save"
+    action=(action "save")
     disabled=saving
     class="save"}}
 
