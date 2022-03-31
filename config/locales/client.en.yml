@@ -100,6 +100,11 @@ en:
 
   admin_js:
     admin:
+      api:
+        scopes:
+          descriptions:
+            plugin_manager:
+              status: Update plugin statuses
       plugin_manager:
         nav_label: "Plugin Manager"
         title: "Plugins"
