@@ -7,9 +7,9 @@ end
 
 PluginManager::Engine.routes.draw do
   get 'status' => 'plugin_status#index'
-  get 'status/validate-key' => 'plugin_status#validate_key'
+  get 'status/validate-key' => 'plugin_status#validate_key', constraints: { format: 'json' }
   get 'status/:plugin_name' => 'plugin_status#show'
-  post 'status' => 'plugin_status#update', defaults: { format: 'json' }
+  post 'status' => 'plugin_status#update', constraints: { format: 'json' }
   get 'discourse' => 'discourse#index'
   get 'plugin' => 'plugin#index'
   get 'plugin/category/:category_id' => 'plugin#category'
@@ -17,7 +17,7 @@ PluginManager::Engine.routes.draw do
   get 'plugin/:plugin_name' => 'plugin#show'
   put 'plugin/:plugin_name' => 'plugin#save', constraints: AdminConstraint.new
   delete 'plugin/:plugin_name' => 'plugin#delete', constraints: AdminConstraint.new
-  post 'user/register' => 'plugin_user#register'
+  post 'user/register' => 'plugin_user#register', constraints: { format: 'json' }
 end
 
 Discourse::Application.routes.prepend do
