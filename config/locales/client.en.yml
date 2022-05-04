@@ -59,10 +59,6 @@ en:
             title: Unknown
             detail_title: "has an unknown status on"
             description: The status of %{plugin_label} is unknown on %{discourse_branch}.
-          recommended:
-            title: Recommended
-            detail_title: "is recommended on"
-            description: "%{plugin_name} %{plugin_branch} loads succesfully on Discourse %{discourse_branch} and follow best practices."
           compatible:
             title: Compatible
             detail_title: "is compatible with"

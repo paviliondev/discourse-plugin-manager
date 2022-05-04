@@ -1,7 +1,6 @@
 @import "common/admin/admin_base.scss";
 @import "common/components/buttons.scss";
 
-$recommended: #339b18;
 $compatible: #038ae7;
 $tests-failing: #d47e00;
 $incompatible: #ef1700;
@@ -310,9 +309,6 @@ $incompatible: #ef1700;
   &.unknown {
     color: var(--primary-low);
   }
-  &.recommended {
-    color: $recommended;
-  }
   &.incompatible {
     color: $incompatible;
   }
@@ -333,10 +329,6 @@ $incompatible: #ef1700;
     &.unknown {
       background-color: rgba(var(--primary-low-rgb), 0.05);
       border: 1px solid rgba(var(--primary-low-rgb), 0.5);
-    }
-    &.recommended {
-      background-color: rgba($recommended, 0.1);
-      border: 1px solid rgba($recommended, 0.5);
     }
     &.incompatible {
       background-color: rgba($incompatible, 0.1);

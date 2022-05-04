@@ -9,7 +9,6 @@ import I18n from "I18n";
 
 const statusIcons = {
   unknown: "far-question-circle",
-  recommended: "check-circle",
   compatible: "far-check-circle",
   tests_failing: "far-times-circle",
   incompatible: "times-circle",

@@ -38,8 +38,7 @@ class ::PluginManager::Plugin::Status
       unknown: 0,
       compatible: 1,
       incompatible: 2,
-      tests_failing: 3,
-      recommended: 4
+      tests_failing: 3
     )
   end
 
@@ -122,8 +121,6 @@ class ::PluginManager::Plugin::Status
       statuses[:incompatible]
     elsif PluginManager::TestManager.failing?(test_status)
       statuses[:tests_failing]
-    elsif PluginManager::TestManager.passing?(test_status)
-      statuses[:recommended]
     elsif compatible?(status)
       statuses[:compatible]
     else
@@ -174,7 +171,7 @@ class ::PluginManager::Plugin::Status
   end
 
   def self.working?(status)
-    compatible?(status) || recommended?(status)
+    compatible?(status)
   end
 
   def self.not_working?(status)
@@ -191,10 +188,6 @@ class ::PluginManager::Plugin::Status
 
   def self.tests_failing?(status)
     status == statuses[:tests_failing]
-  end
-
-  def self.recommended?(status)
-    status == statuses[:recommended]
   end
 
   def self.placeholder_status(plugin, discourse_branch)
