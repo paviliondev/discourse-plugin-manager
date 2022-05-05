@@ -96,7 +96,7 @@ class ::PluginManager::Plugin
 
   def category_tags
     @category_tags ||= begin
-      if category
+      if category&.topic
         category.topic.tags.map(&:name)
       else
         []
