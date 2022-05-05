@@ -4,6 +4,7 @@ import { bind, scheduleOnce } from "@ember/runloop";
 
 export default Component.extend({
   classNameBindings: [":plugin-status-button", "plugin.name"],
+  showLabel: true,
 
   didInsertElement() {
     $(document).on("click", bind(this, this.documentClick));

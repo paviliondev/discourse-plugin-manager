@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 # name: discourse-plugin-manager
-# about: Pavilion's Plugin Manager
+# about: Discourse Plugin Manager
 # version: 0.2.0
 # authors: Angus McLeod
 # url: https://github.com/paviliondev/discourse-plugin-manager
 
-hide_plugin if self.respond_to?(:hide_plugin)
+add_admin_route "admin.plugin_manager.title", "manager"
 
 register_asset "stylesheets/common/plugin-manager.scss"
 register_asset "stylesheets/mobile/plugin-manager.scss", :mobile
@@ -145,6 +145,12 @@ after_initialize do
       else
         nil
       end
+    end
+  end
+
+  on(:topic_tags_changed) do |topic, params|
+    if topic.is_category_topic? && topic.category.custom_fields['plugin_name'].present?
+      PluginManager::Plugin.set(topic.category.custom_fields['plugin_name'], tags: params[:new_tag_names])
     end
   end
 end

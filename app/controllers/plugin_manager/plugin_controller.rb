@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PluginManager::PluginController < ::ApplicationController
-  before_action :ensure_admin, only: [:retrieve, :save, :delete]
+  before_action :ensure_staff, only: [:retrieve, :save, :delete]
   before_action :find_plugins, only: [:index, :show, :category]
 
   def index
@@ -89,6 +89,8 @@ class PluginManager::PluginController < ::ApplicationController
       @plugins = [PluginManager::Plugin.get(params[:plugin_name])]
     else
       @plugins = PluginManager::Plugin.list(
+        tags: params[:tags],
+        all_tags: ActiveRecord::Type::Boolean.new.cast(params[:all_tags]),
         page: params[:page].to_i,
         filter: params[:filter],
         order: params[:order],

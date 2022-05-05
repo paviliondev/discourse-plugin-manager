@@ -15,17 +15,15 @@ PluginManager::Engine.routes.draw do
   get 'plugin/category/:category_id' => 'plugin#category'
   get 'plugin/retrieve' => 'plugin#retrieve'
   get 'plugin/:plugin_name' => 'plugin#show'
-  put 'plugin/:plugin_name' => 'plugin#save', constraints: AdminConstraint.new
-  delete 'plugin/:plugin_name' => 'plugin#delete', constraints: AdminConstraint.new
+  put 'plugin/:plugin_name' => 'plugin#save', constraints: StaffConstraint.new
+  delete 'plugin/:plugin_name' => 'plugin#delete', constraints: StaffConstraint.new
   post 'user/register' => 'plugin_user#register', constraints: { format: 'json' }
 end
 
 Discourse::Application.routes.prepend do
   mount PluginManager::Engine, at: PluginManager::NAMESPACE
 
-  scope module: 'plugin_manager', constraints: AdminConstraint.new do
-    get 'admin/plugin-manager' => 'plugin#index'
-  end
+  get "/admin/plugins/manager" => "plugin_manager/plugin#index", constraints: StaffConstraint.new
 
   %w{users u}.each do |root_path|
     get "#{root_path}/:username/plugins" => "plugin_manager/plugin_user#index"

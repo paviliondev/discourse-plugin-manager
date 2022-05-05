@@ -21,7 +21,8 @@ class ::PluginManager::Plugin
                 :repository_host,
                 :test_host,
                 :owner,
-                :local
+                :local,
+                :tags
 
   def initialize(name, attrs)
     @name = name
@@ -32,6 +33,7 @@ class ::PluginManager::Plugin
     @contact_emails = attrs[:contact_emails]
     @category_id = attrs[:category_id]
     @group_id = attrs[:group_id]
+    @tags = attrs[:tags]
     @branches = attrs[:branches]
     @default_branch = attrs[:default_branch]
     @local = attrs[:local]
@@ -92,6 +94,16 @@ class ::PluginManager::Plugin
     end
   end
 
+  def category_tags
+    @category_tags ||= begin
+      if category
+        category.topic.tags.map(&:name)
+      else
+        []
+      end
+    end
+  end
+
   def self.set(plugin_name, attrs)
     plugin = get(plugin_name)
 
@@ -104,7 +116,8 @@ class ::PluginManager::Plugin
       category_id: attrs[:category_id] || plugin.category_id,
       default_branch: attrs[:default_branch] || plugin.default_branch,
       branches: plugin.branches || [],
-      test_host: attrs[:test_host] || plugin.test_host
+      test_host: attrs[:test_host] || plugin.test_host,
+      tags: attrs[:tags] || plugin.tags
     }
 
     [:branch, :default_branch].each do |key|
@@ -129,6 +142,10 @@ class ::PluginManager::Plugin
     unless Rails.env.test?
       update_category(plugin)
       update_group(plugin)
+    end
+
+    if Set.new(plugin.category_tags) != Set.new(plugin.tags)
+      set(plugin.name, tags: plugin.category_tags)
     end
 
     plugin
@@ -167,9 +184,9 @@ class ::PluginManager::Plugin
     ::PluginStoreRow.exists?(plugin_name: ::PluginManager::NAMESPACE, key: plugin_name)
   end
 
-  def self.list(page: 0, filter: nil, order: nil, asc: true)
+  def self.list(page: 0, filter: nil, order: nil, asc: true, tags: nil, all_tags: false)
     query = ::PluginStoreRow.where(plugin_name: ::PluginManager::NAMESPACE)
-    list_query(query, page: page, filter: filter, order: order, asc: asc)
+    list_query(query, page: page, filter: filter, order: order, asc: asc, tags: tags, all_tags: all_tags)
   end
 
   def self.list_by(attr, value)
@@ -182,7 +199,7 @@ class ::PluginManager::Plugin
     list_query(query)
   end
 
-  def self.list_query(query, page: nil, filter: nil, order: nil, asc: nil)
+  def self.list_query(query, page: nil, filter: nil, order: nil, asc: nil, tags: nil, all_tags: false)
     if filter.present?
       query = query.where("
         key ~ '#{filter}' OR
@@ -190,6 +207,10 @@ class ::PluginManager::Plugin
         (value::json->>'owner')::json->>'name' ~ '#{filter}' OR
         (value::json->>'owner')::json->>'description' ~ '#{filter}'
       ")
+    end
+
+    if tags.present?
+      query = query.where("(value::json->>'tags')::jsonb #{all_tags ? "?&" : "?|"} '{#{tags.join(",")}}'")
     end
 
     if order.present?
@@ -259,6 +280,7 @@ class ::PluginManager::Plugin
 
     if category.present?
       category.description = plugin.about
+      category.custom_fields['plugin_name'] = plugin.name
       category.save!
     else
       category =
@@ -273,6 +295,7 @@ class ::PluginManager::Plugin
         rescue ArgumentError => e
           raise Discourse::InvalidParameters, "Failed to create category"
         end
+      category.custom_fields['plugin_name'] = plugin.name
       category.save!
     end
 

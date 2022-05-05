@@ -14,7 +14,7 @@
   <div class="owner-container">
     {{#if plugin.owner}}
       <button class="btn-owner-logo btn-plugin" {{action "toggleOwnerDetail"}} type="button">
-        {{owner-logo plugin.owner label=true}}
+        {{owner-logo plugin.owner label=(not site.mobileView)}}
       </button>
 
       {{#if showOwnerDetail}}
@@ -30,11 +30,10 @@
   </div>
 </td>
 
-<td class="category">
-  {{#if pluginCategory}}
-    <a role="button" {{action "goToCategory"}} class="go-to-category">
-      <span>{{i18n "server_status.plugin.more"}}</span>
-      {{d-icon "angle-right"}}
-    </a>
-  {{/if}}
+<td class="tags">
+  <div class="tags-container">
+    {{#each plugin.tags as |tag|}}
+      {{discourse-tag tag}}
+    {{/each}}
+  </div>
 </td>

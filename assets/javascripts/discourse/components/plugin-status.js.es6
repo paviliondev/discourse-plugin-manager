@@ -24,6 +24,12 @@ export default Component.extend({
     $(document).off("click", bind(this, this.documentClick));
   },
 
+  click(e) {
+    if (!e.target.closest(".btn-plugin, .btn-owner-logo, .status-badge")) {
+      DiscourseURL.routeTo(this.pluginCategory.url);
+    }
+  },
+
   documentClick(event) {
     if (this._state === "destroying") {
       return;
@@ -104,10 +110,6 @@ export default Component.extend({
       if (this.showOwnerDetail) {
         scheduleOnce("afterRender", this, this.createOwnerDetailModal);
       }
-    },
-
-    goToCategory() {
-      DiscourseURL.routeTo(this.pluginCategory.url);
     },
   },
 });

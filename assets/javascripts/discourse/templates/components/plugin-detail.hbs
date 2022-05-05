@@ -57,4 +57,14 @@
       {{/each}}
     </li>
   {{/if}}
+  {{#if plugin.tags}}
+    <li>
+      <label class="detail-label">{{i18n "server_status.plugin.tags"}}</label>
+      <span class="plugin-tags">
+        {{#each plugin.tags as |tag|}}
+          {{discourse-tag tag}}
+        {{/each}}
+      </span>
+    </li>
+  {{/if}}
 </ul>

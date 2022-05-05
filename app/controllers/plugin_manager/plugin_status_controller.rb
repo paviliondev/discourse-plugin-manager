@@ -101,7 +101,7 @@ class PluginManager::PluginStatusController < ::ApplicationController
       }
       attrs = {
         status: plugin[:status].to_i,
-        skip_git_check: current_user.admin?,
+        skip_git_check: current_user.staff?,
         message: plugin[:message],
         backtrace: plugin[:backtrace]
       }

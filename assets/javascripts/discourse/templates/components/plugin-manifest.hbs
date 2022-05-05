@@ -1,4 +1,23 @@
-{{input type="text" value=filter placeholder=(i18n "server_status.plugin.filter")}}
+<div class="plugin-filters">
+  <div class="text-filter">
+    {{input type="text" value=filter placeholder=(i18n "server_status.plugin.filter")}}
+  </div>
+
+  <div class="tag-filter">
+    {{tag-chooser
+      tags=tags
+      everyTag=true
+      options=(hash
+        allowAny=false
+        none="server_status.plugin.select_tags"
+      )
+    }}
+    <span class="all-tags">
+      {{input type="checkbox" checked=allTags}}
+      <span>{{i18n "server_status.plugin.all_tags"}}</span>
+    </span>
+  </div>
+</div>
 
 {{#if plugins}}
   {{#load-more selector="table.plugin-manifest-table tr" action=(action "loadMore")}}
@@ -6,8 +25,8 @@
       <thead>
         {{table-header-toggle field="plugin_name" labelKey="server_status.plugin.title" order=order asc=asc automatic=true}}
         {{table-header-toggle field="owner_name" labelKey="server_status.plugin.owner.label" order=order asc=asc automatic=true}}
-        {{table-header-toggle field="plugin_status" labelKey="server_status.plugin.status.label" order=order asc=asc automatic=true}}
-        <th></th>
+        <th><span class="header-contents">{{i18n "server_status.plugin.status.label"}}</span></th>
+        <th><span class="header-contents">{{i18n "server_status.plugin.tags"}}</span></th>
       </thead>
       <tbody>
         {{#each plugins as |plugin|}}

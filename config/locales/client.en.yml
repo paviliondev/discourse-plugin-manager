@@ -37,6 +37,9 @@ en:
         authors: "Authors"
         about: "About"
         filter: "filter"
+        tags: Tags
+        all_tags: match all
+        select_tags: Select tags...
         owner:
           label: Supplier
           logo: "%{ownerName} logo"
@@ -102,8 +105,7 @@ en:
             plugin_manager:
               status: Update plugin statuses
       plugin_manager:
-        nav_label: "Plugin Manager"
-        title: "Plugins"
+        title: "Manager"
         plugin:
           edit: Edit
           add: Add

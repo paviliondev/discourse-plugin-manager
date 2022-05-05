@@ -12,7 +12,8 @@ class PluginManager::PluginSerializer < ::ApplicationSerializer
              :owner,
              :test_host,
              :status,
-             :category_id
+             :category_id,
+             :tags
 
   def log
     log = ::PluginManager::Log.list(object.name).first
