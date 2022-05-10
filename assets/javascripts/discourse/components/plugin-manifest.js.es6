@@ -1,7 +1,7 @@
 import Component from "@ember/component";
 import Plugin from "../models/plugin";
 import { A } from "@ember/array";
-import discourseComputed, { observes } from "discourse-common/utils/decorators";
+import { observes } from "discourse-common/utils/decorators";
 
 export default Component.extend({
   classNames: "plugin-manifest",

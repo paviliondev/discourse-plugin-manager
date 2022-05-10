@@ -6,11 +6,11 @@ export default TagChooser.extend({
 
   selectKitOptions: {
     allowAny: false,
-    none: "server_status.plugin.select_tags"
+    none: "server_status.plugin.select_tags",
   },
 
   @discourseComputed("site.plugin_tags")
   content(pluginTags) {
-    return pluginTags.map(t => ({ id: t, name: t }));
-  }
+    return pluginTags.map((t) => ({ id: t, name: t }));
+  },
 });
