@@ -27,6 +27,8 @@ register_svg_icon "far-question-circle"
 end
 
 after_initialize do
+  SeedFu.fixture_paths << Rails.root.join("plugins", "discourse-plugin-manager", "db", "fixtures").to_s
+
   PluginManagerStore.commit_cache
 
   %w(
@@ -152,5 +154,11 @@ after_initialize do
     if topic.is_category_topic? && topic.category.custom_fields['plugin_name'].present?
       PluginManager::Plugin.set(topic.category.custom_fields['plugin_name'], tags: params[:new_tag_names])
     end
+  end
+
+  add_to_serializer(:site, :plugin_tags) do
+    Tag.joins(:tag_groups)
+      .where("tag_groups.name = ?", PluginManager::Plugin::TAG_GROUP)
+      .pluck("tags.name")
   end
 end

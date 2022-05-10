@@ -2,6 +2,7 @@
 
 class ::PluginManager::Plugin
   PAGE_LIMIT = 30
+  TAG_GROUP ||= 'plugin_manager_plugin_tags'
 
   include ActiveModel::Serialization
 

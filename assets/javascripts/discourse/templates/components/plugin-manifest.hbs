@@ -4,14 +4,8 @@
   </div>
 
   <div class="tag-filter">
-    {{tag-chooser
-      tags=tags
-      everyTag=true
-      options=(hash
-        allowAny=false
-        none="server_status.plugin.select_tags"
-      )
-    }}
+    {{plugin-tag-chooser tags=tags}}
+
     <span class="all-tags">
       {{input type="checkbox" checked=allTags}}
       <span>{{i18n "server_status.plugin.all_tags"}}</span>
