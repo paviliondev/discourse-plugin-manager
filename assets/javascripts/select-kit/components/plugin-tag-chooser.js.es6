@@ -14,13 +14,13 @@ export default TagChooser.extend({
     let pluginTags = this.site.plugin_tags;
 
     if (selectedTags) {
-      pluginTags = pluginTags.filter(tag => !selectedTags.includes(tag));
+      pluginTags = pluginTags.filter((tag) => !selectedTags.includes(tag));
     }
 
     if (query) {
-      pluginTags = pluginTags.filter(tag => tag.includes(query));
+      pluginTags = pluginTags.filter((tag) => tag.includes(query));
     }
 
-    return pluginTags.map(tag => ({ id: tag, name: tag }));
-  }
+    return pluginTags.map((tag) => ({ id: tag, name: tag }));
+  },
 });
