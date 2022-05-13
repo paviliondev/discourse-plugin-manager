@@ -1,16 +1,16 @@
 plugins:
-  plugin_manager_issue_management_local:
+  plugin_manager_issues_local:
     default: true
-  plugin_manager_issue_management_local_subcategory_name:
+  plugin_manager_issues_local_subcategory_name:
     default: issues
     client: true
-  plugin_manager_issue_management_site_base_url:
+  plugin_manager_issues_site_base_url:
     default: ""
-  plugin_manager_issue_management_site_api_token:
+  plugin_manager_issues_site_api_token:
     default: ""
-  plugin_manager_issue_management_site_api_user:
+  plugin_manager_issues_site_api_user:
     default: ""
-  plugin_manager_issue_management_site_issue_tags:
+  plugin_manager_issues_site_issue_tags:
     type: list
     default: "automated"
   plugin_manager_documentation_local_subcategory_name:

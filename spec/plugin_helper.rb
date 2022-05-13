@@ -105,8 +105,8 @@ def setup_test_plugin(name, plugin_url: nil, setup_category: false)
   if setup_category
     category = Fabricate(:category)
     plugin = PluginManager::Plugin.set(plugin.name, category_id: category.id)
-    local_management = SiteSetting.plugin_manager_issue_management_local
-    subcategory_name = SiteSetting.plugin_manager_issue_management_local_subcategory_name
+    local_management = SiteSetting.plugin_manager_issues_local
+    subcategory_name = SiteSetting.plugin_manager_issues_local_subcategory_name
 
     if local_management && subcategory_name.present?
       Fabricate(:category, parent_category_id: plugin.category_id, name: subcategory_name)

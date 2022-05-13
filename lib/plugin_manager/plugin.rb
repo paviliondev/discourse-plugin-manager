@@ -309,14 +309,14 @@ class ::PluginManager::Plugin
     end
 
     if category
-      %w(issue documentation).each do |subcategory_type|
+      %w(issues documentation).each do |subcategory_type|
         ensure_subcategory(category, plugin, subcategory_type)
       end
     end
   end
 
   def self.ensure_subcategory(category, plugin, subcategory_type)
-    name = SiteSetting.send("plugin_manager_#{subcategory_type}_management_local_subcategory_name")
+    name = SiteSetting.send("plugin_manager_#{subcategory_type}_local_subcategory_name")
     subcategory = Category.find_by(
       parent_category_id: category.id,
       name: name
