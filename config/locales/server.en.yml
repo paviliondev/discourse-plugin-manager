@@ -16,7 +16,7 @@ en:
   plugin_manager:
     notifier:
       broken:
-        title: "%{plugin_name} does not work on the latest Discourse"
+        title: "%{plugin_name} %{plugin_branch} does not work on %{discourse_branch}"
         body: "%{plugin_name} either has a bug, or is incompatible with the Discourse commit linked below."
       fixed:
         body: "%{plugin_name} has recovered from this issue."
@@ -25,6 +25,7 @@ en:
       error_test: "The '%{test_name}' test is failing."
     plugin:
       category_description: This category is for documentation, support and issues related to the %{plugin_name} plugin.
+      issue_category_description: Category for issues with the %{plugin_name} plugin.
       error:
         plugin_already_exists: Plugin already in the manifest
         failed_to_retrieve_plugin: Failed to retrieve plugin

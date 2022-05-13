@@ -303,6 +303,18 @@ class ::PluginManager::Plugin
     if category && plugin.category_id != category.id
       set(plugin.name, category_id: category.id)
     end
+
+    if category && (subcategory_name = SiteSetting.plugin_manager_issue_management_local_subcategory_name)
+      unless Category.exists?(parent_category_id: category.id, name: subcategory_name)
+        Category.create!(
+          parent_category_id: category.id,
+          name: subcategory_name,
+          slug: subcategory_name.downcase,
+          description: I18n.t("plugin_manager.plugin.issue_category_description", plugin_name: display_name),
+          user: Discourse.system_user
+        )
+      end
+    end
   end
 
   def self.update_group(plugin)

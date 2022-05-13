@@ -60,15 +60,19 @@ describe PluginManager::Plugin::Status do
         stub_github_user_request(third_party_user)
         stub_github_plugin_request(third_party_user, third_party_plugin)
         setup_test_plugin(third_party_plugin, plugin_url: "https://github.com/#{third_party_user}/discourse-#{third_party_plugin.dasherize}.git")
-        add_log(third_party_plugin)
       end
 
       it "sends an email" do
+        log = add_log(third_party_plugin)
         expect_enqueued_with(job: :send_plugin_notification, args: {
           plugin: third_party_plugin,
           site: SiteSetting.title,
           contact_emails: "angus@test.com",
-          title: I18n.t("plugin_manager.notifier.broken.title", plugin_name: third_party_plugin.titleize)
+          title: I18n.t("plugin_manager.notifier.broken.title",
+            plugin_name: third_party_plugin.titleize,
+            discourse_branch: log.discourse_branch,
+            plugin_branch: log.branch
+          )
         }) do
           described_class.update(third_party_plugin, git, incompatible_status.merge(skip_git_check: true))
         end
@@ -90,10 +94,10 @@ describe PluginManager::Plugin::Status do
         log = add_log(compatible_plugin)
         request_body = {
           raw: PluginManager::Notifier.post_markdown(:broken, log, compatible_plugin.titleize),
-          title: PluginManager::Notifier.title(:broken, compatible_plugin.titleize),
+          title: PluginManager::Notifier.title(:broken, log, compatible_plugin.titleize),
           archetype: "regular",
           category: plugin.category_id,
-          tags: ["automated", compatible_plugin]
+          tags: ["automated", compatible_plugin, log.branch]
         }
         stub_post_request(request_body, response_post)
       end
@@ -157,7 +161,7 @@ describe PluginManager::Plugin::Status do
         log = PluginManager::Log.get_unresolved(compatible_plugin, git)
         plugin_name = compatible_plugin.titleize
         topic = Topic.find(log.issue_id)
-        title = PluginManager::Notifier.title(:broken, plugin_name)
+        title = PluginManager::Notifier.title(:broken, log, plugin_name)
         post_markdown = PluginManager::Notifier.post_markdown(:broken, log, plugin_name)
         subcategory_name = SiteSetting.plugin_manager_issue_management_local_subcategory_name
         category_id = Category.find_by(parent_category_id: @plugin.category_id, name: subcategory_name).id

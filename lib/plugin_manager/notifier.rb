@@ -20,7 +20,7 @@ class PluginManager::Notifier
       plugin: @plugin.name,
       site: SiteSetting.title,
       contact_emails: contact_emails,
-      title: self.class.title(@type, @plugin.display_name),
+      title: self.class.title(@type, @log, @plugin.display_name),
       raw: self.class.email_body(@type, @log, @plugin.display_name)
     )
   end
@@ -41,7 +41,7 @@ class PluginManager::Notifier
       end
 
       opts.merge!(
-        title: self.class.title(@type, @plugin.display_name),
+        title: self.class.title(@type, @log, @plugin.display_name),
         archetype: "regular",
         category: category_id,
         tags: post_tags
@@ -106,8 +106,12 @@ class PluginManager::Notifier
     @log.save
   end
 
-  def self.title(type, plugin_name)
-    I18n.t("plugin_manager.notifier.#{type.to_s}.title", plugin_name: plugin_name)
+  def self.title(type, log, plugin_name)
+    I18n.t("plugin_manager.notifier.#{type.to_s}.title",
+      plugin_name: plugin_name,
+      discourse_branch: log.discourse_branch,
+      plugin_branch: log.branch
+    )
   end
 
   def self.email_body(type, log, plugin_name)
@@ -203,6 +207,7 @@ class PluginManager::Notifier
   def post_tags
     tags = SiteSetting.plugin_manager_issue_management_site_issue_tags.split('|')
     tags << @plugin.name.sub("discourse-", "")
+    tags << @log.branch
     tags
   end
 end
