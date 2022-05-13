@@ -291,7 +291,11 @@ class ::PluginManager::Plugin
             name: display_name,
             slug: plugin.name,
             description: I18n.t("plugin_manager.plugin.category_description", plugin_name: display_name),
-            user: Discourse.system_user
+            user: Discourse.system_user,
+            permissions: {
+              everyone: CategoryGroup.permission_types[:create_post],
+              staff: CategoryGroup.permission_types[:full]
+            }
           )
         rescue ArgumentError => e
           raise Discourse::InvalidParameters, "Failed to create category"
@@ -305,14 +309,28 @@ class ::PluginManager::Plugin
     end
 
     if category && (subcategory_name = SiteSetting.plugin_manager_issue_management_local_subcategory_name)
-      unless Category.exists?(parent_category_id: category.id, name: subcategory_name)
-        Category.create!(
+      issue_category = Category.find_by(
+        parent_category_id: category.id,
+        name: subcategory_name
+      )
+
+      unless issue_category
+        issue_category = Category.create!(
           parent_category_id: category.id,
           name: subcategory_name,
           slug: subcategory_name.downcase,
           description: I18n.t("plugin_manager.plugin.issue_category_description", plugin_name: display_name),
-          user: Discourse.system_user
+          user: Discourse.system_user,
+          permissions: {
+            everyone: CategoryGroup.permission_types[:create_post],
+            staff: CategoryGroup.permission_types[:full]
+          }
         )
+      end
+
+      issue_category_title = I18n.t("plugin_manager.plugin.issue_category_title", plugin_name: display_name)
+      unless issue_category_title == issue_category.topic.title
+        issue_category.topic.update_attribute(:title, issue_category_title)
       end
     end
   end

@@ -40,6 +40,9 @@ en:
         tags: Tags
         all_tags: match all
         select_tags: Select tags...
+        issues:
+          label: Issues
+          title: Issues of the plugin.
         owner:
           label: Supplier
           logo: "%{ownerName} logo"

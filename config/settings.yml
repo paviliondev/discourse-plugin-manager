@@ -3,6 +3,7 @@ plugins:
     default: true
   plugin_manager_issue_management_local_subcategory_name:
     default: issues
+    client: true
   plugin_manager_issue_management_site_base_url:
     default: ""
   plugin_manager_issue_management_site_api_token:

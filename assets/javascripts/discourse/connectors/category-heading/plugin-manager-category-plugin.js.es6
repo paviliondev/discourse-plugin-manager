@@ -2,8 +2,12 @@ import Plugin from "../../models/plugin";
 import Discourse from "../../models/discourse";
 
 export default {
-  setupComponent(attrs) {
-    const category = attrs.category;
+  setupComponent(attrs, component) {
+    let category = attrs.category;
+
+    if (category.parentCategory) {
+      category = category.parentCategory;
+    }
 
     function observerCallback() {
       if (this._state === "destroying") {
@@ -25,5 +29,7 @@ export default {
     if (category.discourse) {
       category.discourse.addObserver("branch", observerCallback);
     }
+
+    component.set("pluginCategory", category);
   },
 };

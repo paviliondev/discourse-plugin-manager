@@ -25,7 +25,9 @@ en:
       error_test: "The '%{test_name}' test is failing."
     plugin:
       category_description: This category is for documentation, support and issues related to the %{plugin_name} plugin.
-      issue_category_description: Category for issues with the %{plugin_name} plugin.
+      issue_category_title: Issues for the %{plugin_name} plugin.
+      issue_category_description: |
+        If you have found an issue with the %{plugin_name} plugin please submit it using the [Bug Report Wizard](/w/bug-report).
       error:
         plugin_already_exists: Plugin already in the manifest
         failed_to_retrieve_plugin: Failed to retrieve plugin

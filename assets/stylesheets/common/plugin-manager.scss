@@ -293,7 +293,7 @@ $incompatible: #ef1700;
 
   &.plugin-detail {
     .owner-logo,
-    .discourse-status {
+    .category-actions {
       margin-left: auto;
     }
 
@@ -304,6 +304,14 @@ $incompatible: #ef1700;
       box-sizing: border-box;
       line-height: 27px;
     }
+  }
+}
+
+.category-actions {
+  display: flex;
+
+  > * {
+    margin-left: 1em;
   }
 }
 
@@ -638,16 +646,12 @@ table.plugin-manager-user-table {
 
   .plugin-detail {
     border: 1px solid var(--primary-low);
-    padding: 1em;
+    padding: 1em 1em 0 1em;
     margin: 0 0 1em 0;
   }
 
   .detail-metadata {
     border-top: 1px solid var(--primary-low);
-
-    li {
-      margin-bottom: 0;
-    }
   }
 
   .owner-logo.medium .owner-logo-img {

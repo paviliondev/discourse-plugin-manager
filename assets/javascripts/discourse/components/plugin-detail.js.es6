@@ -9,6 +9,13 @@ export default Component.extend({
     return manifest ? "full-width" : "";
   },
 
+  @discourseComputed("category")
+  issueCategory(category) {
+    const issueCategoryName = this.siteSettings
+      .plugin_manager_issue_management_local_subcategory_name;
+    return category.subcategories.find((c) => c.name === issueCategoryName);
+  },
+
   didInsertElement() {
     this._super(...arguments);
 
