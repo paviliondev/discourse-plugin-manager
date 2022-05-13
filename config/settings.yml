@@ -13,5 +13,8 @@ plugins:
   plugin_manager_issue_management_site_issue_tags:
     type: list
     default: "automated"
+  plugin_manager_documentation_local_subcategory_name:
+    default: documentation
+    client: true
   plugin_manager_github_oauth_client_id: ""
   plugin_manager_github_oauth_client_secret: ""

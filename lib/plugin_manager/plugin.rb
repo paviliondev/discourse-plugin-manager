@@ -308,31 +308,36 @@ class ::PluginManager::Plugin
       set(plugin.name, category_id: category.id)
     end
 
-    if category && (subcategory_name = SiteSetting.plugin_manager_issue_management_local_subcategory_name)
-      issue_category = Category.find_by(
-        parent_category_id: category.id,
-        name: subcategory_name
-      )
-
-      unless issue_category
-        issue_category = Category.create!(
-          parent_category_id: category.id,
-          name: subcategory_name,
-          slug: subcategory_name.downcase,
-          description: I18n.t("plugin_manager.plugin.issue_category_description", plugin_name: display_name),
-          user: Discourse.system_user,
-          permissions: {
-            everyone: CategoryGroup.permission_types[:create_post],
-            staff: CategoryGroup.permission_types[:full]
-          }
-        )
-      end
-
-      issue_category_title = I18n.t("plugin_manager.plugin.issue_category_title", plugin_name: display_name)
-      unless issue_category_title == issue_category.topic.title
-        issue_category.topic.update_attribute(:title, issue_category_title)
+    if category
+      %w(issue documentation).each do |subcategory_type|
+        ensure_subcategory(category, plugin, subcategory_type)
       end
     end
+  end
+
+  def self.ensure_subcategory(category, plugin, subcategory_type)
+    name = SiteSetting.send("plugin_manager_#{subcategory_type}_management_local_subcategory_name")
+    subcategory = Category.find_by(
+      parent_category_id: category.id,
+      name: name
+    )
+
+    unless subcategory
+      subcategory = Category.create!(
+        parent_category_id: category.id,
+        name: name,
+        slug: name.downcase,
+        description: I18n.t("plugin_manager.plugin.#{subcategory_type}_category_description", plugin_name: plugin.display_name),
+        user: Discourse.system_user,
+        permissions: {
+          everyone: CategoryGroup.permission_types[:create_post],
+          staff: CategoryGroup.permission_types[:full]
+        }
+      )
+    end
+
+    topic_title = I18n.t("plugin_manager.plugin.#{subcategory_type}_category_title", plugin_name: plugin.display_name)
+    subcategory.topic.update_attribute(:title, topic_title) unless topic_title == subcategory.topic.title
   end
 
   def self.update_group(plugin)
