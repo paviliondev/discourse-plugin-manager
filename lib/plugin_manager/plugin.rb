@@ -138,18 +138,7 @@ class ::PluginManager::Plugin
       PluginManager::Plugin::Status.update(plugin_name, git, status_attrs)
     end
 
-    plugin = get(plugin_name)
-
-    unless Rails.env.test?
-      update_category(plugin)
-      update_group(plugin)
-    end
-
-    if Set.new(plugin.category_tags) != Set.new(plugin.tags)
-      set(plugin.name, tags: plugin.category_tags)
-    end
-
-    plugin
+    update_associations(plugin_name)
   end
 
   def self.update_repository_attrs(url, attrs)
@@ -170,6 +159,21 @@ class ::PluginManager::Plugin
     end
 
     attrs
+  end
+
+  def self.update_associations(plugin_name)
+    plugin = get(plugin_name)
+
+    unless Rails.env.test?
+      update_category(plugin)
+      update_group(plugin)
+    end
+
+    if Set.new(plugin.category_tags) != Set.new(plugin.tags)
+      set(plugin.name, tags: plugin.category_tags)
+    end
+
+    plugin
   end
 
   def self.get(plugin_name)
