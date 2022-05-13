@@ -150,15 +150,22 @@ after_initialize do
     end
   end
 
-  on(:topic_tags_changed) do |topic, params|
-    if topic.is_category_topic? && topic.category.custom_fields['plugin_name'].present?
-      PluginManager::Plugin.set(topic.category.custom_fields['plugin_name'], tags: params[:new_tag_names])
-    end
-  end
-
-  add_to_serializer(:site, :plugin_tags) do
+  add_class_method(:site, :plugin_tags) do
     Tag.joins(:tag_groups)
       .where("tag_groups.name = ?", PluginManager::Plugin::TAG_GROUP)
       .pluck("tags.name")
   end
+
+  on(:topic_tags_changed) do |topic, params|
+    if topic.is_category_topic? && topic.category.custom_fields['plugin_name'].present?
+      PluginManager::Plugin.set(topic.category.custom_fields['plugin_name'], tags: params[:new_tag_names])
+
+      plugin_tags = Site.plugin_tags
+      unless params[:new_tag_names].all? { |tag| plugin_tags.include?(tag) }
+        Site.clear_anon_cache!
+      end
+    end
+  end
+
+  add_to_serializer(:site, :plugin_tags) { Site.plugin_tags }
 end
