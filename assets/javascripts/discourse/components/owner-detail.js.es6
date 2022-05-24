@@ -25,4 +25,8 @@ export default Component.extend({
   mailtoUrl(email) {
     return `mailto:${email}`;
   },
+
+  click(event) {
+    event.stopPropagation();
+  },
 });

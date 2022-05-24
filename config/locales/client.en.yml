@@ -25,21 +25,21 @@ en:
       add_plugin: Submit a Plugin
       help: Help
       support: Support
-      try: Try
       commit: Commit
       discourse:
         title: Discourse
-        branch: "Branch"
-        version: "Version"
-        commit: "Commit"
+        branch: Discourse
       plugin:
         title: "Plugin"
         authors: "Authors"
         about: "About"
-        filter: "filter"
+        filter:
+          label: Filter
+          placeholder: plugin name or supplier
         tags: Tags
         all_tags: match all
         select_tags: Select tags...
+        branch: Branch
         issues:
           label: Issues
           title: Issues of the plugin.

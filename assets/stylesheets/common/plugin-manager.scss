@@ -287,9 +287,10 @@ $incompatible: #ef1700;
   color: var(--primary);
   box-shadow: shadow("dropdown");
   z-index: 1;
-  padding: 0 1em;
+  padding: 0 0.75em;
   width: 500px;
   max-width: 85vw;
+  cursor: default;
 
   &.plugin-detail {
     .owner-logo,
@@ -322,7 +323,6 @@ $incompatible: #ef1700;
 
       .detail-links {
         margin-left: 1em;
-        padding-top: 0.2em;
       }
     }
   }
@@ -377,14 +377,14 @@ $incompatible: #ef1700;
 }
 
 .branch-label {
-  background-color: var(--primary-low);
+  border: 1px solid var(--primary-medium);
   padding: 0.05em 0.3em;
 }
 
 .detail-label {
   display: block;
-  font-size: 0.8em;
-  margin-bottom: 0.25em;
+  color: var(--primary-medium);
+  margin-bottom: 0.5em;
 }
 
 .detail-value {
@@ -395,6 +395,10 @@ $incompatible: #ef1700;
 
   .d-icon {
     margin-right: 0.5em;
+  }
+
+  + .detail-value {
+    margin-left: 0.5em;
   }
 }
 
@@ -452,6 +456,16 @@ a.btn-plugin {
   align-items: center;
   padding-bottom: 1em;
   margin-top: 1em;
+
+  .title-contents {
+    display: flex;
+    align-items: center;
+    flex-flow: wrap;
+
+    > * {
+      margin-right: 0.75em;
+    }
+  }
 
   span {
     display: inline-block;
@@ -608,8 +622,8 @@ table.plugin-manager-user-table {
 }
 
 .detail-title {
-  .title-text {
-    border: 1px solid rgba(var(--primary-rgb), 0.2);
+  .title-text,
+  .branch-label {
     padding: 0.3em 0.85em;
   }
 }
@@ -624,19 +638,9 @@ table.plugin-manager-user-table {
     width: unset;
     box-shadow: unset;
 
-    .title-contents {
-      display: flex;
-      align-items: center;
-      flex-flow: wrap;
-
-      > * {
-        margin-right: 0.75em;
-      }
-    }
-
     > .detail-title {
       margin-top: 0;
-      align-items: flex-start;
+      align-items: flex-end;
 
       span {
         font-size: 1em;
@@ -681,10 +685,10 @@ table.plugin-manager-user-table {
 
 .plugin-status-detail.plugin-manager-detail {
   .branch-label {
-    padding: 0.1em 0.8em;
+    padding: 0 0.2em;
     height: unset;
-    line-height: unset;
-    margin-bottom: 0.5em;
+    line-height: 1.1em;
+    margin-bottom: 0.25em;
   }
 
   .detail-title {
@@ -695,15 +699,17 @@ table.plugin-manager-user-table {
 .plugin-filters {
   display: flex;
 
-  .text-filter {
+  > * {
     margin-right: 1em;
+  }
 
+  .text-filter {
     input {
       margin-bottom: 0;
     }
   }
 
-  .tag-filter {
+  .tag-filter-contents {
     display: flex;
     align-items: center;
 
@@ -720,12 +726,11 @@ table.plugin-manager-user-table {
 }
 
 @media screen and (max-width: 767px) {
-  .plugin-filters,
-  .plugin-filters .tag-filter {
+  .plugin-filters {
     flex-direction: column;
     align-items: flex-start;
 
-    > *:not(:last-child) {
+    > * {
       margin-bottom: 0.75em;
     }
   }

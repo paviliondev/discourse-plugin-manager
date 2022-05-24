@@ -31,4 +31,8 @@ export default Component.extend({
       document.body.classList.remove("plugin-category");
     }
   },
+
+  click(event) {
+    event.stopPropagation();
+  },
 });

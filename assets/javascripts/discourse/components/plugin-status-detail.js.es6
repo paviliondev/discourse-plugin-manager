@@ -31,4 +31,8 @@ export default Component.extend({
       this.toggleProperty("showLog");
     },
   },
+
+  click(event) {
+    event.stopPropagation();
+  },
 });

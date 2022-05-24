@@ -1,15 +1,23 @@
 <div class="plugin-filters">
+  {{discourse-status discourse=discourse}}
+
   <div class="text-filter">
-    {{input type="text" value=filter placeholder=(i18n "server_status.plugin.filter")}}
+    <label class="detail-label">{{i18n "server_status.plugin.filter.label"}}</label>
+    {{input type="text" value=filter placeholder=(i18n "server_status.plugin.filter.placeholder")}}
   </div>
 
   <div class="tag-filter">
-    {{plugin-tag-chooser tags=tags}}
+    <label class="detail-label">{{i18n "server_status.plugin.tags"}}</label>
 
-    <span class="all-tags">
-      {{input type="checkbox" checked=allTags}}
-      <span>{{i18n "server_status.plugin.all_tags"}}</span>
-    </span>
+    <div class="tag-filter-contents">
+      {{plugin-tag-chooser tags=tags}}
+
+      <span class="all-tags">
+        <label class="detail-label">&nbsp;</label>
+        {{input type="checkbox" checked=allTags}}
+        <span>{{i18n "server_status.plugin.all_tags"}}</span>
+      </span>
+    </div>
   </div>
 </div>
 
