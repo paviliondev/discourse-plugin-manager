@@ -3,6 +3,7 @@
 # about: Discourse Plugin Manager
 # version: 0.2.0
 # authors: Angus McLeod
+# contact_emails: development@pavilion.tech
 # url: https://github.com/paviliondev/discourse-plugin-manager
 
 add_admin_route "admin.plugin_manager.title", "manager"
