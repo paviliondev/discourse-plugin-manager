@@ -294,7 +294,7 @@ $incompatible: #ef1700;
 
   &.plugin-detail {
     .owner-logo,
-    .category-actions {
+    .plugin-actions {
       margin-left: auto;
     }
 
@@ -308,7 +308,7 @@ $incompatible: #ef1700;
   }
 }
 
-.category-actions {
+.plugin-actions {
   display: flex;
 
   > * {

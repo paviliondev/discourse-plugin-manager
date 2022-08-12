@@ -3,7 +3,7 @@ import { dasherize } from "@ember/string";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import { notEmpty, readOnly } from "@ember/object/computed";
-import EmberObject from "@ember/object";
+import RestModel from "discourse/models/rest";
 import Category from "discourse/models/category";
 import I18n from "I18n";
 
@@ -14,7 +14,7 @@ const statusIcons = {
   incompatible: "times-circle",
 };
 
-const Plugin = EmberObject.extend({
+const Plugin = RestModel.extend({
   @discourseComputed("status.status")
   statusIcon(status) {
     return status ? statusIcons[status] : "";
@@ -58,6 +58,20 @@ const Plugin = EmberObject.extend({
   @discourseComputed("category_id")
   category(categoryId) {
     return Category.findById(categoryId);
+  },
+
+  @discourseComputed("category")
+  issueCategory(category) {
+    const issueCategoryName = this.siteSettings
+      .plugin_manager_issues_local_subcategory_name;
+    return category.subcategories.find((c) => c.name === issueCategoryName);
+  },
+
+  @discourseComputed("category")
+  documentationCategory(category) {
+    const documentationCategoryName = this.siteSettings
+      .plugin_manager_documentation_local_subcategory_name;
+    return category.subcategories.find((c) => c.name === documentationCategoryName);
   },
 
   reload(discourseBranch) {

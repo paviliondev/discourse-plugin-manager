@@ -43,6 +43,9 @@ en:
         issues:
           label: Issues
           title: Issues of the plugin.
+        documentation:
+          label: Documentation
+          title: Documentation for the plugin.
         owner:
           label: Supplier
           logo: "%{ownerName} logo"

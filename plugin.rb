@@ -22,6 +22,19 @@ register_svg_icon "far-question-circle"
 %w(
   ../lib/plugin_manager.rb
   ../lib/plugin_manager_store.rb
+  ../lib/plugin_manager/log.rb
+  ../lib/plugin_manager/notifier.rb
+  ../lib/plugin_manager/plugin.rb
+  ../lib/plugin_manager/plugin/status.rb
+  ../lib/plugin_manager/repository_host.rb
+  ../lib/plugin_manager/repository_host/github.rb
+  ../lib/plugin_manager/repository_manager.rb
+  ../lib/plugin_manager/repository_owner.rb
+  ../lib/plugin_manager/status_handler.rb
+  ../lib/plugin_manager/test_host.rb
+  ../lib/plugin_manager/test_host/github.rb
+  ../lib/plugin_manager/test_manager.rb
+  ../lib/plugin_manager/user_plugin.rb
 ).each do |path|
   load File.expand_path(path, __FILE__)
 end

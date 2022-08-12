@@ -36,15 +36,7 @@
   </div>
 
   {{#if category}}
-    <div class="category-actions">
-      {{#if issueCategory}}
-        {{d-button
-          href=issueCategory.url
-          title="server_status.plugin.issues.title"
-          label="server_status.plugin.issues.label"
-          icon="far-dot-circle"}}
-      {{/if}}
-    </div>
+    {{plugin-actions plugin=plugin}}
   {{else}}
     {{#if plugin.owner}}
       {{owner-logo plugin.owner linked=true class="medium"}}
