@@ -138,6 +138,14 @@ $incompatible: #ef1700;
       padding: unset;
     }
 
+    td.actions {
+      text-align: right;
+
+      .plugin-actions {
+        display: inline-flex;
+      }
+    }
+
     @media screen and (max-width: 970px) and (min-width: 768px) {
       td,
       th {
@@ -304,6 +312,7 @@ $incompatible: #ef1700;
 
 .plugin-actions {
   display: flex;
+  margin-left: auto;
 
   > * {
     margin-left: 1em;
@@ -706,6 +715,7 @@ table.plugin-manager-user-table {
   .tag-filter-contents {
     display: flex;
     align-items: center;
+    flex-flow: wrap;
 
     .all-tags {
       display: flex;
