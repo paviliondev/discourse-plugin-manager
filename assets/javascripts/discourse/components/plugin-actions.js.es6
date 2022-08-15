@@ -6,11 +6,11 @@ export default Component.extend({
 
   @discourseComputed('site.mobileView')
   issueLabel(mobileView) {
-    return mobileView ? null : "server_status.plugin.documentation.label";
+    return mobileView ? null : "server_status.plugin.issues.label";
   },
 
   @discourseComputed('site.mobileView')
   documentationLabel(mobileView) {
-    return mobileView ? null : "server_status.plugin.issues.label"
+    return mobileView ? null : "server_status.plugin.documentation.label"
   }
 });
