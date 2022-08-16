@@ -28,7 +28,7 @@ en:
       commit: Commit
       discourse:
         title: Discourse
-        branch: Discourse
+        branch: Discourse Branch
       plugin:
         title: "Plugin"
         authors: "Authors"
@@ -39,7 +39,7 @@ en:
         tags: Tags
         all_tags: match all
         select_tags: Select tags...
-        branch: Branch
+        branch: Plugin Branch
         issues:
           label: Issues
           title: Issues of the plugin.

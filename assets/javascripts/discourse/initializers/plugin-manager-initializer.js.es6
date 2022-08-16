@@ -2,7 +2,7 @@ import Discourse from "../models/discourse";
 import Plugin from "../models/plugin";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { A } from "@ember/array";
-import { observes } from "discourse-common/utils/decorators";
+import discourseComputed, { observes } from "discourse-common/utils/decorators";
 
 export default {
   name: "plugin-manager",
@@ -103,6 +103,13 @@ export default {
               plugin,
             });
           }
+        },
+      });
+
+      api.modifyClass("controller:navigation/category", {
+        @discourseComputed("category", "category.parentCategory")
+        displayCategory(category, parentCategory) {
+          return parentCategory || category;
         },
       });
     });

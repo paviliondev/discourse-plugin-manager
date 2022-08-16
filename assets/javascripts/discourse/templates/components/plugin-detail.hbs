@@ -1,45 +1,25 @@
 <div class="detail-title">
-  <div class="title-contents">
-    {{#if category}}
+  <h3 class="title-text">{{plugin.display_name}}</h3>
+
+  {{#if category}}
+    <div class="title-contents">
       {{discourse-status discourse=discourse}}
-    {{/if}}
 
-    <div>
-      <label class="detail-label">{{i18n "server_status.plugin.title"}}</label>
-      {{#if category}}
-        {{category-drop
-          category=category
-          categories=site.categories
-          options=(hash
-            parentCategory=category.parentCategory
-            subCategory=category.isSubcategory
-            noSubcategories=category.noSubcategories
-            autoFilterable=true
-          )
-        }}
-      {{else}}
-        <span class="title-text">{{plugin.display_name}}</span>
-      {{/if}}
-    </div>
+      <div>
+        <label class="detail-label">{{i18n "server_status.plugin.branch"}}</label>
+        {{branch-label plugin}}
+      </div>
 
-    <div>
-      <label class="detail-label">{{i18n "server_status.plugin.branch"}}</label>
-      {{branch-label plugin}}
-    </div>
-
-    {{#if category}}
       <div>
         <label class="detail-label">{{i18n "server_status.plugin.status.label"}}</label>
         {{plugin-status-button plugin=plugin discourse=discourse}}
       </div>
-    {{/if}}
-  </div>
-
-  {{#if category}}
-    {{plugin-actions plugin=plugin}}
+    </div>
   {{else}}
     {{#if plugin.owner}}
-      {{owner-logo plugin.owner linked=true class="medium"}}
+      <div class="detail-links">
+        {{owner-logo plugin.owner linked=true class="medium"}}
+      </div>
     {{/if}}
   {{/if}}
 </div>
@@ -54,9 +34,11 @@
   {{#if plugin.authorList}}
     <li>
       <label class="detail-label">{{i18n "server_status.plugin.authors"}}</label>
-      {{#each plugin.authorList as |author|}}
-        <span class="detail-value">{{author}}</span>
-      {{/each}}
+      <div class="detail-values">
+        {{#each plugin.authorList as |author|}}
+          <span class="detail-value">{{author}}</span>
+        {{/each}}
+      </div>
     </li>
   {{/if}}
   {{#if plugin.hasContactEmails}}

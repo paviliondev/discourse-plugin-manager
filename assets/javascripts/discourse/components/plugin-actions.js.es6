@@ -3,26 +3,26 @@ import discourseComputed from "discourse-common/utils/decorators";
 import { inject as service } from "@ember/service";
 
 export default Component.extend({
-  classNames: ['plugin-actions'],
+  classNames: ["plugin-actions"],
   router: service(),
 
-  @discourseComputed('site.mobileView')
+  @discourseComputed("site.mobileView")
   issueLabel(mobileView) {
     return mobileView ? null : "server_status.plugin.issues.label";
   },
 
-  @discourseComputed('site.mobileView')
+  @discourseComputed("site.mobileView")
   documentationLabel(mobileView) {
-    return mobileView ? null : "server_status.plugin.documentation.label"
+    return mobileView ? null : "server_status.plugin.documentation.label";
   },
 
-  @discourseComputed('router.currentURL')
+  @discourseComputed("router.currentURL")
   issuesClass(currentURL) {
-    return currentURL.includes('/issues/') ? 'btn-primary' : '';
+    return currentURL.includes("/issues/") ? "btn-primary" : "";
   },
 
-  @discourseComputed('router.currentURL')
+  @discourseComputed("router.currentURL")
   documentationClass(currentURL) {
-    return currentURL.includes('/documentation/') ? 'btn-primary' : '';
-  }
+    return currentURL.includes("/documentation/") ? "btn-primary" : "";
+  },
 });
