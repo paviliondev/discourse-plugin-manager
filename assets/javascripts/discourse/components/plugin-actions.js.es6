@@ -6,14 +6,14 @@ export default Component.extend({
   classNames: ["plugin-actions"],
   router: service(),
 
-  @discourseComputed("site.mobileView")
-  issueLabel(mobileView) {
-    return mobileView ? null : "server_status.plugin.issues.label";
+  @discourseComputed("site.mobileView", "textOnly")
+  issueLabel(mobileView, textOnly) {
+    return (mobileView || textOnly) ? null : "server_status.plugin.issues.label";
   },
 
-  @discourseComputed("site.mobileView")
-  documentationLabel(mobileView) {
-    return mobileView ? null : "server_status.plugin.documentation.label";
+  @discourseComputed("site.mobileView", "textOnly")
+  documentationLabel(mobileView, textOnly) {
+    return (mobileView || textOnly) ? null : "server_status.plugin.documentation.label";
   },
 
   @discourseComputed("router.currentURL")
