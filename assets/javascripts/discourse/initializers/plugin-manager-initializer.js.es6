@@ -111,6 +111,11 @@ export default {
         displayCategory(category, parentCategory) {
           return parentCategory || category;
         },
+
+        @discourseComputed("site.categories")
+        pluginCategories(categories) {
+          return categories.filter(c => c.for_plugin);
+        }
       });
     });
   },

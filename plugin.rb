@@ -182,4 +182,7 @@ after_initialize do
   end
 
   add_to_serializer(:site, :plugin_tags) { Site.plugin_tags }
+
+  Site.preloaded_category_custom_fields << 'plugin_name'
+  add_to_serializer(:site_category, :for_plugin) { object.custom_fields['plugin_name'].present? }
 end
