@@ -146,6 +146,14 @@ $incompatible: #ef1700;
       }
     }
 
+    @media screen and (min-width: 970px) {
+      td.name {
+        .name-label {
+          white-space: nowrap;
+        }
+      }
+    }
+
     @media screen and (max-width: 970px) and (min-width: 768px) {
       td,
       th {
@@ -193,6 +201,7 @@ $incompatible: #ef1700;
 
         .owner {
           width: unset;
+          margin-left: auto;
         }
 
         .status {
@@ -201,7 +210,6 @@ $incompatible: #ef1700;
 
         .owner,
         .tags {
-          margin-left: auto;
           display: flex;
           align-items: center;
         }
@@ -209,6 +217,15 @@ $incompatible: #ef1700;
 
       .owner-logo-label {
         display: none;
+      }
+
+      .top {
+        flex-direction: column;
+        align-items: unset;
+      }
+
+      .buttons {
+        justify-content: unset;
       }
     }
   }
@@ -315,6 +332,10 @@ $incompatible: #ef1700;
 .plugin-actions {
   display: flex;
   gap: 1em;
+
+  .btn {
+    background: unset;
+  }
 }
 
 .navigation-container .plugin-actions {
@@ -441,6 +462,7 @@ $incompatible: #ef1700;
 
   &.has-label .owner-logo-label {
     margin-left: 0.75em;
+    white-space: nowrap;
   }
 }
 
@@ -733,6 +755,10 @@ table.plugin-manager-user-table {
         margin: 0 0.5em;
         margin-bottom: 0.17em;
       }
+    }
+
+    .tag-chooser {
+      width: 250px;
     }
   }
 }
