@@ -381,6 +381,7 @@ $incompatible: #ef1700;
 
     .status-label {
       margin-left: 0.75em;
+      white-space: nowrap;
     }
 
     &.unknown {
