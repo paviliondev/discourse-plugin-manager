@@ -143,6 +143,10 @@ $incompatible: #ef1700;
 
       .plugin-actions {
         display: inline-flex;
+
+        .btn {
+          background: unset;
+        }
       }
     }
 
@@ -332,10 +336,6 @@ $incompatible: #ef1700;
 .plugin-actions {
   display: flex;
   gap: 1em;
-
-  .btn {
-    background: unset;
-  }
 }
 
 .navigation-container .plugin-actions {
