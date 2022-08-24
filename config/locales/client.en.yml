@@ -23,6 +23,7 @@ en:
     server_status:
       title: "Plugins"
       add_plugin: Submit a Plugin
+      report_an_issue: Report an Issue
       help: Help
       support: Support
       commit: Commit
