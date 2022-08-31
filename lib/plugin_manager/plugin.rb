@@ -270,7 +270,7 @@ class ::PluginManager::Plugin
     end
 
     result.plugin = {
-      name: metadata.name,
+      name: metadata.name.dasherize,
       contact_emails: metadata.contact_emails,
       authors: metadata.authors,
       about: metadata.about,
