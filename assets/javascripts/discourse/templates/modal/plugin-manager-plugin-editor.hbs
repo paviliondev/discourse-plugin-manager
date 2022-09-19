@@ -44,6 +44,11 @@
               {{model.contactEmails}}
             </div>
           {{/if}}
+
+          <div class="plugin-attr">
+            <label>{{i18n "admin.plugin_manager.plugin.maintainers"}}</label>
+            <UserChooser @value={{this.model.maintainers}} @onChange={{action (mut this.model.maintainers)}} />
+          </div>
         </div>
       {{/if}}
     </div>

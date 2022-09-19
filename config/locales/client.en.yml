@@ -58,6 +58,7 @@ en:
             organization: Organization
         commit: "Plugin Commit"
         contact_emails: "Contacts"
+        maintainer: "Maintainer"
         more: more
         test_link:
           label: Test
@@ -135,3 +136,4 @@ en:
           status: "Status"
           controls: "Controls"
           category: Category
+          maintainers: "Maintainers"

@@ -75,6 +75,7 @@ export default Controller.extend(ModalFunctionality, {
         authors: model.authors,
         about: model.about,
         contact_emails: model.contact_emails,
+        maintainers: model.maintainers,
         test_host: model.test_host,
       };
       Plugin.save(attrs).then((result) => {

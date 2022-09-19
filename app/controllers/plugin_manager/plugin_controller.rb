@@ -21,7 +21,7 @@ class PluginManager::PluginController < ::ApplicationController
   def category
     render_json_dump(
       branch: discourse_branch,
-      plugin: serialize_data(@plugins.first, PluginManager::PluginSerializer, root: false)
+      plugin: serialize_data(@plugins.first, PluginManager::PluginSerializer, root: false, include_maintainer_user: true)
     )
   end
 
@@ -57,7 +57,8 @@ class PluginManager::PluginController < ::ApplicationController
       :about,
       :version,
       :contact_emails,
-      :test_host
+      :test_host,
+      maintainers: []
     )
     attrs[:url] = url
 

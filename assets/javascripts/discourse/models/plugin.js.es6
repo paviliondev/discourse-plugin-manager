@@ -5,6 +5,7 @@ import { popupAjaxError } from "discourse/lib/ajax-error";
 import { notEmpty, readOnly } from "@ember/object/computed";
 import RestModel from "discourse/models/rest";
 import Category from "discourse/models/category";
+import User from "discourse/models/user";
 import I18n from "I18n";
 
 const statusIcons = {
@@ -80,6 +81,15 @@ const Plugin = RestModel.extend({
     Plugin.find(this.name, discourseBranch).then((result) => {
       this.setProperties(result.plugin);
     });
+  },
+
+  @discourseComputed("maintainer_user")
+  maintainerUser(user) {
+    if (user) {
+      return User.create(user);
+    } else {
+      return null;
+    }
   },
 });
 

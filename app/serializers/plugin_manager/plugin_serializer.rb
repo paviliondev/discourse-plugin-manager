@@ -7,6 +7,8 @@ class PluginManager::PluginSerializer < ::ApplicationSerializer
              :about,
              :owner,
              :contact_emails,
+             :maintainers,
+             :maintainer_user,
              :branch_url,
              :log,
              :owner,
@@ -39,5 +41,15 @@ class PluginManager::PluginSerializer < ::ApplicationSerializer
 
   def include_owner?
     object.owner.present?
+  end
+
+  def maintainer_user
+    if user = User.find_by(username: object.maintainer)
+      BasicUserSerializer.new(user, root: false).as_json
+    end
+  end
+
+  def include_maintainer_user?
+    options[:include_maintainer_user] && object.maintainer.present?
   end
 end

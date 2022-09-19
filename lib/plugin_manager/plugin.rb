@@ -19,6 +19,7 @@ class ::PluginManager::Plugin
                 :authors,
                 :about,
                 :contact_emails,
+                :maintainers,
                 :repository_host,
                 :test_host,
                 :owner,
@@ -32,6 +33,7 @@ class ::PluginManager::Plugin
     @authors = attrs[:authors]
     @about = attrs[:about]
     @contact_emails = attrs[:contact_emails]
+    @maintainers = attrs[:maintainers]
     @category_id = attrs[:category_id]
     @group_id = attrs[:group_id]
     @tags = attrs[:tags]
@@ -105,6 +107,10 @@ class ::PluginManager::Plugin
     end
   end
 
+  def maintainer
+    maintainers.present? ? maintainers.first : nil
+  end
+
   def self.set(plugin_name, attrs)
     plugin = get(plugin_name)
 
@@ -113,6 +119,7 @@ class ::PluginManager::Plugin
       authors: attrs[:authors] || plugin.authors,
       about: attrs[:about] || plugin.about,
       contact_emails: attrs[:contact_emails] || plugin.contact_emails,
+      maintainers: attrs[:maintainers] || plugin.maintainers,
       owner: attrs[:owner]&.instance_values || plugin.owner&.instance_values,
       category_id: attrs[:category_id] || plugin.category_id,
       default_branch: attrs[:default_branch] || plugin.default_branch,
@@ -286,6 +293,7 @@ class ::PluginManager::Plugin
     if category.present?
       category.description = plugin.about
       category.custom_fields['plugin_name'] = plugin.name
+      category.custom_fields['plugin_maintainer'] = plugin.maintainer
       category.save!
     else
       category =
@@ -305,6 +313,7 @@ class ::PluginManager::Plugin
           raise Discourse::InvalidParameters, "Failed to create category"
         end
       category.custom_fields['plugin_name'] = plugin.name
+      category.custom_fields['plugin_maintainer'] = plugin.maintainer
       category.save!
     end
 

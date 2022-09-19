@@ -107,6 +107,8 @@ export default {
       });
 
       api.modifyClass("controller:navigation/category", {
+        pluginId: "plugin-manager",
+
         @discourseComputed("category", "category.parentCategory")
         displayCategory(category, parentCategory) {
           return parentCategory || category;
@@ -114,8 +116,8 @@ export default {
 
         @discourseComputed("site.categories")
         pluginCategories(categories) {
-          return categories.filter(c => c.for_plugin);
-        }
+          return categories.filter((c) => c.for_plugin);
+        },
       });
     });
   },

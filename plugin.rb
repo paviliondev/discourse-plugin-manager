@@ -181,6 +181,20 @@ after_initialize do
     end
   end
 
+  on(:topic_created) do |topic, opts, user|
+    if defined?(Assigner) == 'constant' &&
+      SiteSetting.assign_enabled &&
+      topic.category.name === SiteSetting.plugin_manager_issues_local_subcategory_name
+
+      plugin_category = topic.category&.parent_category
+
+      if plugin_maintainer = plugin_category&.custom_fields['plugin_maintainer']
+        assigner = Assigner.new(topic, Discourse.system_user)
+        assigner.assign(User.find_by_username(plugin_maintainer))
+      end
+    end
+  end
+
   add_to_serializer(:site, :plugin_tags) { Site.plugin_tags }
 
   Site.preloaded_category_custom_fields << 'plugin_name'
