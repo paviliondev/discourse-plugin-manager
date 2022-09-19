@@ -1,6 +1,6 @@
 ## Discourse Plugin Manager
 
-Discourse plugin manager running on ``plugins.discourse.pavilion.tech``.
+Discourse plugin manager running on ``discourse.pluginmanager.org``.
 
 Note that this plugin manually overrides files in the Discourse installation itself, before any other plugin is loaded. As long as you follow the steps outlined below when developing and deploying the plugin everything will work as expected.
 
@@ -35,4 +35,4 @@ Use a development workflow that looks like this
 
 ### Deployment
 
-Deploying updates of this plugin is slightly different from a deploying a normal plugin update. The script in ``bin/update.sh`` will handle it for you. It's present on `plugins.discourse.pavilion.tech` in ``/usr/local/bin/discourse_update``. Just run ``discourse_update`` on the server.
+Deploying updates of this plugin is slightly different from a deploying a normal plugin update. The script in ``bin/update.sh`` will handle it for you. It's present on `discourse.pluginmanager.org` in ``/usr/local/bin/discourse_update``. Just run ``discourse_update`` on the server.
