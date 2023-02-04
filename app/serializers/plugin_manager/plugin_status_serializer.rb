@@ -7,6 +7,7 @@ class PluginManager::PluginStatusSerializer < ::ApplicationSerializer
              :discourse_sha,
              :status,
              :status_changed_at,
+             :last_status_at,
              :test_status
 
   def status

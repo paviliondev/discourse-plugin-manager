@@ -17,6 +17,7 @@ class ::PluginManager::Plugin::Status
 
   attr_accessor :status,
                 :status_changed_at,
+                :last_status_at,
                 :test_status
 
   def initialize(name, attrs)
@@ -30,6 +31,7 @@ class ::PluginManager::Plugin::Status
     # changable attrs
     @status = attrs[:status].to_i
     @status_changed_at = attrs[:status_changed_at]
+    @last_status_at = attrs[:last_status_at]
     @test_status = attrs[:test_status].present? ? attrs[:test_status].to_i : nil
   end
 
@@ -95,11 +97,11 @@ class ::PluginManager::Plugin::Status
     new_attrs[:status] = normalize_status(**new_attrs)
     status_changed = current_status && (current_status.status != new_attrs[:status])
     new_attrs[:status_changed_at] = (!current_status || status_changed) ? Time.now : current_status.status_changed_at
+    new_attrs[:last_status_at] = Time.now
 
     key = status_key(name, git[:branch], git[:discourse_branch])
     new_attrs[:name] = name
     required_git_attrs.each { |attr| new_attrs[attr] = git[attr] }
-
     ::PluginManagerStore.set(db_key, key, new_attrs)
 
     if status_changed
