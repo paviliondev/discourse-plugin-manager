@@ -15,11 +15,11 @@ class PluginManager::PluginStatusSerializer < ::ApplicationSerializer
   end
 
   def status_changed_at
-    object.status_changed_at.to_time.strftime('%F %T')
+    defined?(object.status_changed_at) ? object.status_changed_at.to_time.strftime('%F %T') : ""
   end
 
   def last_status_at
-    object.last_status_at.to_time.strftime('%F %T')
+    defined?(object.last_status_at) ? object.last_status_at.to_time.strftime('%F %T') : ""
   end
 
   def test_status
