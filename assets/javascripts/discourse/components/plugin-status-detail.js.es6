@@ -20,8 +20,8 @@ export default Component.extend({
       plugin_name: pluginName,
       plugin_branch: pluginBranch,
       discourse_branch: discourseBranch,
-      plugin_last_status_at: pluginLastStatusAt,
-      plugin_status_changed_at: pluginStatusChangedAt
+      plugin_last_status_at: moment(pluginLastStatusAt).fromNow(),
+      plugin_status_changed_at: moment(pluginStatusChangedAt).fromNow()
     });
   },
 

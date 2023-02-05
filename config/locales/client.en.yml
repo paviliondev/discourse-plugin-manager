@@ -73,15 +73,15 @@ en:
           compatible:
             title: Compatible
             detail_title: "is compatible with"
-            description: "%{plugin_name} %{plugin_branch} loads succesfully on Discourse %{discourse_branch}. Last status update was at %(plugin_last_status_at), status last changed at %(plugin_status_changed_at)"
+            description: "%{plugin_name} %{plugin_branch} loads succesfully on Discourse %{discourse_branch}. Last status update was %(plugin_last_status_at), status last changed %(plugin_status_changed_at)"
           incompatible:
             title: Incompatible
             detail_title: "is not compatible with"
-            description: "%{plugin_name} %{plugin_branch} does not load succesfully on Discourse %{discourse_branch}. Last status update was at %(plugin_last_status_at), status last changed at %(plugin_status_changed_at)"
+            description: "%{plugin_name} %{plugin_branch} does not load succesfully on Discourse %{discourse_branch}. Last status update was %(plugin_last_status_at), status last changed %(plugin_status_changed_at)"
           tests_failing:
             title: Tests Failing
             detail_title: "tests are failing on"
-            description: "%{plugin_name} %{plugin_branch} loads succesfully on Discourse %{discourse_branch}, but its tests are failing. Last status update was at %(plugin_last_status_at), status last changed at %(plugin_status_changed_at)"
+            description: "%{plugin_name} %{plugin_branch} loads succesfully on Discourse %{discourse_branch}, but its tests are failing. Last status update was %(plugin_last_status_at), status last changed %(plugin_status_changed_at)"
         issue_report: issue report
         test_log: test log
         log:
