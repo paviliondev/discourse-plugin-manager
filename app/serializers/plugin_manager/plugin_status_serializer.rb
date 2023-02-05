@@ -15,7 +15,6 @@ class PluginManager::PluginStatusSerializer < ::ApplicationSerializer
   end
 
   def status_changed_at
-    byebug
     defined?(object.status_changed_at) && !object.status_changed_at.nil? ? object.status_changed_at.to_time.strftime('%F %T') : ""
   end
 
