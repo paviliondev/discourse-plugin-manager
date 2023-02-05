@@ -36,7 +36,7 @@ describe PluginManager::PluginStatusController do
     expect(response.status).to eq(200)
     expect(response.parsed_body['total']).to eq(2)
     expect(response.parsed_body['statuses'].first['status']).to eq('compatible')
-    expect(response.parsed_body['statuses'].first['last_status_at'].to_time.strftime('%F %T')).to eq(Time.now.strftime('%F %T'))
+    expect(response.parsed_body['statuses'].first['last_status_at']).to eq(Time.now.strftime('%F %T'))
   end
 
   it "updates a plugin status" do
