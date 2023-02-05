@@ -102,6 +102,7 @@ class ::PluginManager::Plugin::Status
     key = status_key(name, git[:branch], git[:discourse_branch])
     new_attrs[:name] = name
     required_git_attrs.each { |attr| new_attrs[attr] = git[attr] }
+
     ::PluginManagerStore.set(db_key, key, new_attrs)
 
     if status_changed
