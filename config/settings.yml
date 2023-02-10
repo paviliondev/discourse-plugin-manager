@@ -2,7 +2,7 @@ plugins:
   plugin_manager_issues_local:
     default: true
   plugin_manager_issues_local_subcategory_name:
-    default: issues
+    default: support
     client: true
   plugin_manager_issues_site_base_url:
     default: ""

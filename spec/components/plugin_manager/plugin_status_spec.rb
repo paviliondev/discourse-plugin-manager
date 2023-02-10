@@ -43,7 +43,7 @@ describe PluginManager::Plugin::Status do
     ).to eq(described_class.statuses[:tests_failing])
   end
 
-  context "status change" do
+  context "with status change" do
     def add_log(plugin)
       PluginManager::Log.add(plugin, git,
         message: "#{plugin.titleize} broke",

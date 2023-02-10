@@ -1,22 +1,22 @@
-import Discourse from "../models/discourse";
 import Plugin from "../models/plugin";
+import Discourse from "../models/discourse";
+import Category from "discourse/models/category";
 import { withPluginApi } from "discourse/lib/plugin-api";
-import { A } from "@ember/array";
-import discourseComputed, { observes } from "discourse-common/utils/decorators";
+import discourseComputed from "discourse-common/utils/decorators";
+import I18n from "I18n";
 
 export default {
   name: "plugin-manager",
   initialize(container) {
-    const messageBus = container.lookup("message-bus:main");
+    const messageBus = container.lookup("service:message-bus");
+    const site = container.lookup("service:site");
 
     messageBus.subscribe(
       "/plugin-manager/status-updated",
       function (pluginName) {
-        const categoriesController = container.lookup(
-          "controller:discovery/categories"
-        );
-        const plugin = categoriesController.plugins.findBy("name", pluginName);
-        const discourse = categoriesController.discourse;
+        const pluginsController = container.lookup("controller:plugins");
+        const plugin = pluginsController.plugins.findBy("name", pluginName);
+        const discourse = pluginsController.discourse;
 
         if (plugin && discourse) {
           plugin.reload(discourse.branch);
@@ -24,57 +24,7 @@ export default {
       }
     );
 
-    withPluginApi("0.8.13", (api) => {
-      api.modifyClass("route:discovery-categories", {
-        pluginId: "plugin-manager",
-
-        queryParams: {
-          branch: {
-            refreshModel: true,
-          },
-        },
-
-        afterModel() {
-          return this._getPlugins();
-        },
-
-        renderTemplate() {
-          this.render("discovery/categories", { outlet: "list-container" });
-        },
-
-        setupController(controller) {
-          this._super(...arguments);
-
-          const branch = this.branch;
-          const discourse = Discourse.create({ branch });
-          const plugins = A(
-            this.plugins.map((plugin) => Plugin.create(plugin))
-          );
-
-          controller.setProperties({
-            discourse,
-            plugins,
-          });
-        },
-
-        _getPlugins() {
-          const params = this.paramsFor("discovery.categories");
-          return Plugin.list({ branch: params.branch }).then((result) => {
-            this.setProperties(result);
-          });
-        },
-      });
-
-      api.modifyClass("controller:discovery/categories", {
-        pluginId: "plugin-manager",
-        queryParams: ["branch"],
-
-        @observes("discourse.branch")
-        setBranch() {
-          this.set("branch", this.discourse.branch);
-        },
-      });
-
+    withPluginApi("1.6.0", (api) => {
       api.modifyClass("route:discovery.category", {
         pluginId: "plugin-manager",
 
@@ -119,6 +69,81 @@ export default {
           return categories.filter((c) => c.for_plugin);
         },
       });
+
+      api.addSidebarSection(
+        (BaseCustomSidebarSection, BaseCustomSidebarSectionLink) => {
+          return class extends BaseCustomSidebarSection {
+            get name() {
+              return "plugins";
+            }
+            get title() {
+              return I18n.t("server_status.title");
+            }
+            get text() {
+              return I18n.t("server_status.title");
+            }
+            get links() {
+              const sidebarLinks = [];
+              const pluginCategories = site.categories.filter(
+                (c) => c.for_plugin
+              );
+
+              pluginCategories.forEach((lc) => {
+                sidebarLinks.push(
+                  new (class extends BaseCustomSidebarSectionLink {
+                    get name() {
+                      return "plugin";
+                    }
+                    get route() {
+                      return "discovery.category";
+                    }
+                    get model() {
+                      return `${Category.slugFor(lc)}/${lc.id}`;
+                    }
+                    get title() {
+                      return lc.name;
+                    }
+                    get text() {
+                      return lc.name;
+                    }
+                    get prefixType() {
+                      return "icon";
+                    }
+                    get prefixValue() {
+                      return "plug";
+                    }
+                  })()
+                );
+              });
+
+              sidebarLinks.push(
+                new (class extends BaseCustomSidebarSectionLink {
+                  get name() {
+                    return "plugins";
+                  }
+                  get route() {
+                    return "plugins";
+                  }
+                  get title() {
+                    return I18n.t("server_status.all_plugins");
+                  }
+                  get text() {
+                    return I18n.t("server_status.all_plugins");
+                  }
+                  get prefixType() {
+                    return "icon";
+                  }
+                  get prefixValue() {
+                    return "list";
+                  }
+                })()
+              );
+
+              return sidebarLinks;
+            }
+          };
+        }
+      );
     });
   },
 };

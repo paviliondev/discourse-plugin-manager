@@ -1,8 +1,5 @@
 en:
   js:
-    categories:
-      all: "all plugins"
-      n_more: "Plugins (%{count} more)..."
     category:
       none: "(no plugin)"
       all: "All plugins"
@@ -22,6 +19,7 @@ en:
 
     server_status:
       title: "Plugins"
+      all_plugins: "All Plugins"
       add_plugin: Submit a Plugin
       report_an_issue: Report an Issue
       help: Help

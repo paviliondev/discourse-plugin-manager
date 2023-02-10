@@ -474,6 +474,7 @@ class ::PluginManager::Plugin
       lazy-yt
       poll
       styleguide
+      chat
     )
   end
 end

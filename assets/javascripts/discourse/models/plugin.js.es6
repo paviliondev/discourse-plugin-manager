@@ -63,15 +63,15 @@ const Plugin = RestModel.extend({
 
   @discourseComputed("category")
   issueCategory(category) {
-    const issueCategoryName =
-      this.siteSettings.plugin_manager_issues_local_subcategory_name;
+    const issueCategoryName = this.siteSettings
+      .plugin_manager_issues_local_subcategory_name;
     return category.subcategories.find((c) => c.name === issueCategoryName);
   },
 
   @discourseComputed("category")
   documentationCategory(category) {
-    const documentationCategoryName =
-      this.siteSettings.plugin_manager_documentation_local_subcategory_name;
+    const documentationCategoryName = this.siteSettings
+      .plugin_manager_documentation_local_subcategory_name;
     return category.subcategories.find(
       (c) => c.name === documentationCategoryName
     );
