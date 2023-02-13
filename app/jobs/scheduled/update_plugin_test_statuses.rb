@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Jobs
   class UpdatePluginTestsStatuses < ::Jobs::Scheduled
-    every 1.hours
+    every 10.minutes
 
     def execute(args)
       ::PluginManager::Plugin.update_test_statuses

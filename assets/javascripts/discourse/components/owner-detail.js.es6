@@ -18,7 +18,7 @@ export default Component.extend({
 
   @discourseComputed("owner.type")
   typeTitle(type) {
-    return I18n.t(`server_status.plugin.owner.type.${type}`);
+    return I18n.t(`plugin_manager.plugin.owner.type.${type}`);
   },
 
   @discourseComputed("owner.email")

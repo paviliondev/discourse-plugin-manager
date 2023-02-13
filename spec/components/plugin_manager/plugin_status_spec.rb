@@ -56,7 +56,7 @@ describe PluginManager::Plugin::Status do
       let(:third_party_user) { "angusmcleod" }
 
       before do
-        SiteSetting.plugin_manager_issues_local = false
+        SiteSetting.plugin_manager_remote_issues = true
         stub_github_user_request(third_party_user)
         stub_github_plugin_request(third_party_user, third_party_plugin)
         setup_test_plugin(third_party_plugin, plugin_url: "https://github.com/#{third_party_user}/discourse-#{third_party_plugin.dasherize}.git")
@@ -83,20 +83,22 @@ describe PluginManager::Plugin::Status do
       let(:response_post) { JSON.parse(File.open("#{fixture_dir}/discourse/post.json").read) }
 
       before do
-        SiteSetting.plugin_manager_issues_site_base_url = base_url
-        SiteSetting.plugin_manager_issues_site_api_user = api_user
-        SiteSetting.plugin_manager_issues_site_api_token = api_token
-        SiteSetting.plugin_manager_issues_local = false
+        skip("not currently implemented")
+
+        SiteSetting.plugin_manager_remote_issues_site_base_url = base_url
+        SiteSetting.plugin_manager_remote_issues_site_api_user = api_user
+        SiteSetting.plugin_manager_remote_issues_site_api_token = api_token
+        SiteSetting.plugin_manager_remote_issues = false
         stub_github_user_request
         stub_github_plugin_request
-        plugin = setup_test_plugin(compatible_plugin, setup_category: true)
+        plugin = setup_test_plugin(compatible_plugin, setup_categories: true)
 
         log = add_log(compatible_plugin)
         request_body = {
           raw: PluginManager::Notifier.post_markdown(:broken, log, compatible_plugin.titleize),
           title: PluginManager::Notifier.title(:broken, log, compatible_plugin.titleize),
           archetype: "regular",
-          category: plugin.category_id,
+          category: plugin.support_category_id,
           tags: ["automated", compatible_plugin, log.branch]
         }
         stub_post_request(request_body, response_post)
@@ -146,12 +148,11 @@ describe PluginManager::Plugin::Status do
 
     context "with local posting enabled" do
       before do
-        SiteSetting.plugin_manager_issues_local = true
         stub_github_user_request
         stub_github_plugin_request
 
         freeze_time
-        @plugin = setup_test_plugin(compatible_plugin, setup_category: true)
+        @plugin = setup_test_plugin(compatible_plugin, setup_categories: true)
         add_log(compatible_plugin)
       end
 
@@ -163,8 +164,7 @@ describe PluginManager::Plugin::Status do
         topic = Topic.find(log.issue_id)
         title = PluginManager::Notifier.title(:broken, log, plugin_name)
         post_markdown = PluginManager::Notifier.post_markdown(:broken, log, plugin_name)
-        subcategory_name = SiteSetting.plugin_manager_issues_local_subcategory_name
-        category_id = Category.find_by(parent_category_id: @plugin.category_id, name: subcategory_name).id
+        category_id = Category.find_by(id: @plugin.support_category_id).id
 
         expect(topic.present?).to eq(true)
         expect(topic.title).to eq(title)

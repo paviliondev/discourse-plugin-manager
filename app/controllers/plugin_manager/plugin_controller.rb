@@ -85,9 +85,11 @@ class PluginManager::PluginController < ::ApplicationController
 
   def find_plugins
     if action_name === 'category'
-      @plugins = PluginManager::Plugin.list_by('category_id', params[:category_id])
+      plugin = PluginManager::Plugin.find_by_category_id(params[:category_id])
+      @plugins = plugin ? [plugin] : []
     elsif action_name === 'show'
-      @plugins = [PluginManager::Plugin.get(params[:plugin_name])]
+      plugin = PluginManager::Plugin.get(params[:plugin_name])
+      @plugins = plugin ? [plugin] : []
     else
       @plugins = PluginManager::Plugin.list(
         tags: params[:tags],

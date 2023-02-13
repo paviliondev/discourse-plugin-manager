@@ -10,34 +10,8 @@
   </div>
 </td>
 
-<td class="owner">
-  <div class="owner-container">
-    {{#if plugin.owner}}
-      <button class="btn-owner-logo btn-plugin" {{action "toggleOwnerDetail"}} type="button">
-        {{owner-logo plugin.owner label=(not site.mobileView)}}
-      </button>
-
-      {{#if showOwnerDetail}}
-        {{owner-detail owner=plugin.owner}}
-      {{/if}}
-    {{/if}}
-  </div>
-</td>
-
 <td class="status">
   <div class="status-container">
     {{plugin-status-button plugin=plugin discourse=discourse}}
   </div>
-</td>
-
-<td class="tags">
-  <div class="plugin-tags">
-    {{#each plugin.tags as |tag|}}
-      {{discourse-tag tag}}
-    {{/each}}
-  </div>
-</td>
-
-<td class="actions">
-  {{plugin-actions plugin=plugin textOnly=true}}
 </td>

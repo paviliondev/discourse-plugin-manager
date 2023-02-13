@@ -12,7 +12,7 @@ registerUnbound("owner-logo", (owner, opts = {}) => {
     opts.linked ? `a href=${href}` : "div"
   } class="${classes}" target="${target}">`;
 
-  let imgAlt = I18n.t("server_status.plugin.owner.logo", {
+  let imgAlt = I18n.t("plugin_manager.plugin.owner.logo", {
     ownerName: owner.name,
   });
   html += `<img class="owner-logo-img" src=${owner.avatar_url} alt=${imgAlt}>`;

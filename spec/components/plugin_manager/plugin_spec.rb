@@ -16,7 +16,7 @@ describe PluginManager::Plugin do
     stub_github_plugin_file_request
 
     result = described_class.retrieve_from_url(plugin_url)
-    expect(result.plugin[:name]).to eq(compatible_plugin)
+    expect(result.plugin[:name]).to eq(compatible_plugin.dasherize)
     expect(result.plugin[:about]).to eq("Compatbile plugin fixture")
     expect(result.plugin[:authors]).to eq("Angus McLeod")
     expect(result.plugin[:contact_emails]).to eq("angus@test.com")

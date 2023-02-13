@@ -11,7 +11,7 @@ export default Component.extend({
   asc: null,
   canLoadMore: true,
 
-  @observes("filter", "order", "asc", "tags.[]", "allTags")
+  @observes("filter", "order", "asc")
   triggerLoadPlugins() {
     this.setProperties({
       page: 0,
@@ -30,8 +30,6 @@ export default Component.extend({
       asc: this.asc,
       filter: this.filter,
       branch: this.discourse.branch,
-      tags: this.tags,
-      all_tags: this.allTags,
     };
 
     Plugin.list(params)

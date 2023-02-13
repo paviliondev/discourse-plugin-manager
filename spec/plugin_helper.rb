@@ -89,31 +89,26 @@ def api_token
 end
 
 def stub_plugin_git_cmds(dir, plugin_url)
-  Open3.expects(:capture3).with("git rev-parse HEAD", chdir: dir).returns(plugin_sha).at_least_once
-  Open3.expects(:capture3).with("git rev-parse --abbrev-ref HEAD", chdir: dir).returns(plugin_branch).at_least_once
-  Open3.expects(:capture3).with("git config --get remote.origin.url", chdir: dir).returns(plugin_url || "https://github.com/paviliondev/discourse-compatible-plugin.git")
+  Open3.expects(:capture3).with("git rev-parse HEAD", { chdir: dir }).returns(plugin_sha).at_least_once
+  Open3.expects(:capture3).with("git rev-parse --abbrev-ref HEAD", { chdir: dir }).returns(plugin_branch).at_least_once
+  Open3.expects(:capture3).with("git config --get remote.origin.url", { chdir: dir }).returns(plugin_url || "https://github.com/paviliondev/discourse-compatible-plugin.git")
   Discourse.expects(:git_branch).returns(discourse_branch).at_least_once
   Discourse.expects(:git_version).returns(discourse_sha).at_least_once
 end
 
-def setup_test_plugin(name, plugin_url: nil, setup_category: false)
+def setup_test_plugin(name, plugin_url: nil, setup_categories: false)
   dir = plugin_dir(name)
   stub_plugin_git_cmds(dir, plugin_url)
   PluginManager::TestHost.expects(:detect_local).returns("github")
   plugin = PluginManager::Plugin.set_local(dir)
 
-  if setup_category
-    category = Fabricate(:category)
-    plugin = PluginManager::Plugin.set(plugin.name, category_id: category.id)
-    local_management = SiteSetting.plugin_manager_issues_local
-    subcategory_name = SiteSetting.plugin_manager_issues_local_subcategory_name
-
-    if local_management && subcategory_name.present?
-      Fabricate(:category, parent_category_id: plugin.category_id, name: subcategory_name)
-    end
+  if setup_categories
+    SiteSetting.plugin_manager_support_category = Fabricate(:category).id unless SiteSetting.plugin_manager_support_category.present?
+    SiteSetting.plugin_manager_documentation_category = Fabricate(:category).id unless SiteSetting.plugin_manager_documentation_category.present?
+    PluginManager::Plugin.update_categories(plugin)
   end
 
-  plugin
+  PluginManager::Plugin.get(plugin.name)
 end
 
 def stub_github_user_request(user = "paviliondev")

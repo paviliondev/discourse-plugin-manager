@@ -10,6 +10,7 @@ export default {
   initialize(container) {
     const messageBus = container.lookup("service:message-bus");
     const site = container.lookup("service:site");
+    const siteSettings = container.lookup("service:site-settings");
 
     messageBus.subscribe(
       "/plugin-manager/status-updated",
@@ -30,11 +31,7 @@ export default {
 
         afterModel(model) {
           return this._super(...arguments).then(() => {
-            let categoryId = model.category.parentCategory
-              ? model.category.parentCategory.id
-              : model.category.id;
-
-            return Plugin.categoryPlugin(categoryId).then((result) => {
+            return Plugin.categoryPlugin(model.category.id).then((result) => {
               this.setProperties(result);
             });
           });
@@ -77,18 +74,25 @@ export default {
               return "plugins";
             }
             get title() {
-              return I18n.t("server_status.title");
+              return I18n.t("plugin_manager.title");
             }
             get text() {
-              return I18n.t("server_status.title");
+              return I18n.t("plugin_manager.title");
             }
             get links() {
               const sidebarLinks = [];
-              const pluginCategories = site.categories.filter(
-                (c) => c.for_plugin
+              const supportCatId = Number(
+                siteSettings.plugin_manager_support_category
+              );
+              const docsCatId = Number(
+                siteSettings.plugin_manager_documentation_category
+              );
+              const parentIds = [supportCatId, docsCatId].map((id) => id);
+              const pluginCategoryParents = site.categories.filter((c) =>
+                parentIds.includes(c.id)
               );
 
-              pluginCategories.forEach((lc) => {
+              pluginCategoryParents.forEach((lc) => {
                 sidebarLinks.push(
                   new (class extends BaseCustomSidebarSectionLink {
                     get name() {
@@ -110,7 +114,7 @@ export default {
                       return "icon";
                     }
                     get prefixValue() {
-                      return "plug";
+                      return supportCatId === lc.id ? "far-life-ring" : "book";
                     }
                   })()
                 );
@@ -125,16 +129,16 @@ export default {
                     return "plugins";
                   }
                   get title() {
-                    return I18n.t("server_status.all_plugins");
+                    return I18n.t("plugin_manager.status");
                   }
                   get text() {
-                    return I18n.t("server_status.all_plugins");
+                    return I18n.t("plugin_manager.status");
                   }
                   get prefixType() {
                     return "icon";
                   }
                   get prefixValue() {
-                    return "list";
+                    return "far-dot-circle";
                   }
                 })()
               );

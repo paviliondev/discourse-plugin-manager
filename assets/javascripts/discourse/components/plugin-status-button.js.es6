@@ -22,6 +22,8 @@ export default Component.extend({
     if (!event.target.closest(`.plugin-status-button.${this.plugin.name}`)) {
       this.set("showStatusDetail", false);
     }
+
+    return true;
   },
 
   createStatusDetailModal() {

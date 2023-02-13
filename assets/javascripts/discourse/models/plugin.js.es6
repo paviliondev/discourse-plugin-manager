@@ -23,7 +23,7 @@ const Plugin = RestModel.extend({
 
   @discourseComputed("status.status")
   statusTitle(status) {
-    return status ? I18n.t(`server_status.plugin.status.${status}.title`) : "";
+    return status ? I18n.t(`plugin_manager.plugin.status.${status}.title`) : "";
   },
 
   @discourseComputed("status.status")
@@ -56,25 +56,14 @@ const Plugin = RestModel.extend({
   branchUrl: readOnly("branch_url"),
   branch: readOnly("status.branch"),
 
-  @discourseComputed("category_id")
-  category(categoryId) {
+  @discourseComputed("documentation_category_id")
+  documentationCategory(categoryId) {
     return Category.findById(categoryId);
   },
 
-  @discourseComputed("category")
-  issueCategory(category) {
-    const issueCategoryName = this.siteSettings
-      .plugin_manager_issues_local_subcategory_name;
-    return category.subcategories.find((c) => c.name === issueCategoryName);
-  },
-
-  @discourseComputed("category")
-  documentationCategory(category) {
-    const documentationCategoryName = this.siteSettings
-      .plugin_manager_documentation_local_subcategory_name;
-    return category.subcategories.find(
-      (c) => c.name === documentationCategoryName
-    );
+  @discourseComputed("support_category_id")
+  supportCategory(categoryId) {
+    return Category.findById(categoryId);
   },
 
   reload(discourseBranch) {

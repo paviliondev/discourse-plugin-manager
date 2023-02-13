@@ -14,7 +14,7 @@ export default Component.extend({
     "discourse.branch"
   )
   detailDescription(pluginName, pluginStatus, pluginBranch, discourseBranch) {
-    return I18n.t(`server_status.plugin.status.${pluginStatus}.description`, {
+    return I18n.t(`plugin_manager.plugin.status.${pluginStatus}.description`, {
       plugin_name: pluginName,
       plugin_branch: pluginBranch,
       discourse_branch: discourseBranch,
@@ -23,7 +23,7 @@ export default Component.extend({
 
   @discourseComputed("plugin.status.status")
   detailTitle(pluginStatus) {
-    return I18n.t(`server_status.plugin.status.${pluginStatus}.detail_title`);
+    return I18n.t(`plugin_manager.plugin.status.${pluginStatus}.detail_title`);
   },
 
   actions: {

@@ -2,22 +2,8 @@
   {{discourse-status discourse=discourse}}
 
   <div class="text-filter">
-    <label class="detail-label">{{i18n "server_status.plugin.filter.label"}}</label>
-    {{input type="text" value=filter placeholder=(i18n "server_status.plugin.filter.placeholder")}}
-  </div>
-
-  <div class="tag-filter">
-    <label class="detail-label">{{i18n "server_status.plugin.tags"}}</label>
-
-    <div class="tag-filter-contents">
-      {{plugin-tag-chooser tags=tags}}
-
-      <span class="all-tags">
-        <label class="detail-label">&nbsp;</label>
-        {{input type="checkbox" checked=allTags}}
-        <span>{{i18n "server_status.plugin.all_tags"}}</span>
-      </span>
-    </div>
+    <label class="detail-label">{{i18n "plugin_manager.plugin.filter.label"}}</label>
+    {{input type="text" value=filter placeholder=(i18n "plugin_manager.plugin.filter.placeholder")}}
   </div>
 </div>
 
@@ -25,10 +11,8 @@
   {{#load-more selector="table.plugin-manifest-table tr" action=(action "loadMore")}}
     <table class="table plugin-manifest-table grid">
       <thead>
-        {{table-header-toggle field="plugin_name" labelKey="server_status.plugin.title" order=order asc=asc automatic=true}}
-        {{table-header-toggle field="owner_name" labelKey="server_status.plugin.owner.label" order=order asc=asc automatic=true}}
-        <th><span class="header-contents">{{i18n "server_status.plugin.status.label"}}</span></th>
-        <th><span class="header-contents">{{i18n "server_status.plugin.tags"}}</span></th>
+        {{table-header-toggle field="plugin_name" labelKey="plugin_manager.plugin.title" order=order asc=asc automatic=true}}
+        <th><span class="header-contents">{{i18n "plugin_manager.plugin.status.label"}}</span></th>
       </thead>
       <tbody>
         {{#each plugins as |plugin|}}

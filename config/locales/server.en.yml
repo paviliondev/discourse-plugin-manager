@@ -2,15 +2,13 @@ en:
   category:
     topic_prefix: "About the %{category} plugin"
   site_settings:
-    plugin_manager_update_category_id: Server update category
-    plugin_manager_issues_local: Post issues locally
-    plugin_manager_issues_local_subcategory_name: Name of issues subcategory
-    plugin_manager_issues_site_base_url: "URL of site where bug reports are being handled"
-    plugin_manager_issues_site_api_token: "API Token of site where bug reports are being handled"
-    plugin_manager_issues_site_api_user:  "API User of site where bug reports are being handled"
-    plugin_manager_issues_site_issue_tags: "Tags you wish to apply to issue topics raised on site where bug reports are being handled"
-    plugin_manager_issues_site_issue_category_id: "Category (id) where bug reports are being handled"
-    plugin_manager_documentation_local_subcategory_name: Name of documentation subcategory
+    plugin_manager_support_category: Support parent category.
+    plugin_manager_documentation_category: Documentation parent category.
+    plugin_manager_remote_issues: "Handle bug reports remotely."
+    plugin_manager_remote_issues_site_base_url: "URL of site where bug reports are being handled"
+    plugin_manager_remote_issues_site_api_token: "API Token of site where bug reports are being handled"
+    plugin_manager_remote_issues_site_api_user:  "API User of site where bug reports are being handled"
+    plugin_manager_remote_issues_site_issue_tags: "Tags you wish to apply to issue topics raised on site where bug reports are being handled"
     plugin_manager_github_oauth_client_id: "Client id of Github OAuth app for Plugin Manager Server."
     plugin_manager_github_oauth_client_secret: "Client secret of Github OAuth app for Plugin Manager Server."
 
@@ -25,7 +23,7 @@ en:
       error: "The tests are failing."
       error_test: "The '%{test_name}' test is failing."
     plugin:
-      category_description: This category is for documentation, support and issues related to the %{plugin_name} plugin.
+      documentation_category_description: Documentation for the %{plugin_name} plugin.
       issues_category_title: Issues for the %{plugin_name} plugin.
       issues_category_description: Please submit issues with the %{plugin_name} plugin using the [Bug Report Wizard](/w/bug-report).
       documentation_category_title: Documentation for the %{plugin_name} plugin.

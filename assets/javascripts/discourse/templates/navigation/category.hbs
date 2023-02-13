@@ -13,18 +13,8 @@
 </section>
 
 <DSection @class="navigation-container category-navigation">
-  {{#if category.plugin}}
-    {{category-drop
-      category=displayCategory
-      categories=pluginCategories
-      options=(hash
-        noSubcategories=true
-        autoFilterable=true
-      )
-    }}
-    {{plugin-actions plugin=category.plugin}}
-  {{else}}
+  {{#unless category.plugin}}
     <DNavigation @category={{this.category}} @filterMode={{this.filterMode}} @noSubcategories={{this.noSubcategories}} @canCreateTopic={{this.canCreateTopic}} @createTopic={{route-action "createTopic"}} @createTopicDisabled={{this.cannotCreateTopicOnCategory}} @hasDraft={{this.currentUser.has_topic_draft}} @editCategory={{route-action "editCategory" this.category}} />
     <PluginOutlet @name="category-navigation" @connectorTagName="div" @args={{hash category=this.category}} />
-  {{/if}}
+  {{/unless}}
 </DSection>
