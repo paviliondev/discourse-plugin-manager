@@ -1,6 +1,4 @@
 en:
-  category:
-    topic_prefix: "About the %{category} plugin"
   site_settings:
     plugin_manager_support_category: Support parent category.
     plugin_manager_documentation_category: Documentation parent category.
