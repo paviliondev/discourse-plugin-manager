@@ -14,6 +14,7 @@ describe PluginManager::PluginStatusController do
   it "indexes plugin statuses" do
     setup_test_plugin(compatible_plugin)
     setup_test_plugin(third_party_plugin)
+    freeze_time Time.now
     PluginManager::Plugin::Status.update(compatible_plugin, git, compatible_status)
     PluginManager::Plugin::Status.update(third_party_plugin, git, compatible_status)
 
@@ -35,6 +36,7 @@ describe PluginManager::PluginStatusController do
     expect(response.status).to eq(200)
     expect(response.parsed_body['total']).to eq(2)
     expect(response.parsed_body['statuses'].first['status']).to eq('compatible')
+    expect(response.parsed_body['statuses'].first['last_status_at']).to eq(Time.now.strftime('%F %T'))
   end
 
   it "updates a plugin status" do

@@ -41,6 +41,9 @@ describe PluginManager::Plugin::Status do
     expect(
       described_class.get(compatible_plugin, plugin_branch, discourse_branch).status
     ).to eq(described_class.statuses[:tests_failing])
+    expect(
+      described_class.get(compatible_plugin, plugin_branch, discourse_branch).last_status_at.to_time.strftime('%F %T')
+    ).to eq(Time.now.strftime('%F %T'))
   end
 
   context "with status change" do
