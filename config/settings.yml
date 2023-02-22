@@ -1,20 +1,22 @@
 plugins:
-  plugin_manager_issues_local:
-    default: true
-  plugin_manager_issues_local_subcategory_name:
-    default: issues
+  plugin_manager_support_category:
+    type: category
+    default: ""
     client: true
-  plugin_manager_issues_site_base_url:
+  plugin_manager_documentation_category:
+    type: category
     default: ""
-  plugin_manager_issues_site_api_token:
+    client: true
+  plugin_manager_remote_issues:
+    default: false
+  plugin_manager_remote_issues_site_base_url:
     default: ""
-  plugin_manager_issues_site_api_user:
+  plugin_manager_remote_issues_site_api_token:
     default: ""
-  plugin_manager_issues_site_issue_tags:
+  plugin_manager_remote_issues_site_api_user:
+    default: ""
+  plugin_manager_remote_issues_site_issue_tags:
     type: list
     default: "automated"
-  plugin_manager_documentation_local_subcategory_name:
-    default: documentation
-    client: true
   plugin_manager_github_oauth_client_id: ""
   plugin_manager_github_oauth_client_secret: ""

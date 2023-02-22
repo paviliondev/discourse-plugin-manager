@@ -6,7 +6,7 @@ export default TagChooser.extend({
 
   selectKitOptions: {
     allowAny: false,
-    none: "server_status.plugin.select_tags",
+    none: "plugin_manager.plugin.select_tags",
   },
 
   search(query) {

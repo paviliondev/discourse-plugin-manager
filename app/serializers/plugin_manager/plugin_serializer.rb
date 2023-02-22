@@ -14,7 +14,8 @@ class PluginManager::PluginSerializer < ::ApplicationSerializer
              :owner,
              :test_host,
              :status,
-             :category_id,
+             :documentation_category_id,
+             :support_category_id,
              :tags
 
   def log

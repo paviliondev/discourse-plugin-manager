@@ -9,7 +9,8 @@ class ::PluginManager::Plugin
   attr_accessor :branch,
                 :discourse_branch,
                 :status,
-                :category_id,
+                :support_category_id,
+                :documentation_category_id,
                 :group_id
 
   attr_reader   :name,
@@ -34,7 +35,8 @@ class ::PluginManager::Plugin
     @about = attrs[:about]
     @contact_emails = attrs[:contact_emails]
     @maintainers = attrs[:maintainers]
-    @category_id = attrs[:category_id]
+    @support_category_id = attrs[:support_category_id]
+    @documentation_category_id = attrs[:documentation_category_id]
     @group_id = attrs[:group_id]
     @tags = attrs[:tags]
     @branches = attrs[:branches]
@@ -87,20 +89,22 @@ class ::PluginManager::Plugin
     end
   end
 
-  def category
-    @category ||= begin
-      if category_id
-        Category.find_by(id: category_id)
-      else
-        Category.find_by(slug: name.dasherize)
-      end
+  def documentation_category
+    @documentation_category ||= begin
+      Category.find_by(id: documentation_category_id)
     end
   end
 
-  def category_tags
-    @category_tags ||= begin
-      if category&.topic
-        category.topic.tags.map(&:name)
+  def support_category
+    @support_category ||= begin
+      Category.find_by(id: support_category_id)
+    end
+  end
+
+  def documentation_category_tags
+    @documentation_category_tags ||= begin
+      if documentation_category&.topic
+        documentation_category.topic.tags.map(&:name)
       else
         []
       end
@@ -121,7 +125,8 @@ class ::PluginManager::Plugin
       contact_emails: attrs[:contact_emails] || plugin.contact_emails,
       maintainers: attrs[:maintainers] || plugin.maintainers,
       owner: attrs[:owner]&.instance_values || plugin.owner&.instance_values,
-      category_id: attrs[:category_id] || plugin.category_id,
+      documentation_category_id: attrs[:documentation_category_id] || plugin.documentation_category_id,
+      support_category_id: attrs[:support_category_id] || plugin.support_category_id,
       default_branch: attrs[:default_branch] || plugin.default_branch,
       branches: plugin.branches || [],
       test_host: attrs[:test_host] || plugin.test_host,
@@ -135,7 +140,6 @@ class ::PluginManager::Plugin
     end
 
     new_attrs = update_repository_attrs(new_attrs[:url], new_attrs)
-
     PluginManagerStore.set(::PluginManager::NAMESPACE, plugin_name, new_attrs)
 
     status_attrs = attrs.slice(:status, :test_status)
@@ -172,12 +176,10 @@ class ::PluginManager::Plugin
     plugin = get(plugin_name)
 
     unless Rails.env.test?
-      update_category(plugin)
-      update_group(plugin)
-    end
-
-    if Set.new(plugin.category_tags) != Set.new(plugin.tags)
-      set(plugin.name, tags: plugin.category_tags)
+      ActiveRecord::Base.transaction do
+        update_categories(plugin)
+        update_group(plugin)
+      end
     end
 
     plugin
@@ -204,6 +206,16 @@ class ::PluginManager::Plugin
   def self.list_by(attr, value)
     query = ::PluginStoreRow.where("plugin_name = '#{::PluginManager::NAMESPACE}' AND value::json->>'#{attr}' = ?", value.to_s)
     list_query(query)
+  end
+
+  def self.find_by_category_id(value)
+    query = ::PluginStoreRow.where("
+      plugin_name = '#{::PluginManager::NAMESPACE}'
+      AND (
+        value::json->>'documentation_category_id' = :category_id OR
+        value::json->>'support_category_id' = :category_id
+      )", category_id: value.to_s)
+    query.exists? ? create_from_record(query.first) : nil
   end
 
   def self.with_attr(attr)
@@ -287,70 +299,54 @@ class ::PluginManager::Plugin
     result
   end
 
-  def self.update_category(plugin)
-    category = plugin.category
+  def self.update_categories(plugin)
+    %w[documentation support].each do |category_type|
+      next unless (parent_category_id = SiteSetting.send("plugin_manager_#{category_type}_category")).present?
 
-    if category.present?
-      category.description = plugin.about
-      category.custom_fields['plugin_name'] = plugin.name
-      category.custom_fields['plugin_maintainer'] = plugin.maintainer
-      category.save!
-    else
-      category =
-        begin
-          display_name = plugin.display_name
-          Category.new(
-            name: display_name,
-            slug: plugin.name,
-            description: I18n.t("plugin_manager.plugin.category_description", plugin_name: display_name),
-            user: Discourse.system_user,
-            permissions: {
-              everyone: CategoryGroup.permission_types[:create_post],
-              staff: CategoryGroup.permission_types[:full]
-            }
-          )
-        rescue ArgumentError => e
-          raise Discourse::InvalidParameters, "Failed to create category"
-        end
-      category.custom_fields['plugin_name'] = plugin.name
-      category.custom_fields['plugin_maintainer'] = plugin.maintainer
-      category.save!
-    end
+      category = Category.find_by(parent_category_id: parent_category_id, slug: plugin.name)
+      category = create_category(category_type, plugin) unless category
+      category = update_category(category, category_type, plugin)
 
-    if category && plugin.category_id != category.id
-      set(plugin.name, category_id: category.id)
-    end
-
-    if category
-      %w(issues documentation).each do |subcategory_type|
-        ensure_subcategory(category, plugin, subcategory_type)
+      if category && plugin.send("#{category_type}_category_id") != category.id
+        opts = {}
+        opts["#{category_type}_category_id".to_sym] = category.id
+        set(plugin.name, opts)
       end
     end
   end
 
-  def self.ensure_subcategory(category, plugin, subcategory_type)
-    name = SiteSetting.send("plugin_manager_#{subcategory_type}_local_subcategory_name")
-    subcategory = Category.find_by(
-      parent_category_id: category.id,
-      name: name
-    )
+  def self.update_category(category, category_type, plugin)
+    category.description = plugin.about
+    category.custom_fields['plugin_name'] = plugin.name
+    category.custom_fields['plugin_maintainer'] = plugin.maintainer if category_type === "support"
+    category.custom_fields["plugin_#{category_type}"] = true
 
-    unless subcategory
-      subcategory = Category.create!(
-        parent_category_id: category.id,
-        name: name,
-        slug: name.downcase,
-        description: I18n.t("plugin_manager.plugin.#{subcategory_type}_category_description", plugin_name: plugin.display_name),
+    begin
+      category.save!
+    rescue => e
+      raise Discourse::InvalidParameters, "Failed to save category"
+    end
+
+    category
+  end
+
+  def self.create_category(category_type, plugin)
+    begin
+      display_name = plugin.display_name
+      Category.new(
+        name: display_name,
+        slug: plugin.name,
+        description: I18n.t("plugin_manager.plugin.#{category_type}_category_description", plugin_name: display_name),
         user: Discourse.system_user,
+        parent_category_id: SiteSetting.send("plugin_manager_#{category_type}_category"),
         permissions: {
           everyone: CategoryGroup.permission_types[:create_post],
           staff: CategoryGroup.permission_types[:full]
         }
       )
+    rescue ArgumentError => e
+      raise Discourse::InvalidParameters, "Failed to create category"
     end
-
-    topic_title = I18n.t("plugin_manager.plugin.#{subcategory_type}_category_title", plugin_name: plugin.display_name)
-    subcategory.topic.update_attribute(:title, topic_title) unless topic_title == subcategory.topic.title
   end
 
   def self.update_group(plugin)
@@ -474,6 +470,7 @@ class ::PluginManager::Plugin
       lazy-yt
       poll
       styleguide
+      chat
     )
   end
 end

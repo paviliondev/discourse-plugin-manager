@@ -1,27 +1,9 @@
 en:
   js:
-    categories:
-      all: "all plugins"
-      n_more: "Plugins (%{count} more)..."
-    category:
-      none: "(no plugin)"
-      all: "All plugins"
-      list: "List Plugins"
-    filters:
-      categories:
-        title: "Plugins"
-        title_in: "Plugin - %{categoryName}"
-    search:
-      categories: Plugins
-      type:
-        categories: "Plugins"
-        categories_and_tags: "Plugins/tags"
-      advanced:
-        in_category:
-          label: Plugin
-
-    server_status:
+    plugin_manager:
       title: "Plugins"
+      status: "Status"
+      plugin_status: Plugin Status
       add_plugin: Submit a Plugin
       report_an_issue: Report an Issue
       help: Help
@@ -36,7 +18,7 @@ en:
         about: "About"
         filter:
           label: Filter
-          placeholder: plugin name or supplier
+          placeholder: plugin name
         tags: Tags
         all_tags: match all
         select_tags: Select tags...
@@ -90,7 +72,6 @@ en:
           message: message
           backtrace: backtrace
 
-    plugin_manager:
       user:
         plugins:
           nav: Plugins
@@ -135,5 +116,6 @@ en:
           try_url: "Try URL"
           status: "Status"
           controls: "Controls"
-          category: Category
+          support_category: Support
+          documentation_category: Documentation
           maintainers: "Maintainers"

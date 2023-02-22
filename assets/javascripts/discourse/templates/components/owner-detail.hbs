@@ -12,7 +12,7 @@
   <ul class="detail-metadata">
     {{#if owner.description}}
       <li>
-        <label class="detail-label">{{i18n "server_status.plugin.owner.description"}}</label>
+        <label class="detail-label">{{i18n "plugin_manager.plugin.owner.description"}}</label>
         <span class="detail-value">{{owner.description}}</span>
       </li>
     {{/if}}
@@ -22,11 +22,11 @@
 {{#if hasActions}}
   <div class="detail-actions">
     {{#if owner.website}}
-      {{action-link url=owner.website icon="globe" labelKey="server_status.plugin.owner.website"}}
+      {{action-link url=owner.website icon="globe" labelKey="plugin_manager.plugin.owner.website"}}
     {{/if}}
 
     {{#if owner.email}}
-      {{action-link url=mailtoUrl icon="envelope" labelKey="server_status.plugin.owner.email"}}
+      {{action-link url=mailtoUrl icon="envelope" labelKey="plugin_manager.plugin.owner.email"}}
     {{/if}}
   </div>
 {{/if}}

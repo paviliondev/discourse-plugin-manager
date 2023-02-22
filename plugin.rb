@@ -63,10 +63,13 @@ after_initialize do
     load File.expand_path(path, __FILE__)
   end
 
-  unless Rails.env.test?
-    PluginManager::Plugin.update_plugins
+  if Rails.env.development?
     PluginManager::Plugin.update_local_plugins
-    PluginManager::Plugin.update_test_statuses
+  elsif
+    unless Rails.env.test?
+      PluginManager::Plugin.update_plugins
+      PluginManager::Plugin.update_test_statuses
+    end
   end
 
   user_key_suffix = 'plugin-registrations'
@@ -171,8 +174,8 @@ after_initialize do
   end
 
   on(:topic_tags_changed) do |topic, params|
-    if topic.is_category_topic? && topic.category.custom_fields['plugin_name'].present?
-      PluginManager::Plugin.set(topic.category.custom_fields['plugin_name'], tags: params[:new_tag_names])
+    if topic.is_category_topic? && topic.category.plugin_documentation
+      PluginManager::Plugin.set(topic.plugin_documentation.plugin_name, tags: params[:new_tag_names])
 
       plugin_tags = Site.plugin_tags
       unless params[:new_tag_names].all? { |tag| plugin_tags.include?(tag) }
@@ -184,11 +187,9 @@ after_initialize do
   on(:topic_created) do |topic, opts, user|
     if defined?(Assigner) == 'constant' &&
       SiteSetting.assign_enabled &&
-      topic&.category&.name === SiteSetting.plugin_manager_issues_local_subcategory_name
+      topic.category.plugin_support
 
-      plugin_category = topic&.category&.parent_category
-
-      if plugin_maintainer = plugin_category&.custom_fields['plugin_maintainer']
+      if plugin_maintainer = topic.category.plugin_maintainer
         assigner = Assigner.new(topic, Discourse.system_user)
         assigner.assign(User.find_by_username(plugin_maintainer))
       end
@@ -197,6 +198,12 @@ after_initialize do
 
   add_to_serializer(:site, :plugin_tags) { Site.plugin_tags }
 
+  Category.register_custom_field_type("plugin_support", :boolean)
+  Category.register_custom_field_type("plugin_documentation", :boolean)
   Site.preloaded_category_custom_fields << 'plugin_name'
-  add_to_serializer(:site_category, :for_plugin) { object.custom_fields['plugin_name'].present? }
+  add_to_serializer(:site_category, :for_plugin) { object.plugin_name.present? }
+  add_to_class(:category, :plugin_name) { custom_fields['plugin_name'] }
+  add_to_class(:category, :plugin_maintainer) { custom_fields['plugin_maintainer'] }
+  add_to_class(:category, :plugin_documentation) { ActiveRecord::Type::Boolean.new.cast(custom_fields['plugin_documentation']) }
+  add_to_class(:category, :plugin_support) { ActiveRecord::Type::Boolean.new.cast(custom_fields['plugin_support']) }
 end

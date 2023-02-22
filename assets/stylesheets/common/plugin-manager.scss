@@ -406,6 +406,7 @@ $incompatible: #ef1700;
 .branch-label {
   border: 1px solid var(--primary-medium);
   padding: 0.05em 0.3em;
+  display: inline-block;
 }
 
 .detail-label {
@@ -654,12 +655,6 @@ table.plugin-manager-user-table {
   }
 }
 
-.detail-title {
-  .branch-label {
-    padding: 0.3em 0.85em;
-  }
-}
-
 .plugin-category .category-breadcrumb,
 .plugin-category .topic-list-body > tr:first-of-type .discourse-tags {
   display: none;
@@ -672,17 +667,19 @@ table.plugin-manager-user-table {
 
     > .detail-title {
       margin-top: 0;
-      flex-direction: column;
       align-items: flex-start;
 
       h3 {
         font-size: 1.5rem;
-        margin-bottom: 0.5rem;
       }
 
       span {
         font-size: 1em;
       }
+    }
+
+    .branch-label {
+      padding: 0.3em 0.85em;
     }
   }
 

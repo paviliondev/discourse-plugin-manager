@@ -29,4 +29,6 @@ Discourse::Application.routes.prepend do
     get "#{root_path}/:username/plugins" => "plugin_manager/plugin_user#index"
     get "#{root_path}/:username/plugins/registered" => "plugin_manager/plugin_user#registered"
   end
+
+  get "plugins" => "plugin_manager/plugin#index"
 end

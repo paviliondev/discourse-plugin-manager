@@ -4,6 +4,16 @@ import discourseComputed from "discourse-common/utils/decorators";
 export default Component.extend({
   classNames: ["plugin-detail", "plugin-manager-detail"],
 
+  @discourseComputed("plugin.documentationCategory.id", "category.id")
+  documentationCategory(pluginCategoryId, categoryId) {
+    return !categoryId || pluginCategoryId === categoryId;
+  },
+
+  @discourseComputed("plugin.supportCategory.id", "category.id")
+  supportCategory(pluginCategoryId, categoryId) {
+    return pluginCategoryId && pluginCategoryId === categoryId;
+  },
+
   @discourseComputed("manifest")
   aboutClass(manifest) {
     return manifest ? "full-width" : "";

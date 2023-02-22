@@ -1,15 +1,15 @@
-{{#if plugin.issueCategory}}
+{{#if plugin.supportCategory}}
   {{d-button
-    href=plugin.issueCategory.url
-    title="server_status.plugin.issues.title"
+    href=plugin.supportCategory.url
+    title="plugin_manager.plugin.issues.title"
     label=issueLabel
-    icon="far-dot-circle"
+    icon="far-life-ring"
     class=issuesClass}}
 {{/if}}
 {{#if plugin.documentationCategory}}
   {{d-button
     href=plugin.documentationCategory.url
-    title="server_status.plugin.documentation.title"
+    title="plugin_manager.plugin.documentation.title"
     label=documentationLabel
     icon="book"
     class=documentationClass}}

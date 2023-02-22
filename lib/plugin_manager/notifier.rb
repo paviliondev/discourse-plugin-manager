@@ -31,19 +31,10 @@ class PluginManager::Notifier
     }
 
     if @type === :broken
-      category_id = @plugin.category_id
-      local_management = SiteSetting.plugin_manager_issues_local
-      subcategory_name = SiteSetting.plugin_manager_issues_local_subcategory_name
-
-      if local_management && subcategory_name.present?
-        category = Category.find_by(parent_category_id: @plugin.category_id, name: subcategory_name)
-        category_id = category.id if category
-      end
-
       opts.merge!(
         title: self.class.title(@type, @log, @plugin.display_name),
         archetype: "regular",
-        category: category_id,
+        category: @plugin.support_category_id,
         tags: post_tags
       )
     end
@@ -54,10 +45,10 @@ class PluginManager::Notifier
       )
     end
 
-    if SiteSetting.plugin_manager_issues_local
-      local_post(opts)
-    else
+    if SiteSetting.plugin_manager_remote_issues
       remote_post(opts)
+    else
+      local_post(opts)
     end
   end
 
@@ -158,10 +149,6 @@ class PluginManager::Notifier
     result = ""
     result += "Test url: #{log.test_url}\n" if log.test_url
 
-    if !SiteSetting.plugin_manager_issues_local && log.issue_url
-      result += "Issue url: #{log.issue_url}\n"
-    end
-
     if log.backtrace
       result += <<~EOF
         Backtrace:
@@ -174,9 +161,9 @@ class PluginManager::Notifier
 
   def post_settings
     @post_settings ||= begin
-      base_url = SiteSetting.plugin_manager_issues_site_base_url
-      api_user = SiteSetting.plugin_manager_issues_site_api_user
-      api_token = SiteSetting.plugin_manager_issues_site_api_token
+      base_url = SiteSetting.plugin_manager_remote_issues_site_base_url
+      api_user = SiteSetting.plugin_manager_remote_issues_site_api_user
+      api_token = SiteSetting.plugin_manager_remote_issues_site_api_token
 
       if base_url.present? && api_user.present? && api_token.present?
         {
@@ -201,11 +188,11 @@ class PluginManager::Notifier
   end
 
   def send_post?
-    SiteSetting.plugin_manager_issues_local || post_settings.present?
+    !SiteSetting.plugin_manager_remote_issues || post_settings.present?
   end
 
   def post_tags
-    tags = SiteSetting.plugin_manager_issues_site_issue_tags.split('|')
+    tags = SiteSetting.plugin_manager_remote_issues_site_issue_tags.split('|')
     tags << @plugin.name.sub("discourse-", "")
     tags << @log.branch
     tags

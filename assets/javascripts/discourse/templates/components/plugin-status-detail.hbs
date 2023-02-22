@@ -3,7 +3,7 @@
     <span class="plugin-name">{{plugin.display_name}}</span>
     {{branch-label plugin}}
     <span>{{detailTitle}}</span>
-    <span class="discourse-name">{{i18n "server_status.discourse.title"}}</span>
+    <span class="discourse-name">{{i18n "plugin_manager.discourse.title"}}</span>
     {{branch-label discourse}}
   </div>
 
@@ -20,36 +20,36 @@
       {{action-link
         url=plugin.log.test_url
         icon="external-link-alt"
-        labelKey="server_status.plugin.test_log"}}
+        labelKey="plugin_manager.plugin.test_log"}}
     {{/if}}
 
     {{#if plugin.log.issue_url}}
       {{action-link
         url=plugin.log.issue_url
         icon="external-link-alt"
-        labelKey="server_status.plugin.issue_report"}}
+        labelKey="plugin_manager.plugin.issue_report"}}
     {{/if}}
 
     <a class="show-log action-link" {{action "toggleLog"}} role="button">
       {{d-icon "file-alt"}}
-      <span>{{i18n "server_status.plugin.log.show"}}</span>
+      <span>{{i18n "plugin_manager.plugin.log.show"}}</span>
     </a>
 
     {{#if showLog}}
       <div class="log-detail">
         <div class="log-attr log-date">
-          <label>{{i18n "server_status.plugin.log.updated_at"}}</label>
+          <label>{{i18n "plugin_manager.plugin.log.updated_at"}}</label>
           <span>{{plugin.log.updated_at}}</span>
         </div>
 
         <div class="log-attr log-message">
-          <label>{{i18n "server_status.plugin.log.message"}}</label>
+          <label>{{i18n "plugin_manager.plugin.log.message"}}</label>
           <span>{{plugin.log.message}}</span>
         </div>
 
         {{#if plugin.log.backtrace}}
           <div class="log-attr log-backtrace">
-            <label>{{i18n "server_status.plugin.log.backtrace"}}</label>
+            <label>{{i18n "plugin_manager.plugin.log.backtrace"}}</label>
             <div class="backtrace-content">{{plugin.log.backtrace}}</div>
           </div>
         {{/if}}

@@ -26,7 +26,7 @@ export default Component.extend({
 
   click(e) {
     if (!e.target.closest(".btn-plugin, .btn-owner-logo, .status-badge")) {
-      DiscourseURL.routeTo(this.pluginCategory.url);
+      DiscourseURL.routeTo(this.plugin.supportCategory.url);
     }
   },
 
@@ -50,6 +50,8 @@ export default Component.extend({
     ) {
       this.set("showOwnerDetail", false);
     }
+
+    return true;
   },
 
   createPluginDetailModal() {
@@ -90,8 +92,13 @@ export default Component.extend({
     return `mailto:${contactEmails[0]}`;
   },
 
-  @discourseComputed("plugin.category_id")
-  pluginCategory(categoryId) {
+  @discourseComputed("plugin.documentation_category_id")
+  pluginDocumentationCategory(categoryId) {
+    return Category.findById(categoryId);
+  },
+
+  @discourseComputed("plugin.support_category_id")
+  pluginSupportCategory(categoryId) {
     return Category.findById(categoryId);
   },
 
