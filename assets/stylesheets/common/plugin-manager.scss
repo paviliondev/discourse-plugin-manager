@@ -655,11 +655,6 @@ table.plugin-manager-user-table {
   }
 }
 
-.plugin-category .category-breadcrumb,
-.plugin-category .topic-list-body > tr:first-of-type .discourse-tags {
-  display: none;
-}
-
 .plugin-manager-category-plugin {
   .plugin-manager-detail:not(.plugin-status-detail) {
     width: unset;
