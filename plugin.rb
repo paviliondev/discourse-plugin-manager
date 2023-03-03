@@ -187,7 +187,7 @@ after_initialize do
   on(:topic_created) do |topic, opts, user|
     if defined?(Assigner) == 'constant' &&
       SiteSetting.assign_enabled &&
-      topic.category.plugin_support
+      topic.category&.plugin_support
 
       if plugin_maintainer = topic.category.plugin_maintainer
         assigner = Assigner.new(topic, Discourse.system_user)
