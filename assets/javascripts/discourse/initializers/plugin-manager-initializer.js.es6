@@ -3,6 +3,7 @@ import Discourse from "../models/discourse";
 import Category from "discourse/models/category";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import discourseComputed from "discourse-common/utils/decorators";
+import PluginSidebarSection from "../components/plugin-sidebar-section";
 import I18n from "I18n";
 
 export default {
@@ -11,6 +12,12 @@ export default {
     const messageBus = container.lookup("service:message-bus");
     const site = container.lookup("service:site");
     const siteSettings = container.lookup("service:site-settings");
+    const currentUser = container.lookup("service:current-user");
+
+    currentUser.set('sidebar_sections', [
+      new PluginSidebarSection(siteSettings, site),
+      ...currentUser.sidebar_sections
+    ]);
 
     messageBus.subscribe(
       "/plugin-manager/status-updated",
@@ -66,88 +73,6 @@ export default {
           return categories.filter((c) => c.for_plugin);
         },
       });
-
-      api.addSidebarSection(
-        (BaseCustomSidebarSection, BaseCustomSidebarSectionLink) => {
-          return class extends BaseCustomSidebarSection {
-            get name() {
-              return "plugins";
-            }
-            get title() {
-              return I18n.t("plugin_manager.title");
-            }
-            get text() {
-              return I18n.t("plugin_manager.title");
-            }
-            get links() {
-              const sidebarLinks = [];
-              const supportCatId = Number(
-                siteSettings.plugin_manager_support_category
-              );
-              const docsCatId = Number(
-                siteSettings.plugin_manager_documentation_category
-              );
-              const parentIds = [supportCatId, docsCatId].map((id) => id);
-              const pluginCategoryParents = site.categories.filter((c) =>
-                parentIds.includes(c.id)
-              );
-
-              pluginCategoryParents.forEach((lc) => {
-                sidebarLinks.push(
-                  new (class extends BaseCustomSidebarSectionLink {
-                    get name() {
-                      return "plugin";
-                    }
-                    get route() {
-                      return "discovery.category";
-                    }
-                    get model() {
-                      return `${Category.slugFor(lc)}/${lc.id}`;
-                    }
-                    get title() {
-                      return lc.name;
-                    }
-                    get text() {
-                      return lc.name;
-                    }
-                    get prefixType() {
-                      return "icon";
-                    }
-                    get prefixValue() {
-                      return supportCatId === lc.id ? "far-life-ring" : "book";
-                    }
-                  })()
-                );
-              });
-
-              sidebarLinks.push(
-                new (class extends BaseCustomSidebarSectionLink {
-                  get name() {
-                    return "plugins";
-                  }
-                  get route() {
-                    return "plugins";
-                  }
-                  get title() {
-                    return I18n.t("plugin_manager.status");
-                  }
-                  get text() {
-                    return I18n.t("plugin_manager.status");
-                  }
-                  get prefixType() {
-                    return "icon";
-                  }
-                  get prefixValue() {
-                    return "far-dot-circle";
-                  }
-                })()
-              );
-
-              return sidebarLinks;
-            }
-          };
-        }
-      );
     });
   },
 };
