@@ -1,9 +1,14 @@
 import Plugin from "../models/plugin";
 import Discourse from "../models/discourse";
-import Category from "discourse/models/category";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import discourseComputed from "discourse-common/utils/decorators";
 import I18n from "I18n";
+
+import EverythingSectionLink from "discourse/lib/sidebar/common/community-section/everything-section-link";
+import AdminSectionLink from "discourse/lib/sidebar/user/community-section/admin-section-link";
+import DocumentationSectionLink from "../lib/sidebar/common/community-section/documentation-section-link";
+import PluginStatusSectionLink from "../lib/sidebar/common/community-section/plugin-status-section-link";
+import SupportSectionLink from "../lib/sidebar/common/community-section/support-section-link";
 
 export default {
   name: "plugin-manager",
@@ -67,87 +72,28 @@ export default {
         },
       });
 
-      api.addSidebarSection(
-        (BaseCustomSidebarSection, BaseCustomSidebarSectionLink) => {
-          return class extends BaseCustomSidebarSection {
-            get name() {
-              return "plugins";
-            }
-            get title() {
-              return I18n.t("plugin_manager.title");
-            }
-            get text() {
-              return I18n.t("plugin_manager.title");
-            }
-            get links() {
-              const sidebarLinks = [];
-              const supportCatId = Number(
-                siteSettings.plugin_manager_support_category
-              );
-              const docsCatId = Number(
-                siteSettings.plugin_manager_documentation_category
-              );
-              const parentIds = [supportCatId, docsCatId].map((id) => id);
-              const pluginCategoryParents = site.categories.filter((c) =>
-                parentIds.includes(c.id)
-              );
-
-              pluginCategoryParents.forEach((lc) => {
-                sidebarLinks.push(
-                  new (class extends BaseCustomSidebarSectionLink {
-                    get name() {
-                      return "plugin";
-                    }
-                    get route() {
-                      return "discovery.category";
-                    }
-                    get model() {
-                      return `${Category.slugFor(lc)}/${lc.id}`;
-                    }
-                    get title() {
-                      return lc.name;
-                    }
-                    get text() {
-                      return lc.name;
-                    }
-                    get prefixType() {
-                      return "icon";
-                    }
-                    get prefixValue() {
-                      return supportCatId === lc.id ? "far-life-ring" : "book";
-                    }
-                  })()
-                );
-              });
-
-              sidebarLinks.push(
-                new (class extends BaseCustomSidebarSectionLink {
-                  get name() {
-                    return "plugins";
-                  }
-                  get route() {
-                    return "plugins";
-                  }
-                  get title() {
-                    return I18n.t("plugin_manager.status");
-                  }
-                  get text() {
-                    return I18n.t("plugin_manager.status");
-                  }
-                  get prefixType() {
-                    return "icon";
-                  }
-                  get prefixValue() {
-                    return "far-dot-circle";
-                  }
-                })()
-              );
-
-              return sidebarLinks;
-            }
-          };
+      api.modifyClass("component:sidebar/user/community-section", {
+        get defaultMainSectionLinks() {
+          return [
+            EverythingSectionLink,
+            DocumentationSectionLink,
+            SupportSectionLink,
+            PluginStatusSectionLink,
+            AdminSectionLink,
+          ];
         }
-      );
+      });
+
+      api.modifyClass("component:sidebar/anonymous/community-section", {
+        get defaultMainSectionLinks() {
+          return [
+            EverythingSectionLink,
+            DocumentationSectionLink,
+            SupportSectionLink,
+            PluginStatusSectionLink
+          ];
+        }
+      });
     });
   },
 };
