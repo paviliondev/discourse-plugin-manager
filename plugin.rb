@@ -207,6 +207,4 @@ after_initialize do
   add_to_class(:category, :plugin_maintainer) { custom_fields['plugin_maintainer'] }
   add_to_class(:category, :plugin_documentation) { ActiveRecord::Type::Boolean.new.cast(custom_fields['plugin_documentation']) }
   add_to_class(:category, :plugin_support) { ActiveRecord::Type::Boolean.new.cast(custom_fields['plugin_support']) }
-
-  SiteSetting.enable_custom_sidebar_sections = true
 end
