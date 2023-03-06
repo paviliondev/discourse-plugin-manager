@@ -55,7 +55,7 @@ class PluginManager::PluginStatusController < ::ApplicationController
       .map(&:with_indifferent_access)
       .select { |plugin| [:name, :branch, :sha, :status].all? { |key| plugin[key].present? } }
 
-    unless plugins.any?
+    if plugins.none?
       raise Discourse::InvalidParameters.new(:plugins)
     end
 
@@ -76,7 +76,7 @@ class PluginManager::PluginStatusController < ::ApplicationController
         result
       end
 
-    unless registered_plugins.any?
+    if registered_plugins.none?
       raise Discourse::InvalidAccess.new("you are not authorized to update the status of any of these plugins")
     end
 
@@ -84,7 +84,7 @@ class PluginManager::PluginStatusController < ::ApplicationController
       ::PluginManager::Plugin::Status.statuses.values.include?(plugin[:status].to_i)
     end
 
-    unless registered_plugins.any?
+    if registered_plugins.none?
       raise Discourse::InvalidParameters.new("no valid plugin statuses")
     end
 
