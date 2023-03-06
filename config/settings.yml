@@ -20,3 +20,5 @@ plugins:
     default: "automated"
   plugin_manager_github_oauth_client_id: ""
   plugin_manager_github_oauth_client_secret: ""
+  plugin_manager_auto_assign_to_maintainers:
+    default: false

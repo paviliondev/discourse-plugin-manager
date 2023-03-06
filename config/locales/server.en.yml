@@ -9,6 +9,7 @@ en:
     plugin_manager_remote_issues_site_issue_tags: "Tags you wish to apply to issue topics raised on site where bug reports are being handled"
     plugin_manager_github_oauth_client_id: "Client id of Github OAuth app for Plugin Manager Server."
     plugin_manager_github_oauth_client_secret: "Client secret of Github OAuth app for Plugin Manager Server."
+    plugin_manager_auto_assign_to_maintainers: "Automatically assign issues to plugin maintainers."
 
   plugin_manager:
     notifier:
