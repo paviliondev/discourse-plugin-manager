@@ -174,7 +174,7 @@ class ::PluginManager::Plugin::Status
   end
 
   def self.working?(status)
-    compatible?(status)
+    compatible?(status) && !tests_failing?(status)
   end
 
   def self.not_working?(status)

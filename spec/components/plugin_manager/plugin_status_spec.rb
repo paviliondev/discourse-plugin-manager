@@ -183,6 +183,15 @@ describe PluginManager::Plugin::Status do
         topic = Topic.find(log.issue_id)
         expect(topic.closed?).to eq(true)
       end
+
+      it "does not create a post and close topic if tests are failing" do
+        described_class.update(compatible_plugin, git, incompatible_status.merge(skip_git_check: true))
+        described_class.update(compatible_plugin, git, tests_failing.merge(skip_git_check: true))
+
+        log = PluginManager::Log.get_unresolved(compatible_plugin, git)
+        topic = Topic.find(log.issue_id)
+        expect(topic.open?).to eq(true)
+      end
     end
   end
 end

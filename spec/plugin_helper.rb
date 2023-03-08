@@ -189,4 +189,8 @@ def incompatible_status
   { status: PluginManager::Plugin::Status.statuses[:incompatible] }
 end
 
+def tests_failing
+  { test_status: PluginManager::TestManager.status[:failing] }
+end
+
 require 'rails_helper'
