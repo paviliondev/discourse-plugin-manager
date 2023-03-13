@@ -2,7 +2,6 @@ import Plugin from "../models/plugin";
 import Discourse from "../models/discourse";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import discourseComputed from "discourse-common/utils/decorators";
-import I18n from "I18n";
 
 import EverythingSectionLink from "discourse/lib/sidebar/common/community-section/everything-section-link";
 import AdminSectionLink from "discourse/lib/sidebar/user/community-section/admin-section-link";
@@ -14,8 +13,6 @@ export default {
   name: "plugin-manager",
   initialize(container) {
     const messageBus = container.lookup("service:message-bus");
-    const site = container.lookup("service:site");
-    const siteSettings = container.lookup("service:site-settings");
 
     messageBus.subscribe(
       "/plugin-manager/status-updated",
