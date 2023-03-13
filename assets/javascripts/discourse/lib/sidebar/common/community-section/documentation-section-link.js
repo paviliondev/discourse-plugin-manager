@@ -6,7 +6,9 @@ export default class DocumentationSectionLink extends BaseSectionLink {
   constructor() {
     super(...arguments);
     const { site, siteSettings } = helperContext();
-    const categoryId = Number(siteSettings.plugin_manager_documentation_category);
+    const categoryId = Number(
+      siteSettings.plugin_manager_documentation_category
+    );
     this.category = site.categories.find((c) => c.id === categoryId);
   }
 

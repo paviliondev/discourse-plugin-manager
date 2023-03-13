@@ -19,7 +19,7 @@ export default class DocumentationSectionLink extends BaseSectionLink {
   }
 
   get model() {
-    return `${Category.slugFor(this.category)}/${this.category?.id}` ;
+    return `${Category.slugFor(this.category)}/${this.category?.id}`;
   }
 
   get title() {

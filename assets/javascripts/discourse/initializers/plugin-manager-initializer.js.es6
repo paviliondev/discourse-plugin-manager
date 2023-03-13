@@ -78,7 +78,7 @@ export default {
             PluginStatusSectionLink,
             AdminSectionLink,
           ];
-        }
+        },
       });
 
       api.modifyClass("component:sidebar/anonymous/community-section", {
@@ -87,9 +87,9 @@ export default {
             EverythingSectionLink,
             DocumentationSectionLink,
             SupportSectionLink,
-            PluginStatusSectionLink
+            PluginStatusSectionLink,
           ];
-        }
+        },
       });
     });
   },
