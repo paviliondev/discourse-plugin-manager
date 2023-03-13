@@ -65,11 +65,6 @@ after_initialize do
 
   if Rails.env.development?
     PluginManager::Plugin.update_local_plugins
-  elsif
-    unless Rails.env.test?
-      PluginManager::Plugin.update_plugins
-      PluginManager::Plugin.update_test_statuses
-    end
   end
 
   user_key_suffix = 'plugin-registrations'
