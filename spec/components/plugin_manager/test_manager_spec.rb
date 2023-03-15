@@ -39,7 +39,7 @@ describe PluginManager::TestManager do
   end
 
   it "does nothing if plugin is not using Discourse Plugin workflow" do
-    set_workflow(0,'name', 'Plugin Tests')
+    set_workflow(0, 'name', 'Plugin Tests')
     subject.update(compatible_plugin)
     expect(status.test_status).to eq(nil)
   end
@@ -60,7 +60,7 @@ describe PluginManager::TestManager do
   it "sets a failing status and message when tests are failing" do
     PluginManager::Plugin::Status.update(compatible_plugin, git, compatible_status)
 
-    set_workflow(0,'conclusion', 'failure')
+    set_workflow(0, 'conclusion', 'failure')
     set_test_check(2, 'conclusion', 'failure')
     stub_github_annotations_request(test_annotations_response_body)
 
