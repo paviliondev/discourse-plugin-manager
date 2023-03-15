@@ -32,14 +32,17 @@ class ::PluginManager::TestManager
     @host.plugin = @plugin
     @host.branch = branch
     @host.discourse_branch = discourse_branch
+    @host.manager = self
 
-    test_status = request_test_status
+    status_response = request(@host.status_path)
+    test_status = @host.get_status_from_response(status_response)
 
     if !test_status.nil?
       attrs = {}
       attrs[:test_status] = test_status
       attrs[:branch] = branch
       attrs[:discourse_branch] = discourse_branch
+      attrs[:message] = @host.test_error if @host.test_error
 
       PluginManager::Plugin.set(@plugin.name, attrs)
     end
@@ -53,23 +56,10 @@ class ::PluginManager::TestManager
     test_status == PluginManager::TestManager.status[:failing]
   end
 
-  protected
-
-  def request_test_status
-    status_path = @host.status_path
-
-    if status_path && response = request(status_path)
-      @host.get_status_from_response(response)
-    else
-      nil
-    end
-  end
-
-  def request(endpoint, opts = {})
-    connection = Excon.new(
-      "https://#{@host.domain}/#{endpoint}",
-      middlewares: Excon.defaults[:middlewares] + [Excon::Middleware::RedirectFollower]
-    )
+  def request(endpoint = nil, opts = {})
+    url = opts[:url] || "https://#{@host.domain}/#{endpoint}"
+    middlewares = Excon.defaults[:middlewares] + [Excon::Middleware::RedirectFollower]
+    connection = Excon.new(url, middlewares: middlewares)
 
     begin
       response = connection.request(opts)

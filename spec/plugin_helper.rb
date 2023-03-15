@@ -63,6 +63,14 @@ def third_party_plugin
   "third_party_plugin"
 end
 
+def check_suite_id
+  "4469658997"
+end
+
+def check_run_id
+  "12020026492"
+end
+
 def git
   {
     branch: plugin_branch,
@@ -135,7 +143,23 @@ end
 
 def stub_github_test_request(response_body)
   plugin_path = "discourse-compatible-plugin"
-  stub_request(:get, "https://api.github.com/repos/paviliondev/#{plugin_path}/actions/runs?branch=#{plugin_branch}&status=completed&per_page=1&page=1").to_return(
+  stub_request(:get, "https://api.github.com/repos/paviliondev/#{plugin_path}/actions/runs?branch=#{plugin_branch}&status=completed&per_page=5&page=1").to_return(
+    status: 200,
+    body: response_body
+  )
+end
+
+def stub_github_test_check_request(response_body)
+  plugin_path = "discourse-compatible-plugin"
+  stub_request(:get, "https://api.github.com/repos/paviliondev/#{plugin_path}/check-suites/#{check_suite_id}/check-runs?status=completed").to_return(
+    status: 200,
+    body: response_body
+  )
+end
+
+def stub_github_annotations_request(response_body)
+  plugin_path = "discourse-compatible-plugin"
+  stub_request(:get, "https://api.github.com/repos/paviliondev/#{plugin_path}/check-runs/#{check_run_id}/annotations").to_return(
     status: 200,
     body: response_body
   )

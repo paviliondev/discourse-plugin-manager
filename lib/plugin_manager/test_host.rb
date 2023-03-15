@@ -11,7 +11,9 @@ class ::PluginManager::TestHost
 
   attr_accessor :plugin,
                 :branch,
-                :discourse_branch
+                :discourse_branch,
+                :manager,
+                :test_error
 
   ## overide in child
   def status_path
