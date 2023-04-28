@@ -1,0 +1,26 @@
+[
+  {
+    "path": ".github",
+    "blob_href": "https://github.com/paviliondev/discourse-compatible-plugin/blob/d2fbe349ee9f86d05fdcdbf20e48fc6edd450217/.github",
+    "start_line": 846,
+    "start_column": null,
+    "end_line": 846,
+    "end_column": null,
+    "annotation_level": "failure",
+    "title": "",
+    "message": "QUnit Test Failure: Acceptance: Field | Fields: Text",
+    "raw_details": ""
+  },
+  {
+    "path": ".github",
+    "blob_href": "https://github.com/paviliondev/discourse-compatible-plugin/blob/d2fbe349ee9f86d05fdcdbf20e48fc6edd450217/.github",
+    "start_line": 894,
+    "start_column": null,
+    "end_line": 894,
+    "end_column": null,
+    "annotation_level": "failure",
+    "title": "",
+    "message": "Process completed with exit code 1.",
+    "raw_details": ""
+  }
+]

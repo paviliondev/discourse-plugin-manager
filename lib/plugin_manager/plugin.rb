@@ -142,7 +142,7 @@ class ::PluginManager::Plugin
     new_attrs = update_repository_attrs(new_attrs[:url], new_attrs)
     PluginManagerStore.set(::PluginManager::NAMESPACE, plugin_name, new_attrs)
 
-    status_attrs = attrs.slice(:status, :test_status)
+    status_attrs = attrs.slice(:status, :test_status, :backtrace, :message)
     git = attrs.slice(*PluginManager::Plugin::Status.required_git_attrs)
 
     if status_attrs.present? && git.present?

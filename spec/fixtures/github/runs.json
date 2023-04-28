@@ -3,7 +3,7 @@
   "workflow_runs": [
     {
       "id": 1505649623,
-      "name": "Plugin Tests",
+      "name": "Discourse Plugin",
       "node_id": "WFR_kwLOBjsWBc5ZvmPX",
       "head_branch": "main",
       "head_sha": "ce0335b6799f19d933026a212b367258cffb2eae",

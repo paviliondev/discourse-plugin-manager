@@ -19,8 +19,8 @@ en:
       fixed:
         body: "%{plugin_name} has recovered from this issue."
     test:
-      error: "The tests are failing."
-      error_test: "The '%{test_name}' test is failing."
+      failed: "%{test_name} has failed."
+      failed_with_message: "%{test_name} has failed: %{message}"
     plugin:
       documentation_category_description: Documentation for the %{plugin_name} plugin.
       issues_category_title: Issues for the %{plugin_name} plugin.
