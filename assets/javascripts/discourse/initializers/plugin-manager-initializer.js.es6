@@ -3,12 +3,6 @@ import Discourse from "../models/discourse";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import discourseComputed from "discourse-common/utils/decorators";
 
-import EverythingSectionLink from "discourse/lib/sidebar/common/community-section/everything-section-link";
-import AdminSectionLink from "discourse/lib/sidebar/user/community-section/admin-section-link";
-import DocumentationSectionLink from "../lib/sidebar/common/community-section/documentation-section-link";
-import PluginStatusSectionLink from "../lib/sidebar/common/community-section/plugin-status-section-link";
-import SupportSectionLink from "../lib/sidebar/common/community-section/support-section-link";
-
 export default {
   name: "plugin-manager",
   initialize(container) {
@@ -66,29 +60,6 @@ export default {
         @discourseComputed("site.categories")
         pluginCategories(categories) {
           return categories.filter((c) => c.for_plugin);
-        },
-      });
-
-      api.modifyClass("component:sidebar/user/community-section", {
-        get defaultMainSectionLinks() {
-          return [
-            EverythingSectionLink,
-            DocumentationSectionLink,
-            SupportSectionLink,
-            PluginStatusSectionLink,
-            AdminSectionLink,
-          ];
-        },
-      });
-
-      api.modifyClass("component:sidebar/anonymous/community-section", {
-        get defaultMainSectionLinks() {
-          return [
-            EverythingSectionLink,
-            DocumentationSectionLink,
-            SupportSectionLink,
-            PluginStatusSectionLink,
-          ];
         },
       });
     });
