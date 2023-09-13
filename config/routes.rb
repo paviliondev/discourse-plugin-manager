@@ -18,6 +18,7 @@ PluginManager::Engine.routes.draw do
   put 'plugin/:plugin_name' => 'plugin#save', constraints: StaffConstraint.new
   delete 'plugin/:plugin_name' => 'plugin#delete', constraints: StaffConstraint.new
   post 'user/register' => 'plugin_user#register', constraints: { format: 'json' }
+  post 'statistics' => 'statistics#create', constraints: { format: 'json' }
 end
 
 Discourse::Application.routes.prepend do
