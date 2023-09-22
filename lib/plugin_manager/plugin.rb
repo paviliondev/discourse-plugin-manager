@@ -446,15 +446,15 @@ class ::PluginManager::Plugin
   end
 
   def self.get_local_sha(path)
-    PluginManager.run_shell_cmd('git rev-parse HEAD', chdir: path)
+    PluginManager.run_shell_cmd('git rev-parse HEAD', { chdir: path })
   end
 
   def self.get_local_branch(path)
-    PluginManager.run_shell_cmd('git rev-parse --abbrev-ref HEAD', chdir: path)
+    PluginManager.run_shell_cmd('git rev-parse --abbrev-ref HEAD', { chdir: path })
   end
 
   def self.get_local_url(path)
-    PluginManager.run_shell_cmd('git config --get remote.origin.url', chdir: path)
+    PluginManager.run_shell_cmd('git config --get remote.origin.url', { chdir: path })
   end
 
   def self.excluded_local_plugins

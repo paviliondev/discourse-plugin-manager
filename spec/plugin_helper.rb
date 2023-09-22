@@ -97,9 +97,9 @@ def api_token
 end
 
 def stub_plugin_git_cmds(dir, plugin_url)
-  Open3.expects(:capture3).with("git rev-parse HEAD", { chdir: dir }).returns(plugin_sha).at_least_once
-  Open3.expects(:capture3).with("git rev-parse --abbrev-ref HEAD", { chdir: dir }).returns(plugin_branch).at_least_once
-  Open3.expects(:capture3).with("git config --get remote.origin.url", { chdir: dir }).returns(plugin_url || "https://github.com/paviliondev/discourse-compatible-plugin.git")
+  PluginManager.expects(:run_shell_cmd).with("git rev-parse HEAD", { chdir: dir }).returns(plugin_sha).at_least_once
+  PluginManager.expects(:run_shell_cmd).with("git rev-parse --abbrev-ref HEAD", { chdir: dir }).returns(plugin_branch).at_least_once
+  PluginManager.expects(:run_shell_cmd).with("git config --get remote.origin.url", { chdir: dir }).returns(plugin_url || "https://github.com/paviliondev/discourse-compatible-plugin.git")
   Discourse.expects(:git_branch).returns(discourse_branch).at_least_once
   Discourse.expects(:git_version).returns(discourse_sha).at_least_once
 end

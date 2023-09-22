@@ -50,9 +50,12 @@ after_initialize do
     ../app/jobs/scheduled/update_plugin_test_statuses.rb
     ../app/jobs/scheduled/update_plugins.rb
     ../app/jobs/regular/send_plugin_notification.rb
+    ../app/models/discourse_plugin_statistics_discourse.rb
+    ../app/models/discourse_plugin_statistics_plugin.rb
     ../app/controllers/plugin_manager/plugin_controller.rb
     ../app/controllers/plugin_manager/plugin_status_controller.rb
     ../app/controllers/plugin_manager/plugin_user_controller.rb
+    ../app/controllers/plugin_manager/statistics_controller.rb
     ../app/serializers/plugin_manager/log_serializer.rb
     ../app/serializers/plugin_manager/plugin_serializer.rb
     ../app/serializers/plugin_manager/plugin_user_serializer.rb
