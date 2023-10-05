@@ -53,7 +53,7 @@ describe PluginManager::StatisticsController do
           DiscoursePluginStatisticsDiscourse.exists?(
             host: discourse_host,
             branch: discourse_branch,
-            sha: discourse_sha
+            sha: discourse_sha,
           )
         ).to eq(true)
       end
@@ -87,13 +87,13 @@ describe PluginManager::StatisticsController do
 
         discourse = DiscoursePluginStatisticsDiscourse.find_by(host: discourse_host)
         expect(
-          DiscoursePluginStatisticsPlugin.exists?(
-            received_at: Time.now,
-            discourse_id: discourse.id,
-            name: registered_plugin,
-            branch: plugin_branch,
-            sha: plugin_sha
-          )
+          DiscoursePluginStatisticsPlugin.where("
+            discourse_id = #{discourse.id} AND
+            name = '#{registered_plugin}' AND
+            branch = '#{plugin_branch}' AND
+            sha = '#{plugin_sha}' AND
+            data->>'data_key_1' = '#{plugin_data[:data_key_1]}'
+          ").exists?
         ).to eq(true)
       end
     end

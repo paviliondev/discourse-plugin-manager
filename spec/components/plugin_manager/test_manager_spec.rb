@@ -15,7 +15,7 @@ describe PluginManager::TestManager do
   let(:test_response_body) { File.read("#{fixture_dir}/github/runs.json") }
   let(:test_checks_response_body) { File.read("#{fixture_dir}/github/check_runs.json") }
   let(:test_annotations_response_body) { File.read("#{fixture_dir}/github/annotations.json") }
-  let(:subject) { described_class.new("github", plugin_branch, discourse_branch) }
+  let(:test_manager) { described_class.new("github", plugin_branch, discourse_branch) }
   let(:status) { PluginManager::Plugin::Status.get(compatible_plugin, plugin_branch, discourse_branch) }
 
   def set_workflow(index, key, value)
@@ -40,12 +40,12 @@ describe PluginManager::TestManager do
 
   it "does nothing if plugin is not using Discourse Plugin workflow" do
     set_workflow(0, 'name', 'Plugin Tests')
-    subject.update(compatible_plugin)
+    test_manager.update(compatible_plugin)
     expect(status.test_status).to eq(nil)
   end
 
   it "sets a passing test status when tests are passing" do
-    subject.update(compatible_plugin)
+    test_manager.update(compatible_plugin)
     expect(status.test_status).to eq(described_class.status[:passing])
   end
 
@@ -53,7 +53,7 @@ describe PluginManager::TestManager do
     set_workflow(0, 'conclusion', 'failure')
     set_test_check(0, 'conclusion', 'failure')
 
-    subject.update(compatible_plugin)
+    test_manager.update(compatible_plugin)
     expect(status.test_status).to eq(described_class.status[:passing])
   end
 
@@ -75,7 +75,7 @@ describe PluginManager::TestManager do
       }
     ).returns(true)
 
-    subject.update(compatible_plugin)
+    test_manager.update(compatible_plugin)
     expect(status.test_status).to eq(described_class.status[:failing])
   end
 end
