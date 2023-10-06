@@ -34,6 +34,6 @@ class PluginManager::StatisticsController < ApplicationController
 
   def plugin_params
     params.require(:plugins)
-    params.permit(plugins: [:name, :branch, :sha, data: {}])
+    params.permit(plugins: [:name, :branch, :sha, :url, data: {}])
   end
 end

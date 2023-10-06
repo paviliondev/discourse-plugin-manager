@@ -5,6 +5,7 @@ describe PluginManager::StatisticsController do
   let(:non_registered_plugin) { third_party_plugin }
   let(:plugin_sha) { "12345678910" }
   let(:plugin_branch) { "plugin_branch" }
+  let(:plugin_url) { "https://github.com/paviliondev/discourse-custom-wizard.git" }
   let(:plugin_data) do
     {
       data_key_1: "data-val-1",
@@ -26,6 +27,7 @@ describe PluginManager::StatisticsController do
           name: registered_plugin,
           branch: plugin_branch,
           sha: plugin_sha,
+          url: plugin_url,
           data: plugin_data
         }
       ]
@@ -91,6 +93,7 @@ describe PluginManager::StatisticsController do
             discourse_id = #{discourse.id} AND
             name = '#{registered_plugin}' AND
             branch = '#{plugin_branch}' AND
+            url = '#{plugin_url}' AND
             sha = '#{plugin_sha}' AND
             data->>'data_key_1' = '#{plugin_data[:data_key_1]}'
           ").exists?
