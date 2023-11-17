@@ -31,7 +31,7 @@ export default {
           });
         },
 
-        setupController() {
+        setupController(_, model) {
           this._super(...arguments);
 
           if (this.plugin) {
@@ -39,7 +39,7 @@ export default {
             const discourse = Discourse.create({ branch });
             const plugin = Plugin.create(this.plugin);
 
-            this.controllerFor("navigation/category").category.setProperties({
+            model.category.setProperties({
               discourse,
               plugin,
             });
