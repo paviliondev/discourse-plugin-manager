@@ -26,10 +26,8 @@ export default {
         pluginId: "plugin-manager",
 
         afterModel(model) {
-          return this._super(...arguments).then(() => {
-            return Plugin.categoryPlugin(model.category.id).then((result) => {
-              this.setProperties(result);
-            });
+          return Plugin.categoryPlugin(model.category.id).then((result) => {
+            this.setProperties(result);
           });
         },
 

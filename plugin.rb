@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # name: discourse-plugin-manager
 # about: Discourse Plugin Manager
-# version: 0.2.1
+# version: 0.2.2
 # authors: Angus McLeod
 # contact_emails: development@pavilion.tech
 # url: https://github.com/paviliondev/discourse-plugin-manager
